@@ -25,7 +25,7 @@ def register(request):
             'form': form,
             'nid': 1
         }
-        return render(request, 'UserAuth/UserAuth.html.html', context=context)
+        return render(request, 'UserAuth/UserAuth.html', context=context)
 
     # store userinfo
     form.instance.identity = 1  # default: User
