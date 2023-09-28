@@ -89,3 +89,9 @@ def generate_verification_code(request):
     request.session["verification_code"] = code
     request.session.set_expiry(120)  # 验证码60秒有效期
     return HttpResponse(stream.getvalue())
+def index(request):
+    current_url = request.build_absolute_uri()
+    username = request.session.get("UserInfo")
+    context = {'username': username,
+               'current_url':current_url}
+    return render(request, 'UserAuth/index.html', context)

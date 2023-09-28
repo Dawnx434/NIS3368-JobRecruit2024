@@ -1,0 +1,5 @@
+{% if username %}
+    Welcome {{ username }}
+{% else %}
+    <a href="{{ current_url  }}login/">Please login first<a>
+{% endif %}
