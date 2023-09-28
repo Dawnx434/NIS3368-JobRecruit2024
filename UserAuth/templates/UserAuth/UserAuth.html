@@ -1,0 +1,93 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    {% if nid == 1 %}
+        <title>用户注册</title>
+    {% else %}
+        <title>用户登录</title>
+    {% endif %}
+    <link rel="stylesheet" href="{% static 'plugins/bootstrap/css/bootstrap.css' %}">
+    <style>
+        .account {
+            width: 600px;
+            border: 1px solid #dddddd;
+            border-radius: 5px;
+            box-shadow: 5px 5px 20px #aaa;
+
+            margin-left: auto;
+            margin-right: auto;
+            margin-top: 80px;
+            padding: 20px 40px;
+        }
+
+        .account h2 {
+            margin-top: 10px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+<div class="account">
+    {% if nid == 1 %}
+        <h2>用户注册</h2>
+    {% else %}
+        <h2>用户登录</h2>
+    {% endif %}
+    <form method="post" novalidate>
+        {% csrf_token %}
+        <!--表单列表-->
+        {% for field in form %}
+            {% if field.name != "verification_code" %}
+                <div class="form-group">
+                    <label>{{ field.label }}</label>
+                    {{ field }}
+                    <span style="color: red;">{{ field.errors.0 }}</span>
+                </div>
+            {% else %}
+                <div class="form-group">
+                    <label for="id_code">{{ field.label }}</label>
+                    <div class="row">
+                        <div class="col-xs-8">
+                            {{ field }}
+                            <span style="color: red;">{{ field.errors.0 }}</span>
+                        </div>
+                        <div class="col-xs-4">
+                            <img id="imgCode" style="width: 140px;" src="/auth/gencode/" alt="图形验证码"
+                                 title="点击更换">
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        {% endfor %}
+        {% if nid == 1 %}
+            <input type="submit" value="注 册" class="btn btn-primary">
+        {% else %}
+            <input type="submit" value="登 录" class="btn btn-primary">
+        {% endif %}
+        <a href="/index/" class="btn btn-danger active" role="button">取 消</a>
+        {% if nid == 1 %}
+            <div style="text-align: right;">
+                已有账号？<a style="text-align: right;" href="/auth/login/">去登录！</a>
+            </div>
+        {% else %}
+            <div style="text-align: right;">
+                还没有账号？<a style="text-align: right;" href="/auth/register/">去注册一个！</a>
+            </div>
+        {% endif %}
+        <!--表单结束-->
+    </form>
+</div>
+<script src="{% static 'js/jquery-3.6.0.min.js' %}"></script>
+<script type="text/javascript">
+    //点击刷新验证码
+    $(function () {
+        $("#imgCode").click(function () {
+            let oldSrc = $(this).attr('src');
+            $(this).attr('src', oldSrc + "?");
+        })
+    })
+</script>
+</body>
+</html>

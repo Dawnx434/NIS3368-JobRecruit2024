@@ -15,3 +15,4 @@ media/
 # 数据迁移记录
 */migrations/*.py
 !*/migrations/__init__.py
+/JobRecruitment/local_settings.py
