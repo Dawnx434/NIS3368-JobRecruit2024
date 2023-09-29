@@ -8,7 +8,7 @@
 
 #### 数据库迁移
 
-在启动项目之前，你需要迁移数据库。此处以MySQL为例，在`local_settings.py`中配置你的数据库内容：
+在启动项目之前，你需要迁移数据库。此处以MySQL为例，在`JobRecruitment/local_settings.py`中配置你的数据库内容：
 
 ```python
 # /JobRecruitment/local_settings.py
@@ -16,8 +16,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'jobrecruitment',  # 数据库名字
-        'USER': '',
-        'PASSWORD': '',
+        'USER': '',  #用户名
+        'PASSWORD': '', #用户密码
         'HOST': '127.0.0.1',  # MySQL 在哪个 ip
         'PORT': '3306',  # 端口号
     }
@@ -50,7 +50,7 @@ EMAIL_PORT = 25                 # 一般情况下都为25
 EMAIL_HOST_USER = "example@qq.com"     # 账号
 EMAIL_HOST_PASSWORD = ""     # 您的授权码
 EMAIL_USE_TLS = True       
-EMAIL_FROM = "example@qq.com"      # 邮箱来自
+EMAIL_FROM = "example@qq.com"      # 邮箱来自（这里是和账号一样的）
 EMAIL_TITLE = '邮箱激活'	# 邮件标题
 ```
 

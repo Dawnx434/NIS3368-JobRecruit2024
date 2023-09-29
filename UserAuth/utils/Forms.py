@@ -28,7 +28,7 @@ class RegisterForm(BootStrapForm, forms.ModelForm):
         validators=[RegexValidator(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$', '邮箱格式错误')]
     )
     verification_code = forms.CharField(
-        label="图形验证码",
+        label="验证码",
         max_length=10
     )
 
