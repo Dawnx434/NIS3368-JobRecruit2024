@@ -54,8 +54,12 @@
                             <span style="color: red;">{{ field.errors.0 }}</span>
                         </div>
                         <div class="col-xs-4">
-                            <img id="imgCode" style="width: 140px;" src="/auth/gencode/" alt="图形验证码"
-                                 title="点击更换">
+                            {% if nid == 2 %}
+                                <img id="imgCode" style="width: 140px;" src="/auth/gencode/" alt="图形验证码"
+                                     title="点击更换">
+                            {% elif nid == 1 %}
+                                <button type="button" id="sendemail" class="btn btn-primary">发送邮件</button>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
@@ -88,6 +92,63 @@
             $(this).attr('src', oldSrc + "?");
         })
     })
+
+    const interval = 30; //这边lhw说30秒比较好
+    let countdown = interval;
+    let button = document.getElementById('sendemail');
+    let timer;
+
+    function updateButtonText() {
+        button.innerText = '剩余时间: ' + countdown + ' 秒';
+    }
+
+
+    function countdownTick() {
+        countdown--;
+        updateButtonText(button);
+
+        if (countdown <= 0) {
+            clearInterval(timer);
+            button.innerText = '发送验证码';
+            button.disabled = false;
+            button.className = 'btn btn-primary';
+        }
+    }
+
+    // 使用 JavaScript 事件处理监听按钮点击事件
+    document.getElementById('sendemail').addEventListener('click', function () {
+        //防止按钮再被点击
+        button.disabled = true;
+        countdown = interval;
+        button.className = 'btn btn-secondary';
+        //启动倒计时
+        timer = setInterval(countdownTick, 1000);
+        let email_address = document.getElementById("id_email").value
+        //发送请求
+        $.ajax({
+            url: '/auth/sendemail/',
+            type: 'POST',
+            data: {
+                'email_address': email_address,
+            },
+            dataType: 'JSON',
+            success: (
+                function (res) {
+                    if (res['state']) {
+                        // state = true
+                    } else {
+                        // state = false
+                        alert('错误的邮箱格式！');
+                        clearInterval(timer);
+                        button.innerText = '发送验证码';
+                        button.disabled = false;
+                        button.className = 'btn btn-primary';
+                    }
+                }
+            )
+        })
+
+    });
 </script>
 </body>
 </html>
