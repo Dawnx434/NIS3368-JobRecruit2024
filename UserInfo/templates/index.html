@@ -1,0 +1,46 @@
+{% if username %}
+  <div class="dropdown">
+    <span class="dropdown-trigger" onmouseover="showDropdown()" onmouseout="hideDropdown()">
+      Welcome <span id="username"> {{ username }} </span>
+    </span>
+    <div class="dropdown-content" onmouseover="cancelHide()" onmouseout="hideDropdown()">
+      <!-- 下拉框内容 -->
+      <ul>
+        <li><a href="../resum">我的简历</a></li>
+          <li><a href="../application/">我的投递</a></li>
+        <li><a href="../info/">个人资料</a></li>
+        <li><a href="../account/">账号安全</a></li>
+        <li><a href="../logout/">退出登录</a></li>
+      </ul>
+    </div>
+  </div>
+  <script>
+    var dropdownTimeout;
+
+    function showDropdown() {
+      clearTimeout(dropdownTimeout);
+      var dropdownContent = document.querySelector('.dropdown-content');
+      dropdownContent.style.display = 'block';
+    }
+
+    function hideDropdown() {
+      dropdownTimeout = setTimeout(function() {
+        var dropdownContent = document.querySelector('.dropdown-content');
+        dropdownContent.style.display = 'none';
+      }, 200);
+    }
+
+    function cancelHide() {
+      clearTimeout(dropdownTimeout);
+    }
+  </script>
+
+  <style>
+    .dropdown-content {
+      display: none;
+      /* 根据需要设置下拉框的样式 */
+    }
+  </style>
+{% else %}
+  <a href="/auth/login/">Please login first</a>
+{% endif %}
