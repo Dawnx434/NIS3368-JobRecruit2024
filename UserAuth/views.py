@@ -1,11 +1,14 @@
 from io import BytesIO
 
 from django.shortcuts import render, HttpResponse, redirect
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 from UserAuth.utils.Forms import RegisterForm, LoginForm
 
 from UserAuth import models
 
-from UserAuth.utils.generateCode import check_code
+from UserAuth.utils.generateCode import check_code, send_sms_code
+from UserAuth.utils.validators import is_valid_email
 
 
 # Create your views here.
@@ -89,9 +92,39 @@ def generate_verification_code(request):
     request.session["verification_code"] = code
     request.session.set_expiry(120)  # 验证码60秒有效期
     return HttpResponse(stream.getvalue())
+
+
+@csrf_exempt
+def sendemail(request):
+    if request.method == 'GET':
+        data = {
+            'state': False,
+            'msg': 'Invalid request method'
+        }
+        return JsonResponse(data)
+
+    email = request.POST.get('email_address')
+    if not is_valid_email(email):
+        data = {
+            'state': False,
+            'msg': 'Invalid Email format'
+        }
+        return JsonResponse(data)
+    else:
+        # 发送邮件
+        state, code = send_sms_code(target_email=email)
+        request.session['verification_code'] = code
+        request.session.set_expiry(2 * 60)
+        data = {
+            'state': True,
+            'msg': 'Send Email successfully'
+        }
+        return JsonResponse(data)
+
+
 def index(request):
-    current_url = request.build_absolute_uri()
-    username = request.session.get("UserInfo")
-    context = {'username': username,
-               'current_url':current_url}
-    return render(request, 'UserAuth/index.html', context)
+    userinfo = request.session.get("UserInfo")
+    context = {
+        'username': userinfo
+    }
+    return render(request, 'UserAuth/index.html', context=context)
