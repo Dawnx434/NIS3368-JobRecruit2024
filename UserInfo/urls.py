@@ -8,4 +8,6 @@ urlpatterns = [
    path("info/", views.info),
    path("account/",views.account),
    path("logout/",views.logout),
+   path("modify/", views.modify),
+   path("submit/",views.change_sql),
 ]

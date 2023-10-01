@@ -20,6 +20,11 @@ class User(models.Model):
         (3, "管理员")
     )
     identity = models.SmallIntegerField(verbose_name="权限身份", choices=identity_choice, default=1)
+    edu_ground = models.CharField(verbose_name="学历",max_length=12)
+    school = models.CharField(verbose_name="学校",max_length=12)
+    major = models.CharField(verbose_name="专业",max_length=12)
+    excepting_position = models.CharField(verbose_name="意向职位",max_length=12)
+    excepting_location = models.CharField(verbose_name="意向地点",max_length=12)
 
     def __str__(self):
         return self.username

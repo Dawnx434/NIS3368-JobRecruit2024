@@ -1,8 +1,9 @@
 {% if username %}
   <div class="dropdown">
     <span class="dropdown-trigger" onmouseover="showDropdown()" onmouseout="hideDropdown()">
-      Welcome <span id="username"> {{ username }} </span>
+      昵称： <span id="username"> {{ username }} </span>
     </span>
+      <img src="../../static/images/1.jpg" alt="头像" style="width:100px;height: 100px;">
     <div class="dropdown-content" onmouseover="cancelHide()" onmouseout="hideDropdown()">
       <!-- 下拉框内容 -->
       <ul>
