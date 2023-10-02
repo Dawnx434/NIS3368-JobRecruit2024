@@ -1,50 +1,13 @@
-<form method="post" action="../info/">
+<form method="post" action="/info/info/">
     {% csrf_token %}
-  <!-- 表单字段 -->
-  <!-- 生成多组表单 -->
+    <!-- 表单字段 -->
+    <!-- 生成多组表单 -->
+    {% for key,value in userinfo.items %}
+        <div>
+            <label for="{{ key }}">{{ key }}：</label>
+            <input type="text" id="{{ key }}" name="{{ key }}" value="{{ value }}" required>
+        </div>
+    {% endfor %}
 
-    <div>
-  <label for="username">昵称：</label>
-  <input type="text" id="username" name="username" value="{{ username }}" required>
-</div>
-<div>
-  <label for="mobile_phone">电话号码：</label>
-  <input type="text" id="mobile_phone" name="mobile_phone" value="{{ mobile_phone }}" required>
-</div>
-<div>
-  <label for="gender">性别：</label>
-  <input type="text" id="gender" name="gender" value="{{ gender }}" required>
-</div>
-<div>
-  <label for="email">Email：</label>
-  <input type="text" id="email" name="email" value="{{ email }}" required>
-</div>
-
-<div>
-  <label for="edu_ground">教育背景：</label>
-  <input type="text" id="edu_ground" name="edu_ground" value="{{ edu_ground }}" required>
-</div>
-
-<div>
-  <label for="school">学校：</label>
-  <input type="text" id="school" name="school" value="{{ school }}" required>
-</div>
-
-<div>
-  <label for="major">专业：</label>
-  <input type="text" id="major" name="major" value="{{ major }}" required>
-</div>
-
-<div>
-  <label for="excepting_position">期望职位：</label>
-  <input type="text" id="excepting_position" name="excepting_position" value="{{ excepting_position }}" required>
-</div>
-
-<div>
-  <label for="excepting_location">期望地点：</label>
-  <input type="text" id="excepting_location" name="excepting_location" value="{{ excepting_location }}" required>
-</div>
-  <!-- 提交按钮 -->
-  <button type="submit">提交</button>
-
-</form>
+    <!-- 提交按钮 -->
+    <button type="submit">提交</button>

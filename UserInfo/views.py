@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect,HttpResponse
 from UserAuth.models import User
 
 # Create your views here.
@@ -13,69 +13,77 @@ def apply(request):
 def account(request):
     return 1
 def modify(request):
-    context = get_info(request)
+    # 获取当前用户数据行
+    query_set = User.objects.filter(id=request.session['UserInfo'].get("id"))
+    # 正常来说根据id查表应该查询出唯一的用户，这里作检查
+    if len(query_set) != 1:
+        return HttpResponse("不合法的身份")
+    # 获取用户数据
+    obj = query_set.first()
+    user_info = {"id": request.session['UserInfo'].get("id"),
+                 "username": obj.username,
+                 "mobile_phone": obj.mobile_phone,
+                 "gender": obj.gender,
+                 "email": obj.email,
+                 "edu_ground": obj.edu_ground,
+                 "school": obj.school,
+                 "major": obj.major,
+                 "excepting_position": obj.excepting_position,
+                 "excepting_location": obj.excepting_location
+                 }
+    context = {
+        'userinfo': user_info
+    }
     return render(request,"userinfo_modify.html",context)
-def change_sql():
-    return 1
 def logout(request):
     request.session.clear()
     return redirect("/")
 def info(request):
-    if request.method == 'POST':
-        name = request.session.get('UserInfo')
-        username = request.POST.get('username')
-        mobile_phone = request.POST.get('mobile_phone')
-        gender = request.POST.get('gender')
-        email = request.POST.get('email')
-        edu_ground = request.POST.get('edu_ground')
-        school = request.POST.get('school')
-        major = request.POST.get('major')
-        excepting_position = request.POST.get('excepting_position')
-        excepting_location = request.POST.get('excepting_location')
-        context = {"username": username,
-               "id": name['id'],
-               "mobile_phone": mobile_phone,
-               "gender": gender,
-               "email": email,
-               "edu_ground": edu_ground,
-               "school": school,
-               "major": major,
-               "excepting_position": excepting_position,
-               "excepting_location": excepting_location,
-        }
-        save(context)
-    else:
-        context = get_info(request)
-    return render(request, "userinfo.html", context)
-def get_info(request):
-    name = request.session.get("UserInfo")
-    mobile_phone = User.objects.get(id=name['id']).mobile_phone
-    gender = User.objects.get(id=name['id']).gender
-    email = User.objects.get(id=name['id']).email
-    edu_ground = User.objects.get(id=name['id']).edu_ground
-    school = User.objects.get(id=name['id']).school
-    major = User.objects.get(id=name['id']).major
-    excepting_position = User.objects.get(id=name['id']).excepting_position
-    excepting_location = User.objects.get(id=name['id']).excepting_location
-    context = {"username": name['username'],
-               "id": name['id'],
-               "mobile_phone": mobile_phone,
-               "gender": gender,
-               "email": email,
-               "edu_ground": edu_ground,
-               "school": school,
-               "major": major,
-               "excepting_position": excepting_position,
-               "excepting_location": excepting_location,
-               }
-    return context
-def save(context):
-    User.objects.get(id=context['id']).username = context.get('username')
-    User.objects.get(id=context['id']).mobile_phone = context.get('mobile_phone')
-    User.objects.get(id=context['id']).gender = context.get('gender')
-    User.objects.get(id=context['id']).email = context.get('email')
-    User.objects.get(id=context['id']).edu_ground = context.get('edu_ground')
-    User.objects.get(id=context['id']).school = context.get('school')
-    User.objects.get(id=context['id']).major = context.get('major')
-    User.objects.get(id=context['id']).excepting_position = context.get('excepting_position')
-    User.objects.get(id=context['id']).excepting_location = context.get('excepting_location')
+    if request.method == "GET":
+        # 查询并返回数据
+        query_set = User.objects.filter(id=request.session["UserInfo"].get("id"))
+        # 判空
+        if not query_set:
+            return HttpResponse("不合法的身份")
+        if len(query_set) != 1:
+            return HttpResponse("不合法的身份")
+        # 获取用户数据
+        obj = query_set.first()
+        user_info = {"id": request.session['UserInfo'].get("id"),
+                     "username": obj.username,
+                     "mobile_phone": obj.mobile_phone,
+                     "gender": obj.gender,
+                     "email": obj.email,
+                     "edu_ground": obj.edu_ground,
+                     "school": obj.school,
+                     "major": obj.major,
+                     "excepting_position": obj.excepting_position,
+                     "excepting_location": obj.excepting_location
+                     }
+        return render(request, "userinfo.html", context=user_info)
+        # else POST
+    data = request.POST
+    fields = ['username', 'mobile_phone', 'gender', 'email',
+              'edu_ground', 'school', 'major', 'excepting_position', 'excepting_location']
+    new_info = {}
+    # 获取当前用户数据行
+    query_set = User.objects.filter(id=request.session['UserInfo'].get("id"))
+    # 正常来说根据id查表应该查询出唯一的用户，这里作检查
+    if len(query_set) != 1:
+        return HttpResponse("不合法的身份")
+    # 获取用户数据
+    obj = query_set.first()
+    for field in fields:
+        setattr(obj, field, data.get(field))
+    user_info = {"id":request.session['UserInfo'].get("id"),
+                 "username": obj.username,
+                 "mobile_phone": obj.mobile_phone,
+                 "gender": obj.gender,
+                 "email": obj.email,
+                 "edu_ground": obj.edu_ground,
+                 "school": obj.school,
+                 "major": obj.major,
+                 "excepting_position": obj.excepting_position,
+                 "excepting_location": obj.excepting_location
+                 }
+    return render(request, "userinfo.html", context=user_info)
