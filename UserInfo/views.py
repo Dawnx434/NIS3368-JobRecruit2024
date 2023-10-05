@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect,HttpResponse
 from UserAuth.models import User
-
+import os
+from django.conf import settings
 # Create your views here.
 def index(request):
     name = request.session.get("UserInfo")
@@ -12,6 +13,24 @@ def apply(request):
     return 1
 def account(request):
     return 1
+def image_upload(request):
+    if request.method == 'POST':
+       upload_image = request.FILES['upload']
+       # 获取上传文件的后缀名
+       file_extension = os.path.splitext(upload_image.name)[1]
+       # 这里对文件后缀名进行检验
+       white_list = {'.jpg', '.png'}
+       print(file_extension)
+       if file_extension  not in white_list:
+           return HttpResponse('你上传的文件格式不对')
+       save_path =  os.path.join(settings.MEDIA_ROOT,str(request.session['UserInfo'].get("id")) + file_extension)
+       # 保存文件到指定位置
+       with open(save_path, 'wb') as file:
+           for chunk in upload_image.chunks():
+               file.write(chunk)
+       return HttpResponse('头像上传成功')
+    else:
+        return HttpResponse('头像上传失败')
 def modify(request):
     # 获取当前用户数据行
     query_set = User.objects.filter(id=request.session['UserInfo'].get("id"))

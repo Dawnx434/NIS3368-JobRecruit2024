@@ -1,5 +1,5 @@
 <li>
-    <img src="../../static/images/{{ id }}.jpg" alt="头像" style="width:100px;height: 100px;">
+    <img src="../../static/images/{{ id }}.jpg?rand={{ random }}" alt="头像" style="width:100px;height: 100px;">
     <p>昵称：{{ username }}</p>
     <p>手机号：{{ mobile_phone }}</p>
     <p>性别：{{ gender  }}</p>
@@ -33,6 +33,11 @@
     {% else %}
         <p>意向地点：暂无</p>
     {% endif %}
-    <p><a href="../modify/">点击修改</a></p>
+    <p><a href="../modify/">点击修改个人资料</a></p>
+    <form method="post" action="{% url 'image_upload' %}" enctype="multipart/form-data">
+  {% csrf_token %}
+  <input type="file" name="upload">
+  <button type="submit">上传头像</button>
+</form>
 
 </li>
