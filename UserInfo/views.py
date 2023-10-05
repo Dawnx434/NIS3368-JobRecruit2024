@@ -35,18 +35,10 @@ def modify(request):
         'userinfo': user_info
     }
     return render(request,"userinfo_modify.html",context)
-def logout(request):
-    request.session.clear()
-    return redirect("/")
 def info(request):
     if request.method == "GET":
         # 查询并返回数据
         query_set = User.objects.filter(id=request.session["UserInfo"].get("id"))
-        # 判空
-        if not query_set:
-            return HttpResponse("不合法的身份")
-        if len(query_set) != 1:
-            return HttpResponse("不合法的身份")
         # 获取用户数据
         obj = query_set.first()
         user_info = {"id": request.session['UserInfo'].get("id"),
