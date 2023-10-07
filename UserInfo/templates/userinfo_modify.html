@@ -1,0 +1,13 @@
+<form method="post" action="/info/info/">
+    {% csrf_token %}
+    <!-- 表单字段 -->
+    <!-- 生成多组表单 -->
+    {% for key,value in userinfo.items %}
+        <div>
+            <label for="{{ key }}">{{ key }}：</label>
+            <input type="text" id="{{ key }}" name="{{ key }}" value="{{ value }}" required>
+        </div>
+    {% endfor %}
+
+    <!-- 提交按钮 -->
+    <button type="submit">提交</button>

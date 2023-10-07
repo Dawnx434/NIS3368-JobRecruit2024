@@ -22,6 +22,6 @@ from UserAuth import views
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("auth/", include("UserAuth.urls")),
+    path("info/", include("UserInfo.urls")),
     path("", views.index),
-
 ]
