@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     # My app
     'UserAuth',
     'UserInfo',
+    'PublishPosition',
 ]
 
 MIDDLEWARE = [

@@ -20,8 +20,9 @@ from django.urls import path, include
 from UserAuth import views
 
 urlpatterns = [
+    path("", views.index),
     path("admin/", admin.site.urls),
     path("auth/", include("UserAuth.urls")),
     path("info/", include("UserInfo.urls")),
-    path("", views.index),
+    path("position/", include("PublishPosition.urls")),
 ]
