@@ -6,7 +6,7 @@ from django.conf import settings
 def index(request):
     name = request.session.get("UserInfo")
     context = {"username": name}
-    return render(request, "index.html", context)
+    return render(request, "UserInfo/index.html", context)
 def resume(request):
     return 1
 def apply(request):
@@ -24,6 +24,7 @@ def image_upload(request):
        if file_extension  not in white_list:
            return HttpResponse('你上传的文件格式不对')
        save_path =  os.path.join(settings.MEDIA_ROOT,str(request.session['UserInfo'].get("id")) + file_extension)
+       print(save_path)
        # 保存文件到指定位置
        with open(save_path, 'wb') as file:
            for chunk in upload_image.chunks():
@@ -53,7 +54,7 @@ def modify(request):
     context = {
         'userinfo': user_info
     }
-    return render(request,"userinfo_modify.html",context)
+    return render(request,"UserInfo/userinfo_modify.html",context)
 def info(request):
     if request.method == "GET":
         # 查询并返回数据
@@ -71,7 +72,7 @@ def info(request):
                      "excepting_position": obj.excepting_position,
                      "excepting_location": obj.excepting_location
                      }
-        return render(request, "userinfo.html", context=user_info)
+        return render(request, "UserInfo/userinfo.html", context=user_info)
         # else POST
     data = request.POST
     fields = ['username', 'mobile_phone', 'gender', 'email',
@@ -97,4 +98,4 @@ def info(request):
                  "excepting_position": obj.excepting_position,
                  "excepting_location": obj.excepting_location
                  }
-    return render(request, "userinfo.html", context=user_info)
+    return render(request, "UserInfo/userinfo.html", context=user_info)

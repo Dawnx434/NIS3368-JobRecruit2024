@@ -126,7 +126,7 @@ STATICFILES_DIRS = [
     # 全局目录下的静态文件
     BASE_DIR / "static",
 ]
-
+MEDIA_ROOT = os.path.join(BASE_DIR, 'static/images/')
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
