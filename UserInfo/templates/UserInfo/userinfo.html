@@ -5,10 +5,32 @@
     <title>个人信息</title>
     <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/5.1.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script src="https://cdn.staticfile.org/twitter-bootstrap/5.1.1/js/bootstrap.bundle.min.js"></script>
     <style>
 
-        .left {
+        .custom-text-color {
+            color: #17a2b8 !important;
+            font-weight: bold;
+        }
+
+        .custom-background{
+            background-color: #E5E5E5;
+        }
+
+        .custom-button{
             background-color: #17a2b8;
+            color: white;
+            border: 1px solid #17a2b8;
+        }
+
+        .custom-text-color{
+            color: #17a2b8 !important;
+        }
+
+        .left {
+            background-color: #17a2b8 !important;
             color: white;
             display: flex;
             flex-direction: column;
@@ -24,11 +46,6 @@
             padding: 20px;
             border-top-right-radius: 10px;
             border-bottom-right-radius: 10px;
-        }
-
-        .custom-text-color {
-            color: #17a2b8 !important;
-            font-weight: bold;
         }
 
         .column {
@@ -69,18 +86,19 @@
 			padding-top: 100px;
 		}
 
-		.custom-background{
-		    background-color: #E5E5E5;
-		}
-
-		.custom-button{
-		    background-color: #17a2b8;
-		    color: white;
-		    border: 1px solid #17a2b8;
+		.circle-image {
+            border-radius: 50%;
+            overflow: hidden;
+        }
+        .circle-image img {
+            width: 100%;
+            height: 100%;
+            display: block;
         }
 
-        .custom-text-color{
-            color: #17a2b8 !important;
+        .dropdown-container {
+            position: relative;
+            left: -50px;
         }
 
         <!-- modal -->
@@ -96,6 +114,7 @@
 
         #photoModal {
             position: relative; /* 相对于#myModal */
+            transform: translate(40%, 0%);
             width: 400px;
             height: 300px;
             background-color: #fff;
@@ -119,7 +138,7 @@
             margin: 15% auto;
             padding: 20px;
             border: 1px solid #888;
-            width: 80%;
+            width: 50%;
         }
 
         .close {
@@ -138,9 +157,9 @@
 
 
         #uploadedPhoto {
-            width: 100%; /* 设置照片宽度为弹窗宽度 */
-            height: 100%; /* 设置照片高度为弹窗高度 */
-            object-fit: contain; /* 调整照片以适应弹窗大小 */
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
         }
 
         .modal,
@@ -170,39 +189,48 @@
 
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav mr-auto">
-                <li class="nav-item active mr-3">
-                    <a class="nav-link" href="#">首页  <span class="sr-only">(current)</span></a>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">首页</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">内推</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">面经</a>
                 </li>
                 <li>
                     <form class="form-inline my-2 my-lg-0">
                         <input class="form-control mr-sm-2" type="search" placeholder="按条件搜索..." aria-label="Search">
-                        <button class="btn btn-outline-success my-2 my-sm-0 custom-button" type="submit">搜索</button>
+                        <button class="btn btn-primary custom-button" type="submit"><i class="fas fa-search"></i></button>
                     </form>
                 </li>
             </ul>
 
             <ul class="navbar-nav ml-auto dropdown-menu-end">
-                <li class="nav-item active mr-3">
-                    <a class="nav-link" href="#">消息  <span class="sr-only">(current)</span></a>
-                </li>
                 <li class="nav-item dropdown mr-5">
                     <a class="nav-link dropdown-toggle custom-text-color" href="#" role="button" data-toggle="dropdown" aria-expanded="true">
-                        {{ username }}
+                        <img src="../../static/images/{{ matching_files }}?rand=<%= Date.now() %>" alt="头像" style="width:30px; height:30px;">
                     </a>
-                    <div class="dropdown-menu">
-                        <a class="dropdown-item" href="#">个人主页</a>
-                        <a class="dropdown-item" href="#">登出</a>
+                    <div class="dropdown-container">
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item" href="../resum">我的简历</a>
+                            <a class="dropdown-item" href="../application/">我的投递</a>
+                            <a class="dropdown-item" href="../info/">个人资料</a>
+                            <a class="dropdown-item" href="../account/">账号安全</a>
+                            <a class="dropdown-item" href="../logout/">退出登录</a>
+                        </div>
                     </div>
                 </li>
             </ul>
         </div>
     </nav>
 
+
     <div class="container content-container">
         <div class="row">
             <div class="col-sm-4 bg-info text-white left">
                 <div class="lbox">
-                    <img src="../../static/images/{{ matching_files }}?rand={{ random }}" alt="头像" class="img-fluid d-block m-auto" style="width:300px;height: 250px;">
+                    <img src="../../static/images/{{ matching_files }}?rand=<%= Date.now() %>" alt="头像" class="img-fluid d-block m-auto" style="width:250px;height: 250px;">
                     <button class="btn btn-primary custom-button" id="uploadAvatarBtn" onclick="openModal()">
                         <i class="bi bi-camera-fill"></i> 上传头像
                     </button>
@@ -211,19 +239,24 @@
                     <div id="myModal" class="modal">
                         <div class="modal-content">
                             <span class="close" onclick="closeModal()" id="closeModalBtn">&times;</span>
-                            <h2>&nbsp;&nbsp;请选择您要上传的头像</h2>
-
-                                <form method="post" action="{% url 'image_upload' %}" enctype="multipart/form-data">
+                            <h2 style="text-align: center;">请选择您要上传的头像</h2>
+                                <form method="post" action="{% url 'image_upload' %}" enctype="multipart/form-data" class="d-flex justify-content-center align-items-center flex-wrap">
                                     {% csrf_token %}
-                                    <input type="file" name="upload" accept="image/*" id="fileInput">
-                                    <button type="submit">上传头像</button>
+                                    <label class="btn btn-primary mt-4 mr-2 custom-button">
+                                        选择文件
+                                        <input type="file" name="upload" accept="image/*" id="fileInput" style="display: none;">
+                                    </label>
+                                    <button type="submit" class="btn btn-primary mt-3 mr-2 custom-button">确认上传</button>
                                 </form>
 
 
                             <div id="photoModal">
-                                <img id="uploadedPhoto" src="" alt="Uploaded Photo">
+                                    <img id="uploadedPhoto" src="" alt="Uploaded Photo">
                             </div>
-                            <div id="noImageText">您还没有上传头像</div>
+                            <div style="margin: 40px; text-align: center;">
+                                <div id="noImageText">您还没有上传头像</div>
+                            </div>
+                            <div id="uploadMessage" style="display: none;"></div>
                         </div>
                     </div>
                     <div id="modalBackdrop" class="modal-backdrop"></div>
@@ -245,7 +278,15 @@
                     </div>
                 </div>
                 <div class="rbox column">
-                    <p><span class="custom-text-color">性别:</span> {{ gender }}</p>
+                    <p><span class="custom-text-color">性别:</span>
+                        {% if gender == '1' %}
+                            不愿透露
+                        {% elif gender == '2' %}
+                            男
+                        {% elif gender == '3' %}
+                            女
+                        {% endif %}
+                    </p>
                     <p><span class="custom-text-color">学历:</span> {{ edu_ground }}</p>
                     <p><span class="custom-text-color">学校:</span> {{ school }}</p>
                     <p><span class="custom-text-color">专业:</span> {{ major }}</p>
@@ -275,12 +316,16 @@
         });
 
         function openModal() {
+                        console.log('Submit button clicked!');
+
             var modal = document.getElementById("myModal");
             var modalBackdrop = document.getElementById("modalBackdrop");
 
             if (modal && modalBackdrop) {
                 modal.style.display = "block";
                 modalBackdrop.style.display = "block";
+                photoModal.style.display = "none";
+                noImageText.style.display = "block";
 
                 var closeBtn = document.getElementById("closeModalBtn");
                 closeBtn.addEventListener("click", closeModal);
@@ -294,13 +339,16 @@
             var modalBackdrop = document.getElementById("modalBackdrop");
             modal.style.display = "none";
             modalBackdrop.style.display = "none";
+            photoModal.style.display = "none";
+            noImageText.style.display = "none";
         }
 
         function handleFileSelect(event) {
             const fileInput = event.target;
             const selectedFile = fileInput.files[0];
             const uploadedPhoto = document.getElementById("uploadedPhoto");
-            const noImageText = document.getElementById("noImageText"); // 获取文本元素
+            const noImageText = document.getElementById("noImageText");
+
 
             if (selectedFile) {
                 const reader = new FileReader();
@@ -308,14 +356,14 @@
                 reader.onload = function(event) {
                     photoModal.style.display = "block";
                     uploadedPhoto.src = event.target.result;
-                    noImageText.style.display = "none"; // 隐藏文本元素
+                    noImageText.style.display = "none";
                     document.getElementById("photoModal").style.display = "block";
                 };
 
                 reader.readAsDataURL(selectedFile);
             } else {
                 photoModal.style.display = "none";
-                noImageText.style.display = "block"; // 显示文本元素
+                noImageText.style.display = "block";
                 document.getElementById("photoModal").style.display = "block";
             }
         }

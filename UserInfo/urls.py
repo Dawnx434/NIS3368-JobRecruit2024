@@ -5,7 +5,7 @@ urlpatterns = [
    path("index/", views.index),
    path("resume/", views.resume),
    path("application/", views.apply),
-   path("info/", views.info),
+   path("info/", views.info, name='user_info'),
    path("account/",views.account),
    path("logout/",auth_model.logout),
    path("modify/", views.modify),
