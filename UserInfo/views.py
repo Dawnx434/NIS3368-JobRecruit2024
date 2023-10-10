@@ -1,12 +1,14 @@
 from django.shortcuts import render, redirect,HttpResponse
 from UserAuth.models import User
 import os
+import glob
 from django.conf import settings
+import re
 # Create your views here.
 def index(request):
     name = request.session.get("UserInfo")
     context = {"username": name}
-    return render(request, "index.html", context)
+    return render(request, "UserInfo/index.html", context)
 def resume(request):
     return 1
 def apply(request):
@@ -18,11 +20,18 @@ def image_upload(request):
        upload_image = request.FILES['upload']
        # 获取上传文件的后缀名
        file_extension = os.path.splitext(upload_image.name)[1]
-       # 这里对文件后缀名进行检验
-       white_list = {'.jpg', '.png'}
-       print(file_extension)
+       # 这里对文件后缀名进行检验、设置白名单
+       white_list = {'.jpg', '.png','.jpeg','.gif','.bmp','.tiff','.svg'}
        if file_extension  not in white_list:
            return HttpResponse('你上传的文件格式不对')
+       # 将原有图像进行删除
+       pattern = re.compile( str(request.session['UserInfo'].get("id")) + r'.*')
+       file_names = os.listdir(settings.MEDIA_ROOT)
+       matching_files = []
+       for file_name in file_names:
+           if pattern.match(file_name):
+               matching_files.append(file_name)
+               os.remove(settings.MEDIA_ROOT + file_name)
        save_path =  os.path.join(settings.MEDIA_ROOT,str(request.session['UserInfo'].get("id")) + file_extension)
        # 保存文件到指定位置
        with open(save_path, 'wb') as file:
@@ -53,8 +62,17 @@ def modify(request):
     context = {
         'userinfo': user_info
     }
-    return render(request,"userinfo_modify.html",context)
+    return render(request,"UserInfo/userinfo_modify.html",context)
 def info(request):
+    pattern = re.compile(str(request.session['UserInfo'].get("id")) + r'.*')
+    file_names = os.listdir(settings.MEDIA_ROOT)
+    matching_files = []
+    for file_name in file_names:
+        if pattern.match(file_name):
+            matching_files.append(file_name)
+    # 没有上传就用默认的
+    if not matching_files:
+        matching_files.append('default.png')
     if request.method == "GET":
         # 查询并返回数据
         query_set = User.objects.filter(id=request.session["UserInfo"].get("id"))
@@ -69,9 +87,10 @@ def info(request):
                      "school": obj.school,
                      "major": obj.major,
                      "excepting_position": obj.excepting_position,
-                     "excepting_location": obj.excepting_location
+                     "excepting_location": obj.excepting_location,
+                     "matching_files":matching_files[0],
                      }
-        return render(request, "userinfo.html", context=user_info)
+        return render(request, "UserInfo/userinfo.html", context=user_info)
         # else POST
     data = request.POST
     fields = ['username', 'mobile_phone', 'gender', 'email',
@@ -95,6 +114,7 @@ def info(request):
                  "school": obj.school,
                  "major": obj.major,
                  "excepting_position": obj.excepting_position,
-                 "excepting_location": obj.excepting_location
+                 "excepting_location": obj.excepting_location,
+                 "matching_files": matching_files[0],
                  }
-    return render(request, "userinfo.html", context=user_info)
+    return render(request, "UserInfo/userinfo.html", context=user_info)
