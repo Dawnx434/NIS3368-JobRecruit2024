@@ -5,6 +5,7 @@ import os
 import glob
 from django.conf import settings
 import re
+import random
 
 
 # Create your views here.
@@ -17,6 +18,8 @@ def index(request):
         if pattern.match(file_name):
             matching_files.append(file_name)
     name = request.session.get("UserInfo")
+    if not matching_files:
+        matching_files.append('default.jpeg')
     context = {"username": name,
                "id":matching_files[0]}
     return render(request, "UserInfo/index.html", context)
@@ -103,7 +106,7 @@ def info(request):
             matching_files.append(file_name)
     # 没有上传就用默认的
     if not matching_files:
-        matching_files.append('default.png')
+        matching_files.append('default.jpeg')
     if request.method == "GET":
         # 查询并返回数据
         query_set = User.objects.filter(id=request.session["UserInfo"].get("id"))

@@ -202,7 +202,7 @@
         <div class="row">
             <div class="col-sm-4 bg-info text-white left">
                 <div class="lbox">
-                    <img src="../../static/images/{{ matching_files }}?rand={{ random }}" alt="头像" class="img-fluid d-block m-auto" style="width:300px;height: 250px;">
+                    <img src="../../static/images/{{ matching_files }}?rand=<%= Date.now() %>"  alt="头像" class="img-fluid d-block m-auto" style="width:300px;height: 250px;">
                     <button class="btn btn-primary custom-button" id="uploadAvatarBtn" onclick="openModal()">
                         <i class="bi bi-camera-fill"></i> 上传头像
                     </button>
