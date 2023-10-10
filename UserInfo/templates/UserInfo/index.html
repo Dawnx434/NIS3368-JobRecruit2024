@@ -1,47 +1,68 @@
-{% if username %}
-  <div class="dropdown">
-    <span class="dropdown-trigger" onmouseover="showDropdown()" onmouseout="hideDropdown()">
-      昵称： <span id="username"> {{ username }} </span>
-    </span>
-      <img src="../../static/images/1.jpg" alt="头像" style="width:100px;height: 100px;">
-    <div class="dropdown-content" onmouseover="cancelHide()" onmouseout="hideDropdown()">
-      <!-- 下拉框内容 -->
-      <ul>
-        <li><a href="../resum">我的简历</a></li>
-          <li><a href="../application/">我的投递</a></li>
-        <li><a href="../info/">个人资料</a></li>
-        <li><a href="../account/">账号安全</a></li>
-        <li><a href="../logout/">退出登录</a></li>
-      </ul>
-    </div>
-  </div>
-  <script>
-    var dropdownTimeout;
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>个人主页</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/5.1.1/css/bootstrap.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+        <script src="https://cdn.staticfile.org/twitter-bootstrap/5.1.1/js/bootstrap.bundle.min.js"></script>
+        <style>
+            .custom-text-color{
+                color: #17a2b8 !important;
+            }
+    
+            .custom-background{
+                background-color: #E5E5E5;
+            }
+    
+            .custom-button{
+                background-color: white;
+                color: #17a2b8;
+                border: 1px solid #17a2b8;
+            }
+        </style>
+    </head>
+    <body class="custom-background">
 
-    function showDropdown() {
-      clearTimeout(dropdownTimeout);
-      var dropdownContent = document.querySelector('.dropdown-content');
-      dropdownContent.style.display = 'block';
-    }
+        <nav class="navbar navbar-expand-sm navbar-light bg-light">
+            <div class="container">
+                <a class="navbar-brand custom-text-color" href="#">JobRecruitment</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbar">
+                    <ul class="navbar-nav me-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">首页</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">内推</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">面经</a>
+                        </li>
+                    </ul>
+                    <form class="d-flex">
+                        <input class="form-control me-2" type="text" placeholder="按条件搜索...">
+                        <button class="btn btn-primary custom-button" type="submit"><i class="fas fa-search"></i></button>
+                    </form>
+                    <div class="d-flex nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-bs-toggle="dropdown">
+                            <img src="../../static/images/1.jpg" alt="头像" style="width:100px; height:100px;">
+                        </a>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item" href="../resum">我的简历</a>
+                            <a class="dropdown-item" href="../application/">我的投递</a>
+                            <a class="dropdown-item" href="../info/">个人资料</a>
+                            <a class="dropdown-item" href="../account/">账号安全</a>
+                            <a class="dropdown-item" href="../logout/">退出登录</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
 
-    function hideDropdown() {
-      dropdownTimeout = setTimeout(function() {
-        var dropdownContent = document.querySelector('.dropdown-content');
-        dropdownContent.style.display = 'none';
-      }, 200);
-    }
-
-    function cancelHide() {
-      clearTimeout(dropdownTimeout);
-    }
-  </script>
-
-  <style>
-    .dropdown-content {
-      display: none;
-      /* 根据需要设置下拉框的样式 */
-    }
-  </style>
-{% else %}
-  <a href="/auth/login/">Please login first</a>
-{% endif %}
+    </body>
+</html>

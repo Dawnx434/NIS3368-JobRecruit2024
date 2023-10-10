@@ -1,0 +1,43 @@
+<li>
+    <img src="../../static/images/{{ matching_files }}?rand={{ random }}" alt="头像" style="width:100px;height: 100px;">
+    <p>昵称：{{ username }}</p>
+    <p>手机号：{{ mobile_phone }}</p>
+    <p>性别：{{ gender  }}</p>
+    <p>邮箱：{{ email }}</p>
+    {% if edu_ground != '0' %}
+    <p>学历：{{ edu_ground }}</p>
+    {% else %}
+        <p>学历：暂无</p>
+    {% endif %}
+
+    {% if school != '0' %}
+        <p>学校：{{ school }}</p>
+    {% else %}
+        <p>学校：暂无</p>
+    {% endif %}
+
+    {% if major != '0' %}
+        <p>专业：{{ major }}</p>
+    {% else %}
+        <p>专业：暂无</p>
+    {% endif %}
+
+    {% if excepting_position != '0' %}
+        <p>意向职位：{{ excepting_position }}</p>
+    {% else %}
+        <p>意向职位：暂无</p>
+    {% endif %}
+
+    {% if excepting_location != '0' %}
+        <p>意向地点：{{ excepting_location }}</p>
+    {% else %}
+        <p>意向地点：暂无</p>
+    {% endif %}
+    <p><a href="../modify/">点击修改个人资料</a></p>
+    <form method="post" action="{% url 'image_upload' %}" enctype="multipart/form-data">
+  {% csrf_token %}
+  <input type="file" name="upload">
+  <button type="submit">上传头像</button>
+</form>
+
+</li>
