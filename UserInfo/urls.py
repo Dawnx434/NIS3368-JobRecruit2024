@@ -10,4 +10,6 @@ urlpatterns = [
    path("logout/",auth_model.logout),
    path("modify/", views.modify),
    path("upload/",views.image_upload,name='image_upload'),
+   path("resume_upload/",views.resume_upload,name="resume_upload"),
+   path("resume_download/", views.resume_download),
 ]
