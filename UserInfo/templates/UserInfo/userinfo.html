@@ -1,43 +1,330 @@
-<li>
-    <img src="../../static/images/{{ matching_files }}?rand={{ random }}" alt="头像" style="width:100px;height: 100px;">
-    <p>昵称：{{ username }}</p>
-    <p>手机号：{{ mobile_phone }}</p>
-    <p>性别：{{ gender  }}</p>
-    <p>邮箱：{{ email }}</p>
-    {% if edu_ground != '0' %}
-    <p>学历：{{ edu_ground }}</p>
-    {% else %}
-        <p>学历：暂无</p>
-    {% endif %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>个人信息</title>
+    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
 
-    {% if school != '0' %}
-        <p>学校：{{ school }}</p>
-    {% else %}
-        <p>学校：暂无</p>
-    {% endif %}
+        .left {
+            background-color: #17a2b8;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            border-top-left-radius: 10px;
+            border-bottom-left-radius: 10px;
+        }
 
-    {% if major != '0' %}
-        <p>专业：{{ major }}</p>
-    {% else %}
-        <p>专业：暂无</p>
-    {% endif %}
+        .right {
+            background-color: white;
+            padding: 20px;
+            border-top-right-radius: 10px;
+            border-bottom-right-radius: 10px;
+        }
 
-    {% if excepting_position != '0' %}
-        <p>意向职位：{{ excepting_position }}</p>
-    {% else %}
-        <p>意向职位：暂无</p>
-    {% endif %}
+        .custom-text-color {
+            color: #17a2b8 !important;
+            font-weight: bold;
+        }
 
-    {% if excepting_location != '0' %}
-        <p>意向地点：{{ excepting_location }}</p>
-    {% else %}
-        <p>意向地点：暂无</p>
-    {% endif %}
-    <p><a href="../modify/">点击修改个人资料</a></p>
-    <form method="post" action="{% url 'image_upload' %}" enctype="multipart/form-data">
-  {% csrf_token %}
-  <input type="file" name="upload">
-  <button type="submit">上传头像</button>
-</form>
+        .column {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
 
-</li>
+        .column p {
+            width: 48%;
+        }
+
+        .lbox {
+            margin: 30px;
+            padding: 10px;
+        }
+
+        .lbox.row {
+            padding: 8px 0px;
+        }
+
+        .progress {
+            margin-top: 5px;
+        }
+
+        .rbox {
+            margin: 30px;
+        }
+
+        .rbox h4 {
+            padding-bottom: 5px;
+            color: #17a2b8;
+            border-bottom: 1px solid #17a2b8;
+            font-weight: bold;
+        }
+
+		.content-container {
+			padding-top: 100px;
+		}
+
+		.custom-background{
+		    background-color: #E5E5E5;
+		}
+
+		.custom-button{
+		    background-color: #17a2b8;
+		    color: white;
+		    border: 1px solid #17a2b8;
+        }
+
+        .custom-text-color{
+            color: #17a2b8 !important;
+        }
+
+        <!-- modal -->
+        #myModal {
+            display: none; /* 默认隐藏弹窗 */
+            position: fixed;
+            z-index: 1;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(0, 0, 0, 0.6);
+        }
+
+        #photoModal {
+            position: relative; /* 相对于#myModal */
+            width: 400px;
+            height: 300px;
+            background-color: #fff;
+            border: 0px solid #000;
+            padding: 20px;
+        }
+
+
+        .modal {
+            position: fixed;
+            top: 35%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border: 1px solid #888;
+            color: #000;
+        }
+
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+
+        #uploadedPhoto {
+            width: 100%; /* 设置照片宽度为弹窗宽度 */
+            height: 100%; /* 设置照片高度为弹窗高度 */
+            object-fit: contain; /* 调整照片以适应弹窗大小 */
+        }
+
+        .modal,
+        #modalBackdrop {
+            display: none;
+        }
+
+        #modalBackdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(128, 128, 128, 0.6);
+            z-index: 999;
+        }
+
+
+    </style>
+</head>
+<body class="custom-background">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
+        <a class="navbar-brand custom-text-color" href="#">Job Recruitment</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active mr-3">
+                    <a class="nav-link" href="#">首页  <span class="sr-only">(current)</span></a>
+                </li>
+                <li>
+                    <form class="form-inline my-2 my-lg-0">
+                        <input class="form-control mr-sm-2" type="search" placeholder="按条件搜索..." aria-label="Search">
+                        <button class="btn btn-outline-success my-2 my-sm-0 custom-button" type="submit">搜索</button>
+                    </form>
+                </li>
+            </ul>
+
+            <ul class="navbar-nav ml-auto dropdown-menu-end">
+                <li class="nav-item active mr-3">
+                    <a class="nav-link" href="#">消息  <span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item dropdown mr-5">
+                    <a class="nav-link dropdown-toggle custom-text-color" href="#" role="button" data-toggle="dropdown" aria-expanded="true">
+                        {{ username }}
+                    </a>
+                    <div class="dropdown-menu">
+                        <a class="dropdown-item" href="#">个人主页</a>
+                        <a class="dropdown-item" href="#">登出</a>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container content-container">
+        <div class="row">
+            <div class="col-sm-4 bg-info text-white left">
+                <div class="lbox">
+                    <img src="../../static/images/{{ matching_files }}?rand={{ random }}" alt="头像" class="img-fluid d-block m-auto" style="width:300px;height: 250px;">
+                    <button class="btn btn-primary custom-button" id="uploadAvatarBtn" onclick="openModal()">
+                        <i class="bi bi-camera-fill"></i> 上传头像
+                    </button>
+
+
+                    <div id="myModal" class="modal">
+                        <div class="modal-content">
+                            <span class="close" onclick="closeModal()" id="closeModalBtn">&times;</span>
+                            <h2>&nbsp;&nbsp;请选择您要上传的头像</h2>
+
+                                <form method="post" action="{% url 'image_upload' %}" enctype="multipart/form-data">
+                                    {% csrf_token %}
+                                    <input type="file" name="upload" accept="image/*" id="fileInput">
+                                    <button type="submit">上传头像</button>
+                                </form>
+
+
+                            <div id="photoModal">
+                                <img id="uploadedPhoto" src="" alt="Uploaded Photo">
+                            </div>
+                            <div id="noImageText">您还没有上传头像</div>
+                        </div>
+                    </div>
+                    <div id="modalBackdrop" class="modal-backdrop"></div>
+
+
+
+
+                </div>
+            </div>
+            <div class="col-sm-8 border right bg-light">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="rbox">
+                            <h3 id="username">{{ username }}</h3>
+                        </div>
+                    </div>
+                    <div class="col-md-6 text-right">
+                        <a href="/info/modify/" class="btn btn-primary mt-4 mr-2 custom-button">编辑个人简历</a>
+                    </div>
+                </div>
+                <div class="rbox column">
+                    <p><span class="custom-text-color">性别:</span> {{ gender }}</p>
+                    <p><span class="custom-text-color">学历:</span> {{ edu_ground }}</p>
+                    <p><span class="custom-text-color">学校:</span> {{ school }}</p>
+                    <p><span class="custom-text-color">专业:</span> {{ major }}</p>
+                    <p><span class="custom-text-color">联系电话:</span> {{ mobile_phone }}</p>
+                    <p><span class="custom-text-color">电子邮箱:</span> {{ email }}</p>
+                </div>
+                <div class="rbox">
+                    <h4>求职意向</h4>
+                    <p><span class="custom-text-color" style="margin-top: 20px;">职位：</span>{{ excepting_position }}</p>
+                    <p><span class="custom-text-color">地点：</span>{{ excepting_location }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdn.staticfile.org/popper.js/1.15.0/umd/popper.min.js"></script>
+    <script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+    <script>
+
+        document.addEventListener("DOMContentLoaded", function() {
+            document.getElementById("uploadAvatarBtn").addEventListener("click", openModal);
+            document.getElementById("fileInput").addEventListener("change", handleFileSelect);
+        });
+
+        function openModal() {
+            var modal = document.getElementById("myModal");
+            var modalBackdrop = document.getElementById("modalBackdrop");
+
+            if (modal && modalBackdrop) {
+                modal.style.display = "block";
+                modalBackdrop.style.display = "block";
+
+                var closeBtn = document.getElementById("closeModalBtn");
+                closeBtn.addEventListener("click", closeModal);
+            } else {
+                console.error("modal or modalBackdrop element not found.");
+            }
+        }
+
+        function closeModal() {
+            var modal = document.getElementById("myModal");
+            var modalBackdrop = document.getElementById("modalBackdrop");
+            modal.style.display = "none";
+            modalBackdrop.style.display = "none";
+        }
+
+        function handleFileSelect(event) {
+            const fileInput = event.target;
+            const selectedFile = fileInput.files[0];
+            const uploadedPhoto = document.getElementById("uploadedPhoto");
+            const noImageText = document.getElementById("noImageText"); // 获取文本元素
+
+            if (selectedFile) {
+                const reader = new FileReader();
+
+                reader.onload = function(event) {
+                    photoModal.style.display = "block";
+                    uploadedPhoto.src = event.target.result;
+                    noImageText.style.display = "none"; // 隐藏文本元素
+                    document.getElementById("photoModal").style.display = "block";
+                };
+
+                reader.readAsDataURL(selectedFile);
+            } else {
+                photoModal.style.display = "none";
+                noImageText.style.display = "block"; // 显示文本元素
+                document.getElementById("photoModal").style.display = "block";
+            }
+        }
+
+
+    </script>
+
+
+
+
+</body>
+</html>

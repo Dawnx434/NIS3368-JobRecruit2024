@@ -68,7 +68,7 @@ def login(request):
         'username': row_obj.username
     }
     request.session.set_expiry(60 * 60 * 24 * 7)  # 7天免登录
-    return redirect('/')
+    return redirect('/info/info')
 
 
 def logout(request):

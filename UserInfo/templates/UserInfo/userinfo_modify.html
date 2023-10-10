@@ -1,13 +1,125 @@
-<form method="post" action="/info/info/">
-    {% csrf_token %}
-    <!-- 表单字段 -->
-    <!-- 生成多组表单 -->
-    {% for key,value in userinfo.items %}
-        <div>
-            <label for="{{ key }}">{{ key }}：</label>
-            <input type="text" id="{{ key }}" name="{{ key }}" value="{{ value }}" required>
-        </div>
-    {% endfor %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>修改个人信息</title>
+    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/css/bootstrap.min.css">
+    <style>
+        .custom-background {
+            background-color: #E5E5E5;
+        }
 
-    <!-- 提交按钮 -->
-    <button type="submit">提交</button>
+        .custom-bg-color {
+            background-color: #17a2b8;
+        }
+
+        .custom-text-color {
+            color: #17a2b8;
+        }
+    </style>
+</head>
+<body class="custom-background">
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header custom-bg-color text-white">
+                    修改个人信息
+                </div>
+                <div class="card-body">
+                    <form method="post" action="/info/info/">
+
+                        {% csrf_token %}
+
+                        <input type="hidden" id="id" name="id" value="{{ userinfo.id }}">
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="username" class="custom-text-color">用户名</label>
+                                    <input type="text" id="username" name="username" value="{{ userinfo.username }}" class="form-control" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="mobile_phone" class="custom-text-color">手机号</label>
+                                    <input type="text" id="mobile_phone" name="mobile_phone" value="{{ userinfo.mobile_phone }}" class="form-control" required>
+                                </div>
+<!--                                <div class="form-group">-->
+<!--                                    <label for="gender_choice" class="custom-text-color">性别</label>-->
+<!--                                    <input type="text" id="gender_choice" name="gender_choice" value="{{ userinfo.gender_choice }}" class="form-control" required>-->
+<!--                                </div>-->
+
+                                <div class="form-group">
+                                    <label for="gender" class="custom-text-color">性别</label>
+                                    <select id="gender" name="gender" class="form-control">
+                                        <option value="1" {% if userinfo.gender == 1 %}selected{% endif %}>不愿透露</option>
+                                        <option value="2" {% if userinfo.gender == 2 %}selected{% endif %}>男</option>
+                                        <option value="3" {% if userinfo.gender == 3 %}selected{% endif %}>女</option>
+                                    </select>
+                                </div>
+
+
+
+
+                                <div class="form-group">
+                                    <label for="email" class="custom-text-color">邮箱</label>
+                                    <input type="text" id="email" name="email" value="{{ userinfo.email }}" class="form-control" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="edu_ground" class="custom-text-color">学历</label>
+                                    <input type="text" id="edu_ground" name="edu_ground" value="{{ userinfo.edu_ground }}" class="form-control" required>
+                                </div>
+                            </div>
+
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="school" class="custom-text-color">毕业学校</label>
+                                    <input type="text" id="school" name="school" value="{{ userinfo.school }}" class="form-control" required>
+                                </div>
+                                 <div class="form-group">
+                                    <label for="major" class="custom-text-color">专业</label>
+                                    <input type="text" id="major" name="major" value="{{ userinfo.major }}" class="form-control" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="excepting_position" class="custom-text-color">预期职业</label>
+                                    <input type="text" id="excepting_position" name="excepting_position" value="{{ userinfo.excepting_position }}" class="form-control" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="excepting_location" class="custom-text-color">位置</label>
+                                    <input type="text" id="excepting_location" name="excepting_location" value="{{ userinfo.excepting_location }}" class="form-control" required>
+                                </div>
+                                <div class="row">
+                                    <div class="offset-md-6 col-md-3">
+                                        <button type="submit" class="btn btn-block custom-bg-color text-white mt-4">提交</button>
+                                    </div>
+                                </div>
+
+
+
+                                </div>
+
+
+
+                            </div>
+                        </div>
+
+
+                    </form>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+<script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://cdn.staticfile.org/popper.js/1.15.0/umd/popper.min.js"></script>
+<script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</body>
+</html>
