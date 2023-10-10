@@ -5,6 +5,7 @@ import os
 import glob
 from django.conf import settings
 import re
+import random
 
 
 # Create your views here.
