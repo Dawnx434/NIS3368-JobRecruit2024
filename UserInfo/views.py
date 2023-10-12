@@ -193,8 +193,10 @@ def resume_download(request):
         # 读取文件内容
         file_data = f.read()
 
-    # 创建下载响应
-    response = HttpResponse(file_data, content_type='application/pdf')
-    response['Content-Disposition'] = 'attachment; filename="resume.pdf"'
+    # 创建HttpResponse对象并设置文件内容作为响应的内容
+    response = HttpResponse(file_data, content_type='application/octet-stream')
+
+    # 设置响应的文件名
+    response['Content-Disposition'] = 'attachment; filename={}'.format(matching_files[0])
 
     return response
