@@ -48,10 +48,10 @@
 
                                 <div class="form-group">
                                     <label for="gender" class="custom-text-color">性别</label>
-                                    <select id="gender" name="gender" class="form-control">
-                                        <option value="1" {% if userinfo.gender == 1 %}selected{% endif %}>不愿透露</option>
-                                        <option value="2" {% if userinfo.gender == 2 %}selected{% endif %}>男</option>
-                                        <option value="3" {% if userinfo.gender == 3 %}selected{% endif %}>女</option>
+                                    <select id="gender" name="gender" class="form-control" >
+                                        <option value="1" {% if userinfo.gender == "不愿透露" %}selected{% endif %}>不愿透露</option>
+                                        <option value="2" {% if userinfo.gender == "男" %}selected{% endif %}>男</option>
+                                        <option value="3" {% if userinfo.gender == "女" %}selected{% endif %}>女</option>
                                     </select>
                                 </div>
 

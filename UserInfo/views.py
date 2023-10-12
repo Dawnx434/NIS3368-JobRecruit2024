@@ -6,6 +6,7 @@ import glob
 from django.conf import settings
 import re
 import random
+import urllib.parse
 
 
 # Create your views here.
@@ -31,8 +32,7 @@ def resume(request):
     if not os.path.exists(save_path):
         os.mkdir(save_path)
     file_names = os.listdir(save_path)
-    number = len(file_names)
-    context = {"resumes": range(1, number + 1),
+    context = {"resumes": file_names,
                "id": id}
     return render(request, "UserInfo/resume.html", context=context)
 
@@ -158,19 +158,22 @@ def info(request):
 
 def resume_upload(request):
     if request.method == 'POST':
-        upload_resume = request.FILES['upload']
+        upload_resume = request.FILES.get('upload')
+        if not upload_resume:
+            context = {'msg':'没有上传简历'}
+            return render(request,"UserAuth/alert_page.html",context=context)
         save_path = os.path.join(settings.RESUME_ROOT + str(request.session['UserInfo'].get("id")))
         if not os.path.exists(save_path):
             os.mkdir(save_path)
         matching_files = os.listdir(save_path)
         lengh = len(matching_files)
-        save_path = os.path.join(save_path, str(lengh + 1))
+        save_path = os.path.join(save_path, upload_resume.name)
         file_extension = os.path.splitext(upload_resume.name)[1]
         # 这里对文件后缀名进行检验、设置白名单
         white_list = {'.pdf'}
         if file_extension not in white_list:
             return HttpResponse('你上传的文件格式不对,请上传pdf格式的简历')
-        save_path = os.path.join(save_path + file_extension)
+        save_path = os.path.join(save_path )
         # 保存文件
         with open(save_path, 'wb') as file:
             for chunk in upload_resume.chunks():
@@ -181,13 +184,7 @@ def resume_upload(request):
 def resume_download(request):
     resume_id = request.GET.get('resume_id')
     download_path = os.path.join(settings.RESUME_ROOT, str(request.session['UserInfo'].get("id")))
-    files = os.listdir(download_path)
-    pattern = re.compile(resume_id + r'.*')
-    matching_files = []
-    for file in files:
-        if pattern.match(file):
-            matching_files.append(file)
-    download_path = os.path.join(download_path, matching_files[0])
+    download_path = os.path.join(download_path, resume_id)
     # 打开文件
     with open(download_path, 'rb') as f:
         # 读取文件内容
@@ -196,7 +193,10 @@ def resume_download(request):
     # 创建HttpResponse对象并设置文件内容作为响应的内容
     response = HttpResponse(file_data, content_type='application/octet-stream')
 
-    # 设置响应的文件名
-    response['Content-Disposition'] = 'attachment; filename={}'.format(matching_files[0])
+    # 对文件名进行URL编码
+    encoded_resume_id = urllib.parse.quote(resume_id)
+
+    # 设置响应的文件名，并指定字符编码
+    response['Content-Disposition'] = 'attachment; filename*=UTF-8\'\'{}'.format(encoded_resume_id)
 
     return response
