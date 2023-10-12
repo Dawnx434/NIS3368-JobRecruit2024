@@ -3,10 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <title>个人信息</title>
-    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/5.1.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <script src="https://cdn.staticfile.org/twitter-bootstrap/5.1.1/js/bootstrap.bundle.min.js"></script>
     <style>
 
@@ -83,7 +82,7 @@
         }
 
 		.content-container {
-			padding-top: 100px;
+			padding-top: 80px;
 		}
 
 		.circle-image {
@@ -181,37 +180,33 @@
     </style>
 </head>
 <body class="custom-background">
-    <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
-        <a class="navbar-brand custom-text-color" href="#">Job Recruitment</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
 
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav mr-auto">
-                <li class="nav-item">
-                    <a class="nav-link" href="#">首页</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">内推</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">面经</a>
-                </li>
-                <li>
-                    <form class="form-inline my-2 my-lg-0">
-                        <input class="form-control mr-sm-2" type="search" placeholder="按条件搜索..." aria-label="Search">
+        <nav class="navbar navbar-expand-sm navbar-light bg-light">
+            <div class="container">
+                <a class="navbar-brand custom-text-color" href="#">JobRecruitment</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbar">
+                    <ul class="navbar-nav me-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">首页</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">内推</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">面经</a>
+                        </li>
+                    </ul>
+                    <form class="d-flex">
+                        <input class="form-control me-2" type="text" placeholder="按条件搜索...">
                         <button class="btn btn-primary custom-button" type="submit"><i class="fas fa-search"></i></button>
                     </form>
-                </li>
-            </ul>
-
-            <ul class="navbar-nav ml-auto dropdown-menu-end">
-                <li class="nav-item dropdown mr-5">
-                    <a class="nav-link dropdown-toggle custom-text-color" href="#" role="button" data-toggle="dropdown" aria-expanded="true">
-                        <img src="../../static/images/{{ matching_files }}?rand=<%= Date.now() %>" alt="头像" style="width:30px; height:30px;">
-                    </a>
-                    <div class="dropdown-container">
+                    <div class="d-flex nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-bs-toggle="dropdown">
+                            <img src="../../static/images/{{ matching_files }}?rand=<%= Date.now() %>" alt="头像" style="width:30px; height:30px;">
+                        </a>
                         <div class="dropdown-menu">
                             <a class="dropdown-item" href="../resume">我的简历</a>
                             <a class="dropdown-item" href="../application/">我的投递</a>
@@ -220,23 +215,19 @@
                             <a class="dropdown-item" href="../logout/">退出登录</a>
                         </div>
                     </div>
-                </li>
-            </ul>
-        </div>
-    </nav>
+                </div>
+            </div>
+        </nav>
+
 
 
     <div class="container content-container">
         <div class="row">
             <div class="col-sm-4 bg-info text-white left">
                 <div class="lbox">
-<<<<<<< HEAD
                     <img src="../../static/images/{{ matching_files }}?rand=<%= Date.now() %>" alt="头像" class="img-fluid d-block m-auto" style="width:250px;height: 250px;">
-=======
-                    <img src="../../static/images/{{ matching_files }}?rand=<%= Date.now() %>"  alt="头像" class="img-fluid d-block m-auto" style="width:300px;height: 250px;">
->>>>>>> f180271af0a416c8bb5ead7c5e5f6be0e268ca89
                     <button class="btn btn-primary custom-button" id="uploadAvatarBtn" onclick="openModal()">
-                        <i class="bi bi-camera-fill"></i> 上传头像
+                        <i class="bi bi-camera"></i> 上传头像
                     </button>
 
 
@@ -250,7 +241,7 @@
                                         选择文件
                                         <input type="file" name="upload" accept="image/*" id="fileInput" style="display: none;">
                                     </label>
-                                    <button type="submit" class="btn btn-primary mt-3 mr-2 custom-button">确认上传</button>
+                                    <button type="submit" class="btn btn-primary mt-4 mr-2 custom-button">确认上传</button>
                                 </form>
 
 
