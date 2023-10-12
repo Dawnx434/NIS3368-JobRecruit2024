@@ -3,6 +3,8 @@ from PIL import Image, ImageDraw, ImageFont, ImageFilter
 from django.core.mail import send_mail
 from django.conf import settings
 
+from UserAuth.utils.validators import is_valid_email
+
 
 def check_code(width=120, height=30, char_length=5, font_file='Monaco.ttf', font_size=28):
     code = []
@@ -63,10 +65,13 @@ def send_sms_code(target_email):
         send_status: 0 成功 -1 失败
         sms_code: 验证码
     """
+    # 验证邮箱地址是否正确
+    if not is_valid_email(target_email):
+        return -1
     # 生成邮箱验证码
     sms_code = '%06d' % random.randint(0, 999999)
     email_from = settings.EMAIL_FROM  # 邮箱来自
     email_title = settings.EMAIL_TITLE
-    email_body = "您的邮箱注册验证码为：{0}, 该验证码有效时间为两分钟，请及时进行验证。".format(sms_code)
+    email_body = "您的邮箱验证码为：{0}, 该验证码有效时间为两分钟，请及时进行验证。".format(sms_code)
     send_status = send_mail(email_title, email_body, email_from, [target_email])
     return send_status, str(sms_code)

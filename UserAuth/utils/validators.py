@@ -10,3 +10,14 @@ def is_valid_email(email):
         return True
     else:
         return False
+
+
+def is_username_valid(username):
+    pattern = r'^[a-zA-Z0-9_]+$'
+
+    # 使用正则表达式进行匹配
+    if re.match(pattern, username):
+        return True  # 字符串仅包含数字、字母和下划线
+    else:
+        return False  # 字符串包含其他字符
+
