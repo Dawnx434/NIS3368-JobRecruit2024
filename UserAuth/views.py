@@ -114,7 +114,7 @@ def generate_verification_code(request):
     img, code = check_code()
     # img 储存到内存流中
     img.save(stream, 'png')
-    request.session["verification_code"] = code
+    request.session["login_verification_code"] = code
     request.session.set_expiry(120)  # 验证码60秒有效期
     return HttpResponse(stream.getvalue())
 
@@ -139,7 +139,7 @@ def register_email(request):
     else:
         # 发送邮件
         state, code = send_sms_code(target_email=email)
-        request.session['verification_code'] = code
+        request.session['register_verification_code'] = code
         request.session.set_expiry(2 * 60)
         data = {
             'state': True,

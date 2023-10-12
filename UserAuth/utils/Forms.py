@@ -51,7 +51,7 @@ class RegisterForm(BootStrapForm, forms.ModelForm):
 
     def clean_mobile_phone(self):
         if models.User.objects.filter(mobile_phone=self.cleaned_data['mobile_phone']).exists():
-            raise ValidationError("邮箱已存在")
+            raise ValidationError("手机号已存在")
         return self.cleaned_data['mobile_phone']
 
     def clean_email(self):
@@ -65,7 +65,7 @@ class RegisterForm(BootStrapForm, forms.ModelForm):
         return self.cleaned_data['check_password']
 
     def clean_verification_code(self):
-        code_in_session = self.request.session['verification_code']
+        code_in_session = self.request.session['register_verification_code']
         if not code_in_session:
             raise ValidationError("验证码已过期")
         if not self.cleaned_data['verification_code'] == code_in_session:
@@ -100,7 +100,7 @@ class LoginForm(BootStrapForm, forms.ModelForm):
             raise ValidationError("用户名或密码错误")
 
     def clean_verification_code(self):
-        code_in_session = self.request.session.get('verification_code')
+        code_in_session = self.request.session.get('login_verification_code')
         if not code_in_session:
             raise ValidationError("验证码已过期")
         if not self.cleaned_data['verification_code'] == code_in_session:
