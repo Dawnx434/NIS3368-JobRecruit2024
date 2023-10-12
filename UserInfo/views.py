@@ -47,7 +47,9 @@ def account(request):
 
 def image_upload(request):
     if request.method == 'POST':
-        upload_image = request.FILES['upload']
+        upload_image = request.FILES.get('upload')
+        if not upload_image:
+            return HttpResponse('没有上传头像')
         # 获取上传文件的后缀名
         file_extension = os.path.splitext(upload_image.name)[1]
         # 这里对文件后缀名进行检验、设置白名单
@@ -83,7 +85,7 @@ def modify(request):
     user_info = {"id": request.session['UserInfo'].get("id"),
                  "username": obj.username,
                  "mobile_phone": obj.mobile_phone,
-                 "gender": obj.gender,
+                 "gender": obj.get_gender_display(),
                  "email": obj.email,
                  "edu_ground": obj.edu_ground,
                  "school": obj.school,
@@ -115,7 +117,7 @@ def info(request):
         user_info = {"id": request.session['UserInfo'].get("id"),
                      "username": obj.username,
                      "mobile_phone": obj.mobile_phone,
-                     "gender": obj.gender,
+                     "gender": obj.get_gender_display(),
                      "email": obj.email,
                      "edu_ground": obj.edu_ground,
                      "school": obj.school,
@@ -142,7 +144,7 @@ def info(request):
     user_info = {"id": request.session['UserInfo'].get("id"),
                  "username": obj.username,
                  "mobile_phone": obj.mobile_phone,
-                 "gender": obj.gender,
+                 "gender": obj.get_gender_display(),
                  "email": obj.email,
                  "edu_ground": obj.edu_ground,
                  "school": obj.school,
