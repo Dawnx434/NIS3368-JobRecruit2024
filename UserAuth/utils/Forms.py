@@ -49,6 +49,11 @@ class RegisterForm(BootStrapForm, forms.ModelForm):
             raise ValidationError("用户名已存在")
         return self.cleaned_data['username']
 
+    def clean_mobile_phone(self):
+        if models.User.objects.filter(mobile_phone=self.cleaned_data['mobile_phone']).exists():
+            raise ValidationError("邮箱已存在")
+        return self.cleaned_data['mobile_phone']
+
     def clean_email(self):
         if models.User.objects.filter(email=self.cleaned_data["email"]).exists():
             raise ValidationError("邮箱已存在")
