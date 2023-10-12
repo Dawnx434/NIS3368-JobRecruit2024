@@ -6,6 +6,10 @@ class CheckLoginStateMiddleware(MiddlewareMixin):
 
     def process_request(self, request):
         print(request.path_info)
+        # 访问管理员页面，也应允许
+        if '/admin/' in request.path_info:
+            return None
+
         # 如果访问验证模块UserAuth下的URL，理应都应该允许
         if '/auth/' in request.path_info:
             return None

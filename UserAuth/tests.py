@@ -17,6 +17,10 @@ class UserAuthTests(TestCase):
         fake_email = 'felix_chen.sjtu.edu.cn'
         self.assertIs(is_valid_email(fake_email), False)
 
+    def test_email_validator_with_fake_email_2(self):
+        fake_email = '0'
+        self.assertIs(is_valid_email(fake_email), False)
+
     def test_username_validator_with_valid_username(self):
         valid_username = 'Felix_Chen'
         self.assertIs(is_username_valid(valid_username), True)
