@@ -7,30 +7,22 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/5.1.1/css/bootstrap.min.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
         <script src="https://cdn.staticfile.org/twitter-bootstrap/5.1.1/js/bootstrap.bundle.min.js"></script>
-    <style>
-
-        .custom-text-color {
-            color: #17a2b8 !important;
-            font-weight: bold;
-        }
-
-        .custom-background{
-            background-color: #E5E5E5;
-        }
-
-        .custom-button{
-            background-color: #17a2b8;
-            color: white;
-            border: 1px solid #17a2b8;
-        }
-
-        .custom-text-color{
-            color: #17a2b8 !important;
-        }
-
-    </style>
+        <style>
+            .custom-text-color{
+                color: #17a2b8 !important;
+            }
+    
+            .custom-background{
+                background-color: #E5E5E5;
+            }
+    
+            .custom-button{
+                background-color: white;
+                color: #17a2b8;
+                border: 1px solid #17a2b8;
+            }
+        </style>
     </head>
     <body class="custom-background">
 
@@ -58,7 +50,7 @@
                     </form>
                     <div class="d-flex nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-bs-toggle="dropdown">
-                                <img src="../../static/images/{{ matching_files }}?rand=<%= Date.now() %>" alt="头像" style="width:30px; height:30px;">
+                            <img src="../../static/images/{{ id }}" alt="头像" style="width:30px; height:30px;">
                         </a>
                         <div class="dropdown-menu">
                             <a class="dropdown-item" href="../resume">我的简历</a>
