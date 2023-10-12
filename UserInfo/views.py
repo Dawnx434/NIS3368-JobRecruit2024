@@ -47,7 +47,9 @@ def account(request):
 
 def image_upload(request):
     if request.method == 'POST':
-        upload_image = request.FILES['upload']
+        upload_image = request.FILES.get('upload')
+        if not upload_image:
+            return HttpResponse('没有上传头像')
         # 获取上传文件的后缀名
         file_extension = os.path.splitext(upload_image.name)[1]
         # 这里对文件后缀名进行检验、设置白名单
@@ -83,7 +85,7 @@ def modify(request):
     user_info = {"id": request.session['UserInfo'].get("id"),
                  "username": obj.username,
                  "mobile_phone": obj.mobile_phone,
-                 "gender": obj.gender,
+                 "gender": obj.get_gender_display(),
                  "email": obj.email,
                  "edu_ground": obj.edu_ground,
                  "school": obj.school,
@@ -115,7 +117,7 @@ def info(request):
         user_info = {"id": request.session['UserInfo'].get("id"),
                      "username": obj.username,
                      "mobile_phone": obj.mobile_phone,
-                     "gender": obj.gender,
+                     "gender": obj.get_gender_display(),
                      "email": obj.email,
                      "edu_ground": obj.edu_ground,
                      "school": obj.school,
@@ -142,7 +144,7 @@ def info(request):
     user_info = {"id": request.session['UserInfo'].get("id"),
                  "username": obj.username,
                  "mobile_phone": obj.mobile_phone,
-                 "gender": obj.gender,
+                 "gender": obj.get_gender_display(),
                  "email": obj.email,
                  "edu_ground": obj.edu_ground,
                  "school": obj.school,
@@ -191,8 +193,10 @@ def resume_download(request):
         # 读取文件内容
         file_data = f.read()
 
-    # 创建下载响应
-    response = HttpResponse(file_data, content_type='application/pdf')
-    response['Content-Disposition'] = 'attachment; filename="resume.pdf"'
+    # 创建HttpResponse对象并设置文件内容作为响应的内容
+    response = HttpResponse(file_data, content_type='application/octet-stream')
+
+    # 设置响应的文件名
+    response['Content-Disposition'] = 'attachment; filename={}'.format(matching_files[0])
 
     return response
