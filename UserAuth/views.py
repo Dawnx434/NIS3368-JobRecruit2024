@@ -104,8 +104,8 @@ def reset_password(request):
         return HttpResponse("找不到用户！")
 
     # 重置密码
-    query_set.update(password=form.cleaned_data['verification_code'])
-    return render(request, "UserAuth/alert_page.html", context={'msg': "您的密码已被重置为邮件验证码，请及时修改！"})
+    query_set.update(password=form.cleaned_data['password'])
+    return render(request, "UserAuth/alert_page.html", context={'msg': "您的密码已被重置！"})
 
 
 def generate_verification_code(request):

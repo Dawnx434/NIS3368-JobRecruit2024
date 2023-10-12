@@ -113,8 +113,18 @@ class ResetPasswordForm(BootStrapForm, forms.Form):
         label="手机号或用户名",
         max_length=64,
     )
+    password = forms.CharField(
+        label="新密码",
+        max_length=64,
+        widget=forms.PasswordInput(attrs={'placeholder': '请输入密码'}, render_value=True)
+    )
+    check_password = forms.CharField(
+        label="确认新密码",
+        max_length=64,
+        widget=forms.PasswordInput(attrs={'placeholder': '请确认新密码'}, render_value=True)
+    )
     verification_code = forms.CharField(
-        label="验证码",
+        label="邮箱验证码",
         max_length=32
     )
 
@@ -129,3 +139,8 @@ class ResetPasswordForm(BootStrapForm, forms.Form):
         if not self.cleaned_data['verification_code'] == code_in_session:
             raise ValidationError("验证码错误")
         return self.cleaned_data['verification_code']
+
+    def clean_check_password(self):
+        if not self.cleaned_data['password'] == self.cleaned_data['check_password']:
+            raise ValidationError("两次输入的密码不一致！")
+        return self.cleaned_data['password']
