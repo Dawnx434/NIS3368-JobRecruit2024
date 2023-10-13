@@ -32,8 +32,12 @@ def resume(request):
     if not os.path.exists(save_path):
         os.mkdir(save_path)
     file_names = os.listdir(save_path)
-    context = {"resumes": file_names,
-               "id": id}
+    file_position = [os.path.join(save_path, filename) for filename in file_names]
+    lenth = len(file_names)
+    context = {"resumes": file_names ,
+               "id": id,
+               'file_position':file_position,
+               'length':lenth,}
     return render(request, "UserInfo/resume.html", context=context)
 
 
@@ -189,14 +193,10 @@ def resume_download(request):
     with open(download_path, 'rb') as f:
         # 读取文件内容
         file_data = f.read()
-
-    # 创建HttpResponse对象并设置文件内容作为响应的内容
-    response = HttpResponse(file_data, content_type='application/octet-stream')
-
+    response = HttpResponse(file_data, content_type='application/pdf')
     # 对文件名进行URL编码
     encoded_resume_id = urllib.parse.quote(resume_id)
-
     # 设置响应的文件名，并指定字符编码
-    response['Content-Disposition'] = 'attachment; filename*=UTF-8\'\'{}'.format(encoded_resume_id)
-
+    response['Content-Disposition'] = 'inline; filename*=UTF-8\'\'{}'.format(encoded_resume_id)
     return response
+
