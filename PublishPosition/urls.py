@@ -12,4 +12,5 @@ urlpatterns = [
     path("list/", views.position_list),
     path("view/<int:nid>/", views.view_position_detail),
     path("publish/", views.publish_position),
+    path("modify/<int:nid>", views.modify_position),
 ]
