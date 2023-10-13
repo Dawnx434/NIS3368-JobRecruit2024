@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>发布职位</title>
+</head>
+<body>
+<h1>发布职位</h1>
+<form method="post" action="/position/publish/" novalidate>
+    {% csrf_token %}
+    <label for="position_name">岗位名称</label>
+    <input type="text" id="position_name" name="position_name" required>
+
+    <label for="salary">薪资</label>
+    <input type="number" id="salary" name="salary" required>
+
+    <label for="summary">岗位简介</label>
+    <input type="text" id="summary" name="salary" required>
+
+    <label for="detail">岗位详细内容</label>
+    <input type="text" id="detail" name="detail" required>
+
+    <label for="province">所属省份</label>
+    <select name="province" id="province">
+        {% for key,value in province_dictionary.items %}
+            <option value="{{ key }}">{{ value }}</option>
+        {% endfor %}
+    </select>
+
+    <label for="published_state">发布状态</label>
+    <select name="published_state" id="published_state">
+        <option value="0" selected>未发布</option>
+        <option value="1">已发布</option>
+    </select>
+
+    <button type="submit">提交</button>
+</form>
+</body>
+</html>

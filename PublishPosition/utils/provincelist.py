@@ -7,3 +7,9 @@ province_list = (
     (26, "上海市"), (27, "天津市"), (28, "广西壮族自治区"), (29, "内蒙古自治区"), (30, "西藏自治区"),
     (31, "新疆维吾尔自治区"), (32, "宁夏回族自治区"), (33, "澳门特别行政区"), (34, "香港特别行政区")
 )
+
+province_dictionary = {}
+for item in province_list:
+    province_dictionary[item[0]] = item[1]
+
+

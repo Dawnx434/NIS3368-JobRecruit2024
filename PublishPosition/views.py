@@ -2,6 +2,8 @@ from django.shortcuts import render, HttpResponse
 
 from PublishPosition.models import Position
 
+from PublishPosition.utils.provincelist import province_dictionary
+
 
 # Create your views here.
 def position_list(request):
@@ -44,3 +46,10 @@ def view_position_detail(request, nid):
     }
 
     return render(request, "PublishPosition/position_detail.html", context)
+
+
+def publish_position(request):
+    context = {
+        'province_dictionary': province_dictionary
+    }
+    return render(request, "PublishPosition/position_publish.html", context)
