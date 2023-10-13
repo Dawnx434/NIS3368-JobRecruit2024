@@ -26,11 +26,11 @@ class User(models.Model):
     )
     hr_allowed = models.SmallIntegerField(verbose_name="身份切换权限", choices=hr_allowed_choices, default=1)
     identity = models.SmallIntegerField(verbose_name="权限身份", choices=identity_choice, default=1)
-    edu_ground = models.CharField(verbose_name="学历", max_length=12)
-    school = models.CharField(verbose_name="学校", max_length=12)
-    major = models.CharField(verbose_name="专业", max_length=12)
-    excepting_position = models.CharField(verbose_name="意向职位", max_length=12)
-    excepting_location = models.CharField(verbose_name="意向地点", max_length=12)
+    edu_ground = models.CharField(verbose_name="学历", max_length=12, blank=True)
+    school = models.CharField(verbose_name="学校", max_length=12, blank=True)
+    major = models.CharField(verbose_name="专业", max_length=12, blank=True)
+    excepting_position = models.CharField(verbose_name="意向职位", max_length=12, blank=True)
+    excepting_location = models.CharField(verbose_name="意向地点", max_length=12, blank=True)
 
     def __str__(self):
         return self.username
