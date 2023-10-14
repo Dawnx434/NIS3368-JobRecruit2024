@@ -5,7 +5,7 @@ from django.shortcuts import redirect
 class CheckLoginStateMiddleware(MiddlewareMixin):
 
     def process_request(self, request):
-        print(request.path_info)
+        # print(request.path_info)
         # 访问管理员页面，也应允许
         if '/admin/' in request.path_info:
             return None

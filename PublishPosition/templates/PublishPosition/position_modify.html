@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>修改职位信息</title>
+</head>
+<body>
+<h1>修改职位信息</h1>
+<form method="post" novalidate>
+    {% csrf_token %}
+    <label for="position_name">岗位名称</label>
+    <input type="text" id="position_name" name="position_name" value="{{ data_dict.position_name }}" required>
+    {{ error_dict.position_name }}
+
+    <label for="salary">薪资</label>
+    <input type="number" id="salary" name="salary" value="{{ data_dict.salary }}" required>
+    {{ error_dict.salary }}
+
+    <label for="summary">岗位简介</label>
+    <input type="text" id="summary" name="summary" value="{{ data_dict.summary }}" required>
+    {{ error_dict.summary }}
+
+    <label for="detail">岗位详细内容</label>
+    <input type="text" id="detail" name="detail" value="{{ data_dict.detail }}" required>
+    {{ error_dict.detail }}
+
+    <label for="province">所属省份</label>
+    <select name="province" id="province">
+        {% for key,value in province_dictionary.items %}
+            <option value="{{ key }}" {% if key ==  data_dict.province  %}selected{% endif %}>{{ value }}</option>
+        {% endfor %}
+    </select>
+
+    <label for="published_state">发布状态</label>
+    <select name="published_state" id="published_state">
+        <option value="0" {% if data_dict.published_state == 0 %}selected{% endif %}>未发布</option>
+        <option value="1" {% if data_dict.published_state == 1 %}selected{% endif %}>已发布</option>
+    </select>
+
+    <button type="submit">提交</button>
+</form>
+</body>
+</html>

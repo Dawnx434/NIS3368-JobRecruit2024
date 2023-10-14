@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>职位列表</title>
+</head>
+<body>
+<table>
+    <thead>
+    <tr>
+        <th>岗位名称</th>
+        <th>薪水</th>
+        <th>省份</th>
+        <th>发布者</th>
+        <th>操作</th>
+    </tr>
+    </thead>
+    {% for obj in query_set %}
+        <tr>
+            <td>{{ obj.position_name }}</td>
+            <td>{{ obj.salary }}</td>
+            <td>{{ obj.get_province_display }}</td>
+            <td>{{ obj.HR }}</td>
+            <th><a href="/position/view/{{ obj.id }}">查看详细</a></th>
+        </tr>
+    {% endfor %}
+
+</table>
+</body>
+</html>
