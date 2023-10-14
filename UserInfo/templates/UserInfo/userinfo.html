@@ -58,7 +58,7 @@
         }
 
         .lbox {
-            margin: 30px;
+            margin: 20px;
             padding: 10px;
         }
 
@@ -82,7 +82,8 @@
         }
 
 		.content-container {
-			padding-top: 80px;
+			padding-top: 40px;
+
 		}
 
         .dropdown-container {
@@ -212,8 +213,8 @@
 
 
     <div class="container content-container">
-        <div class="row">
-            <div class="col-sm-4 bg-info text-white left">
+        <div class="row" style="margin:0 auto; padding-left:100px;">
+            <div class="col-md-3 bg-info text-white left" style="width: 30%">
                 <div class="lbox">
                     <img src="../../static/images/{{ matching_files }}?rand=<%= Date.now() %>" alt="头像" class="img-fluid d-block m-auto" style="width:250px;height: 250px;">
                     <button class="btn btn-primary custom-button" id="uploadAvatarBtn" onclick="openModal()">
@@ -251,31 +252,40 @@
 
                 </div>
             </div>
-            <div class="col-sm-8 border right bg-light">
+            <div class="col-md-7 border right bg-light" style="width: 60%">
                 <div class="row">
-                    <div class="col-md-6">
+                    <div class="col-sm-6">
                         <div class="rbox">
-                            <h3 id="username">{{ username }}</h3>
+                            <h3 id="username" style="font-weight: bold;">{{ username }}</h3>
                         </div>
+                        <div class="rbox">
+                            <p><span class="custom-text-color" style="padding-top:100px !important;">联系电话:</span> {{ mobile_phone }}</p>
+                            <p><span class="custom-text-color">电子邮箱:</span> {{ email }}</p>
+                        </div>
+
                     </div>
-                    <div class="col-md-6 text-right">
-                        <a href="/info/modify/" class="btn btn-primary mt-4 mr-2 custom-button">编辑个人简历</a>
+
+                </div>
+                <div class="row">
+                    <div class="col-md-11 d-flex justify-content-end">
+                        <a href="/info/modify/" class="btn btn-primary custom-button">修改个人资料</a>
                     </div>
                 </div>
-                <div class="rbox column">
-                    <p><span class="custom-text-color">性别:</span>
-                     {{ gender }}
-                    </p>
-                    <p><span class="custom-text-color">学历:</span> {{ edu_ground }}</p>
-                    <p><span class="custom-text-color">学校:</span> {{ school }}</p>
-                    <p><span class="custom-text-color">专业:</span> {{ major }}</p>
-                    <p><span class="custom-text-color">联系电话:</span> {{ mobile_phone }}</p>
-                    <p><span class="custom-text-color">电子邮箱:</span> {{ email }}</p>
+                <div class="rbox col-md-10" style="margin-top: 10px;">
+                    <h4>个人信息</h4>
+                    <div class="column">
+                        <p><span class="custom-text-color">性别:</span>
+                         {{ gender }}
+                        </p>
+                        <p><span class="custom-text-color">学历:</span> {{ edu_ground }}</p>
+                        <p><span class="custom-text-color">学校:</span> {{ school }}</p>
+                        <p><span class="custom-text-color">专业:</span> {{ major }}</p>
+                    </div>
                 </div>
-                <div class="rbox">
+                <div class="rbox col-md-10">
                     <h4>求职意向</h4>
-                    <p><span class="custom-text-color" style="margin-top: 20px;">职位：</span>{{ excepting_position }}</p>
-                    <p><span class="custom-text-color">地点：</span>{{ excepting_location }}</p>
+                    <p><span class="custom-text-color" style="margin-top: 20px;">预期职位：</span>{{ excepting_position }}</p>
+                    <p><span class="custom-text-color">预期地点：</span>{{ excepting_location }}</p>
                 </div>
             </div>
         </div>
