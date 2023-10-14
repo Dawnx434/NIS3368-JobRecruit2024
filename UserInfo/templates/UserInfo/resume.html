@@ -1,6 +1,6 @@
 <ul>
     {% for resume in resumes %}
-        <li><a href=" ../resume_download?resume_id={{ resume}} " >{{ resume }}</a></li>
+        <li><a href=" ../resume_download?resume_id={{ resume}} " target="_blank" rel="external nofollow"  >{{ resume }}</a></li>
     {% endfor %}
 </ul>
 <form method="post" action="{% url 'resume_upload' %}" enctype="multipart/form-data">

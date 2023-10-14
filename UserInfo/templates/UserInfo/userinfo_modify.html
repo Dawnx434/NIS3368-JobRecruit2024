@@ -52,15 +52,16 @@
 
                                 <div class="form-group">
                                     <label for="gender" class="custom-text-color">性别</label>
-                                    <select id="gender" name="gender" class="form-control">
-                                        <option value="1" {% if userinfo.gender == 1 %}selected{% endif %}>不愿透露</option>
-                                        <option value="2" {% if userinfo.gender == 2 %}selected{% endif %}>男</option>
-                                        <option value="3" {% if userinfo.gender == 3 %}selected{% endif %}>女</option>
+                                    <select id="gender" name="gender" class="form-control" >
+                                        <option value="1" {% if userinfo.gender == "不愿透露" %}selected{% endif %}>不愿透露</option>
+                                        <option value="2" {% if userinfo.gender == "男" %}selected{% endif %}>男</option>
+                                        <option value="3" {% if userinfo.gender == "女" %}selected{% endif %}>女</option>
                                     </select>
                                 </div>
+
                                 <div class="form-group">
                                     <label for="edu_ground" class="custom-text-color">学历</label>
-                                    <input type="text" id="edu_ground" name="edu_ground" value="{{ userinfo.edu_ground }}" class="form-control">
+                                    <input type="text" id="edu_ground" name="edu_ground" value="{{ userinfo.edu_ground }}" class="form-control" required>
                                 </div>
                                 <div class="form-group">
                                     <label for="school" class="custom-text-color">学校</label>
@@ -68,7 +69,7 @@
                                 </div>
                                  <div class="form-group">
                                     <label for="major" class="custom-text-color">专业</label>
-                                    <input type="text" id="major" name="major" value="{{ userinfo.major }}" class="form-control">
+                                    <input type="text" id="major" name="major" value="{{ userinfo.major }}" class="form-control" required>
                                 </div>
                             </div>
 
@@ -84,6 +85,7 @@
                                 <div class="form-group">
                                     <label for="excepting_location" class="custom-text-color">预期地点</label>
                                     <input type="text" id="excepting_location" name="excepting_location" value="{{ userinfo.excepting_location }}" class="form-control">
+
                                 </div>
                                 <div class="row">
                                     <div class="offset-md-6 col-md-4" style="margin-top:10px;">
