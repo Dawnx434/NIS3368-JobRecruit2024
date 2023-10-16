@@ -238,11 +238,11 @@
                             <h2 style="text-align: center;">请选择您要上传的头像</h2>
                                 <form method="post" action="{% url 'image_upload' %}" enctype="multipart/form-data" class="d-flex justify-content-center align-items-center flex-wrap">
                                     {% csrf_token %}
-                                    <label class="btn btn-primary mt-4 mr-2 custom-button">
+                                    <label class="btn btn-primary custom-button" style="margin:20px;">
                                         选择文件
                                         <input type="file" name="upload" accept="image/*" id="fileInput" style="display: none;">
                                     </label>
-                                    <button type="submit" class="btn btn-primary mt-4 mr-2 custom-button">确认上传</button>
+                                    <button type="submit" class="btn btn-primary custom-button" style="20px;">确认上传</button>
                                 </form>
 
 
@@ -284,8 +284,15 @@
                 <div class="rbox col-md-10" style="margin-top: 10px;">
                     <h4>个人信息</h4>
                     <div class="column">
-                        <p><span class="custom-text-color">性别:</span>
-                         {{ gender }}
+                        <p>
+                            <span class="custom-text-color">性别:</span>
+                            {% if gender == '1' %}
+                                不愿透露
+                            {% elif gender == '2' %}
+                                男
+                            {% elif gender == '3' %}
+                                女
+                            {% endif %}
                         </p>
                         <p><span class="custom-text-color">学历:</span> {{ edu_ground }}</p>
                         <p><span class="custom-text-color">学校:</span> {{ school }}</p>

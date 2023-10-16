@@ -36,30 +36,24 @@
             margin: 60px;
         }
 
-        .circle-image {
-            border-radius: 50%;
-            overflow: hidden;
-        }
-        .circle-image img {
-            width: 100%;
-            height: 100%;
-            display: block;
-        }
         .dropdown-container {
             position: relative;
             left: -50px;
         }
+
+
     </style>
 </head>
-<body  class="custom-background">
-    <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
-        <a class="navbar-brand custom-text-color" href="#">Job Recruitment</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+<body class="custom-background">
+
+<nav class="navbar navbar-expand-sm navbar-light bg-light">
+    <div class="container">
+        <a class="navbar-brand custom-text-color" href="#">JobRecruitment</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar">
             <span class="navbar-toggler-icon"></span>
         </button>
-
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav mr-auto">
+        <div class="collapse navbar-collapse" id="navbar">
+            <ul class="navbar-nav me-auto">
                 <li class="nav-item">
                     <a class="nav-link" href="#">首页</a>
                 </li>
@@ -69,49 +63,28 @@
                 <li class="nav-item">
                     <a class="nav-link" href="#">面经</a>
                 </li>
-                <li>
-                    <form class="form-inline my-2 my-lg-0">
-                        <input class="form-control mr-sm-2" type="search" placeholder="按条件搜索..." aria-label="Search">
-                        <button class="btn btn-primary custom-button" type="submit"><i class="fas fa-search"></i></button>
-                    </form>
-                </li>
-            </ul>
-
-            <ul class="navbar-nav ml-auto dropdown-menu-end">
-                <li class="nav-item dropdown mr-5">
-                    <a class="nav-link dropdown-toggle custom-text-color" href="#" role="button" data-toggle="dropdown" aria-expanded="true">
-                        <img src="../../static/images/{{ matching_files }}?rand=<%= Date.now() %>" alt="头像" style="width:30px; height:30px;">
-                    </a>
-                    <div class="dropdown-container">
-                        <div class="dropdown-menu">
-                            <a class="dropdown-item" href="../resum">我的简历</a>
-                            <a class="dropdown-item" href="../application/">我的投递</a>
-                            <a class="dropdown-item" href="../info/">个人资料</a>
-                            <a class="dropdown-item" href="../account/">账号安全</a>
-                            <a class="dropdown-item" href="../logout/">退出登录</a>
-                        </div>
-                    </div>
-                </li>
             </ul>
         </div>
-    </nav>
-
-    <div class="content-container"></div>
-    <div>
-        {% if success %}
-            <h1 style="color: #17a2b8; text-align: center;">{{ message }}</h1>
-        {% else %}
-            <h1 style="color: red; text-align: center;">{{ message }}</h1>
-        {% endif %}
     </div>
-    <div style="text-align:center">
-            <a href="{% url 'user_info' %}" class="btn btn-primary custom-button">返回个人信息</a>
-    </div>
+</nav>
 
 
-    <script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
-    <script src="https://cdn.staticfile.org/popper.js/1.15.0/umd/popper.min.js"></script>
-    <script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+<div class="content-container"></div>
+<div>
+    {% if success %}
+    <h1 style="color: #17a2b8; text-align: center;">{{ message }}</h1>
+    {% else %}
+    <h1 style="color: red; text-align: center;">{{ message }}</h1>
+    {% endif %}
+</div>
+<div style="text-align:center">
+    <a href="{% url 'user_info' %}" class="btn btn-primary custom-button">返回个人信息</a>
+</div>
+
+
+<script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://cdn.staticfile.org/popper.js/1.15.0/umd/popper.min.js"></script>
+<script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
 
 </body>
 </html>
