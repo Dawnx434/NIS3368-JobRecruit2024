@@ -10,7 +10,7 @@
     <tr>
         <th>岗位名称</th>
         <th>薪水</th>
-        <th>省份</th>
+        <th>地区</th>
         <th>发布者</th>
         <th>操作</th>
     </tr>
@@ -19,7 +19,7 @@
         <tr>
             <td>{{ obj.position_name }}</td>
             <td>{{ obj.salary }}</td>
-            <td>{{ obj.get_province_display }}</td>
+            <td>{{ obj.get_district_display }}</td>
             <td>{{ obj.HR }}</td>
             <th><a href="/position/view/{{ obj.id }}">查看详细</a></th>
         </tr>

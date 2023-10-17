@@ -4,6 +4,7 @@ from PublishPosition.models import Position
 from UserAuth.models import User
 
 from PublishPosition.utils.provincelist import province_dictionary
+from PublishPosition.utils.district import district_dictionary
 from PublishPosition.utils.check_position_form import check_publish_position_form
 
 
@@ -46,7 +47,7 @@ def view_position_detail(request, nid):
         "summary": position.summary,
         "detail": position.detail,
         "HR": position.HR,
-        "province": position.get_province_display(),
+        "district": position.get_district_display(),
     }
 
     return render(request, "PublishPosition/position_detail.html", context)
@@ -55,14 +56,14 @@ def view_position_detail(request, nid):
 def publish_position(request):
     if request.method == 'GET':
         context = {
-            'province_dictionary': province_dictionary
+            'district_dictionary': district_dictionary
         }
         return render(request, "PublishPosition/position_publish.html", context)
 
     # else POST
     data_dict = {}
     error_dict = {}
-    for field in ['position_name', 'salary', 'summary', 'detail', 'province', 'published_state']:
+    for field in ['position_name', 'salary', 'summary', 'detail', 'district', 'published_state']:
         data_dict[field] = request.POST.get(field)
 
     # 获取当前登录用户信息
@@ -79,7 +80,7 @@ def publish_position(request):
     if not check_passed_flag:
         # 未通过检查
         context = {
-            'province_dictionary': province_dictionary,
+            'district_dictionary': district_dictionary,
             'data_dict': data_dict,
             'error_dict': error_dict
         }
@@ -113,11 +114,11 @@ def modify_position(request, nid):
             'salary': position_obj.salary,
             'summary': position_obj.summary,
             'detail': position_obj.detail,
-            'province': position_obj.province,
+            'district': position_obj.district,
             'published_state': position_obj.published_state
         }
         context = {
-            'province_dictionary': province_dictionary,
+            'district_dictionary': district_dictionary,
             'data_dict': data_dict
         }
 
@@ -127,14 +128,14 @@ def modify_position(request, nid):
     data_dict = {}
     error_dict = {}
     # 提取数据
-    for field in ['position_name', 'salary', 'summary', 'detail', 'province', 'published_state']:
+    for field in ['position_name', 'salary', 'summary', 'detail', 'district', 'published_state']:
         data_dict[field] = request.POST.get(field)
     # 检查字段
     data_dict, error_dict, check_passed_flag = check_publish_position_form(data_dict)
     if not check_passed_flag:
         # 未通过检查
         context = {
-            'province_dictionary': province_dictionary,
+            'district_dictionary': district_dictionary,
             'data_dict': data_dict,
             'error_dict': error_dict
         }

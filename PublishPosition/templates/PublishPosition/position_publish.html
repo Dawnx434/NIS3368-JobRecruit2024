@@ -24,10 +24,10 @@
     <input type="text" id="detail" name="detail" value="{{ data_dict.detail }}" required>
     {{ error_dict.detail }}
 
-    <label for="province">所属省份</label>
-    <select name="province" id="province">
-        {% for key,value in province_dictionary.items %}
-            <option value="{{ key }}" {% if key ==  data_dict.province  %}selected{% endif %}>{{ value }}</option>
+    <label for="district">所属地区</label>
+    <select name="district" id="district">
+        {% for key,value in district_dictionary.items %}
+            <option value="{{ key }}" {% if key ==  data_dict.district  %}selected{% endif %}>{{ value }}</option>
         {% endfor %}
     </select>
 
