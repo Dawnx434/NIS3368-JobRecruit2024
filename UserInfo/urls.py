@@ -3,7 +3,7 @@ from UserInfo import views
 from UserAuth import views as auth_model
 urlpatterns = [
    path("index/", views.index),
-   path("resume/", views.resume),
+   path("resume/", views.resume, name="resume"),
    path("application/", views.apply),
    path("info/", views.info, name='user_info'),
    path("account/",views.account),

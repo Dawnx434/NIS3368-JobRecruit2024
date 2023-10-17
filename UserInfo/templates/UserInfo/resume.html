@@ -25,13 +25,141 @@
             border: 1px solid #17a2b8;
         }
 
+        .left-nav{
+            background-color: #17a2b8;
+            color: white;
+        }
+
+        .custom-nav .nav-link {
+            height: 60px;
+            line-height: 20px;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .divider {
+            border-top: 1px solid white;
+            margin-top: 5px;
+            margin-bottom: 5px;
+        }
+
+        .upload-button{
+            background-color: #17a2b8;
+            color: white;
+            border: 1px solid white;
+            height: 55px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .active {
+            background-color: rgba(255, 255, 255, 0.3);
+            color: white;
+            border-radius: 5px;
+        }
+
+        .full-width-nav {
+            position: fixed;
+            margin-top: 50px;
+            top: 0;
+            left: 0;
+            height: 100%;
+            background-color: #17a2b8;
+            color: white;
+            z-index: 0;
+        }
+
+        <!-- modal -->
+        #myModal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(0, 0, 0, 0.6);
+        }
+
+        #resumeModal {
+            position: relative;
+            transform: translate(40%, 0%);
+            width: 400px;
+            height: 300px;
+            background-color: #fff;
+            border: 0px solid #000;
+            padding: 20px;
+        }
+
+
+        .modal {
+            position: fixed;
+            top: 35%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border: 1px solid #888;
+            color: #000;
+        }
+
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 50%;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+
+        #uploadedResume {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .modal,
+        #modalBackdrop {
+            display: none;
+        }
+
+        #modalBackdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(128, 128, 128, 0.6);
+            z-index: 999;
+        }
+
+
+
+
 
 
     </style>
 </head>
 <body class="custom-background">
 
-<nav class="navbar navbar-expand-sm navbar-light bg-light">
+<nav class="navbar navbar-expand-sm navbar-light bg-light" style="z-index:1;">
     <div class="container">
         <a class="navbar-brand custom-text-color" href="#">JobRecruitment</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar">
@@ -69,18 +197,171 @@
     </div>
 </nav>
 
-<ul>
-    {% for resume in resumes %}
-        <li><a href=" ../resume_download?resume_id={{ resume}} " target="_blank" rel="external nofollow"  >{{ resume }}</a></li>
-    {% endfor %}
-</ul>
-<form method="post" action="{% url 'resume_upload' %}" enctype="multipart/form-data">
-  {% csrf_token %}
-  <input type="file" name="upload">
-  <button type="submit">上传简历</button>
-</form>
+<div class="container-fluid">
+    <div class="row">
+        <nav class="d-md-block sidebar left-nav full-width-nav" style="width: 20%;">
+            <div class="position-sticky">
+                <a class="btn btn-primary w-100 mb-2 mt-4 upload-button"
+                   style="font-weight: bold;" id="uploadResumeBtn" onclick="openModal()"><i style="font-size: 1.5rem;" class="bi bi-cloud-upload"></i>&nbsp;&nbsp;上传新简历</a>
 
+                <div id="myModal" class="modal">
+                    <div class="modal-content">
+                        <span class="close" onclick="closeModal()" id="closeModalBtn">&times;</span>
+                        <h2 style="text-align: center;">请选择您要上传的简历文件</h2>
+                        <p style="text-align: center; color: #17a2b8; font-weight: bold;">文件格式必须以.pdf为后缀</p>
+                        <form method="post" action="{% url 'resume_upload' %}" enctype="multipart/form-data"
+                              class="d-flex justify-content-center align-items-center flex-wrap">
+                            {% csrf_token %}
+                            <label class="btn btn-primary custom-button" style="margin:20px;">
+                                选择简历文件
+                                <input type="file" name="upload" accept=".pdf" id="fileInput" style="display: none;">
+                            </label>
+                            <button type="submit" class="btn btn-primary custom-button" style="margin:20px;">确认上传</button>
+                        </form>
+
+
+                        <div id="resumeModal">
+                            <p id="uploadedResume" style="text-align: center; font-weight: bold;"></p>
+                        </div>
+                        <div style="margin: 40px; text-align: center;">
+                            <div id="noResumeText">您还没有上传简历</div>
+                        </div>
+                        <div id="uploadMessage" style="display: none;"></div>
+                    </div>
+                </div>
+                <div id="modalBackdrop" class="modal-backdrop"></div>
+
+
+                <hr class="divider">
+                <ul class="nav flex-column custom-nav">
+                    {% for resume in resumes %}
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="#resume{{ forloop.counter }}" data-toggle="collapse"
+                           id="resume_clicked{{ forloop.counter }}"
+                           onclick="toggleNavColor('resume_clicked{{ forloop.counter }}')">
+                            {{ resume }}
+                        </a>
+                    </li>
+                    <hr class="divider">
+                    {% endfor %}
+                </ul>
+            </div>
+        </nav>
+
+
+        <main class="px-md-4" style="width: 80%; padding-top:10px; margin-left:20%">
+            {% for resume in resumes %}
+            <div id="resume{{ forloop.counter }}" class="collapse resume-content">
+                <embed src="../resume_download?resume_id={{ resume }}" type="application/pdf" width="100%" height="600">
+            </div>
+            {% endfor %}
+        </main>
+
+
+    </div>
+</div>
+
+
+<script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://cdn.staticfile.org/popper.js/1.15.0/umd/popper.min.js"></script>
+<script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+
+<script>
+
+
+    document.getElementById("uploadResumeBtn").addEventListener("click", openModal);
+    document.getElementById("fileInput").addEventListener("change", handleFileSelect);
+
+
+
+    function openModal() {
+        console.log('Upload button clicked!');
+
+        var modal = document.getElementById("myModal");
+        var modalBackdrop = document.getElementById("modalBackdrop");
+
+        if (modal && modalBackdrop) {
+            modal.style.display = "block";
+            modalBackdrop.style.display = "block";
+            resumeModal.style.display = "none";
+            noResumeText.style.display = "block";
+
+            var closeBtn = document.getElementById("closeModalBtn");
+            closeBtn.addEventListener("click", closeModal);
+        } else {
+            console.error("modal or modalBackdrop element not found.");
+        }
+    }
+
+    function closeModal() {
+        var modal = document.getElementById("myModal");
+        var modalBackdrop = document.getElementById("modalBackdrop");
+        modal.style.display = "none";
+        modalBackdrop.style.display = "none";
+        resumeModal.style.display = "none";
+        noResumeText.style.display = "none";
+    }
+
+
+    function handleFileSelect(event) {
+
+        const fileInput = event.target;
+        const selectedFile = fileInput.files[0];
+        const uploadedResume = document.getElementById("uploadedResume");
+        const noResumeText = document.getElementById("noResumeText");
+
+
+        if (selectedFile) {
+            const reader = new FileReader();
+
+            reader.onload = function(event) {
+                resumeModal.style.display = "block";
+                noResumeText.style.display = "none";
+                uploadedResume.textContent = "已选择文件：" + selectedFile.name;
+                document.getElementById("resumeModal").style.display = "block";
+            };
+
+            reader.readAsDataURL(selectedFile);
+        } else {
+            resumeModal.style.display = "none";
+            noResumeText.style.display = "block";
+            selectedResumeFilename.textContent = "";
+            document.getElementById("resumeModal").style.display = "block";
+        }
+    }
+
+
+
+    function toggleNavColor(targetId) {
+        console.log('Clicked: ' + targetId);
+
+        var targetNavItem = document.getElementById(targetId);
+        var isCurrentlyActive = targetNavItem.classList.contains('active');
+        var navItems = document.querySelectorAll('.nav-link');
+
+        var currentActiveResume = document.querySelector('.resume-content.show');
+        if (currentActiveResume && !isCurrentlyActive) {
+            currentActiveResume.classList.remove('show');
+        }
+
+        navItems.forEach(function (item) {
+            item.classList.remove('active');
+        });
+
+        if (!isCurrentlyActive) {
+            console.log('Clicked: NOT ACTIVE' + targetId);
+
+            targetNavItem.classList.add('active');
+        }
+    }
+
+
+
+
+</script>
 
 </body>
 </html>
+
 

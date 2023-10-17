@@ -164,8 +164,8 @@ def resume_upload(request):
     if request.method == 'POST':
         upload_resume = request.FILES.get('upload')
         if not upload_resume:
-            context = {'msg':'没有上传简历'}
-            return render(request,"UserAuth/alert_page.html",context=context)
+            context = {'msg':'没有上传简历','success':False}
+            return render(request,"UserInfo/upload_resume_result.html",context=context)
         save_path = os.path.join(settings.RESUME_ROOT + str(request.session['UserInfo'].get("id")))
         if not os.path.exists(save_path):
             os.mkdir(save_path)
@@ -176,13 +176,15 @@ def resume_upload(request):
         # 这里对文件后缀名进行检验、设置白名单
         white_list = {'.pdf'}
         if file_extension not in white_list:
-            return HttpResponse('你上传的文件格式不对,请上传pdf格式的简历')
+            context = {'msg': '你上传的文件格式不对,请上传pdf格式的简历', 'success': False}
+            return render(request, "UserInfo/upload_resume_result.html", context=context)
         save_path = os.path.join(save_path )
         # 保存文件
         with open(save_path, 'wb') as file:
             for chunk in upload_resume.chunks():
                 file.write(chunk)
-        return HttpResponse("上传简历成功")
+        context = {'msg': '上传简历成功', 'success': True}
+        return render(request, "UserInfo/upload_resume_result.html", context=context)
 
 
 def resume_download(request):
