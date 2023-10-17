@@ -100,7 +100,7 @@
             left: -50px;
         }
 
-        <!-- modal -->
+        /* modal */
         #myModal {
             display: none;
             position: fixed;
@@ -176,7 +176,13 @@
             z-index: 999;
         }
 
+        .dropdown:hover .dropdown-menu{
+        display: block;
+        }
 
+        .dropdown-menu{
+            margin-top: 0;
+        }
 
     </style>
 </head>
@@ -204,8 +210,8 @@
                 <input class="form-control me-2" type="text" placeholder="按条件搜索...">
                 <button class="btn btn-primary custom-button" type="submit"><i class="fas fa-search"></i></button>
             </form>
-            <div class="d-flex nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-bs-toggle="dropdown">
+            <div class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="../index/" id="navbardrop" data-toggle="dropdown">
                     <img src="../../static/images/{{ matching_files }}?rand=<%= Date.now() %>" alt="头像"
                          style="width:30px; height:30px;">
                 </a>
@@ -244,7 +250,7 @@
                                 选择文件
                                 <input type="file" name="upload" accept="image/*" id="fileInput" style="display: none;">
                             </label>
-                            <button type="submit" class="btn btn-primary custom-button" style="20px;">确认上传</button>
+                            <button type="submit" class="btn btn-primary custom-button" style="margin:20px;">确认上传</button>
                         </form>
 
 
@@ -377,6 +383,18 @@
             }
         }
 
+        $(document).ready(function(){
+            $(".dropdown").hover(function(){
+                var dropdownMenu = $(this).children(".dropdown-menu");
+                if(dropdownMenu.is(":visible")){
+                    dropdownMenu.parent().toggleClass("open");
+                }
+            });
+        });     
+
+        $(document).ready(function(){
+            $(document).off('click.bs.dropdown.data-api');
+            });
 
 
 </script>
