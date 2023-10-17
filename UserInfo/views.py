@@ -227,6 +227,8 @@ def show_index(request):
                "id": matching_files[0],
                'image':img}
     return render(request, "UserInfo/show_index.html", context)
+
+
 def find_image(request):
     pattern = re.compile(str(request.session['UserInfo'].get("id")) + r'.*')
     file_names = os.listdir(settings.MEDIA_ROOT)

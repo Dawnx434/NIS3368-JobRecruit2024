@@ -286,13 +286,15 @@
                 <div class="column">
                     <p>
                         <span class="custom-text-color">性别:</span>
-                        {% if gender == '1' %}
+                    {% if gender == '1' %}
                         不愿透露
-                        {% elif gender == '2' %}
+                    {% elif gender == '2' %}
                         男
-                        {% elif gender == '3' %}
+                    {% elif gender == '3' %}
                         女
-                        {% endif %}
+                    {% else %}
+                        {{ gender }}
+                    {% endif %}
                     </p>
                     <p><span class="custom-text-color">学历:</span> {{ edu_ground }}</p>
                     <p><span class="custom-text-color">学校:</span> {{ school }}</p>
