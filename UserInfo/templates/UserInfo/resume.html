@@ -253,6 +253,7 @@
             {% for resume in resumes %}
             <div id="resume{{ forloop.counter }}" class="collapse resume-content">
                 <embed src="../resume_download?resume_id={{ resume }}" type="application/pdf" width="100%" height="600">
+                <iframe src="../resume_download?resume_id={{ resume }}" width="100%" height="600px"></iframe>
             </div>
             {% endfor %}
         </main>
@@ -264,7 +265,7 @@
 
 <script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
 <script src="https://cdn.staticfile.org/popper.js/1.15.0/umd/popper.min.js"></script>
-<script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+<script src="https://cdn.staticfile.org/twitter-bootstrap/5.1.1/js/bootstrap.min.js"></script>
 
 
 <script>
