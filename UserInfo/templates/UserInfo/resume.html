@@ -343,14 +343,16 @@
 
 
     function toggleNavColor(targetId) {
-        console.log('Clicked: ' + targetId);
 
         var targetNavItem = document.getElementById(targetId);
         var isCurrentlyActive = targetNavItem.classList.contains('active');
         var navItems = document.querySelectorAll('.nav-link');
 
         var currentActiveResume = document.querySelector('.resume-content.show');
-        if (currentActiveResume && !isCurrentlyActive) {
+        var resumeContentId = targetId.replace('resume_clicked', 'resume');
+        var resumeContent = document.getElementById(resumeContentId);
+
+        if (currentActiveResume) {
             currentActiveResume.classList.remove('show');
         }
 
@@ -362,14 +364,9 @@
             console.log('Clicked: NOT ACTIVE' + targetId);
 
             targetNavItem.classList.add('active');
-            var resumeContentId = targetId.replace('resume_clicked', 'resume');
-            var resumeContent = document.getElementById(resumeContentId);
             resumeContent.classList.add('show');
         }
     }
-
-
-
 
 </script>
 
