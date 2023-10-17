@@ -72,13 +72,13 @@
 <div class="content-container"></div>
 <div>
     {% if success %}
-    <h1 style="color: #17a2b8; text-align: center;">{{ message }}</h1>
+    <h1 style="color: #17a2b8; text-align: center;">{{ msg }}</h1>
     {% else %}
-    <h1 style="color: red; text-align: center;">{{ message }}</h1>
+    <h1 style="color: red; text-align: center;">{{ msg }}</h1>
     {% endif %}
 </div>
 <div style="text-align:center">
-    <a href="{% url 'user_info' %}" class="btn btn-primary custom-button">返回个人信息</a>
+    <a href="{% url 'resume' %}" class="btn btn-primary custom-button">返回我的简历</a>
 </div>
 
 

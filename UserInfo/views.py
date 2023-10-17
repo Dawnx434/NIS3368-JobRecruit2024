@@ -53,13 +53,13 @@ def image_upload(request):
     if request.method == 'POST':
         upload_image = request.FILES.get('upload')
         if not upload_image:
-            return HttpResponse('没有上传头像')
+            return render(request, 'UserInfo/upload_avatar_result.html',{'message':'没有上传头像', 'success': False})
         # 获取上传文件的后缀名
         file_extension = os.path.splitext(upload_image.name)[1]
         # 这里对文件后缀名进行检验、设置白名单
         white_list = {'.jpg', '.png', '.jpeg', '.gif', '.bmp', '.tiff', '.svg'}
         if file_extension not in white_list:
-            return render(request, 'UserInfo/upload_avatar_result.html',{'message':'你上传的文件格式不正确','success': False})
+            return render(request, 'UserInfo/upload_avatar_result.html',{'message':'你上传的文件格式不正确', 'success': False})
         # 将原有图像进行删除
         pattern = re.compile(str(request.session['UserInfo'].get("id")) + r'.*')
         file_names = os.listdir(settings.MEDIA_ROOT)
@@ -73,9 +73,9 @@ def image_upload(request):
         with open(save_path, 'wb') as file:
             for chunk in upload_image.chunks():
                 file.write(chunk)
-        return render(request, 'UserInfo/upload_avatar_result.html',{'message':'头像上传成功','success': True})
+        return render(request, 'UserInfo/upload_avatar_result.html',{'message':'头像上传成功', 'success': True})
     else:
-        return render(request, 'UserInfo/upload_avatar_result.html',{'message':'头像上传失败','success': False})
+        return render(request, 'UserInfo/upload_avatar_result.html',{'message':'头像上传失败', 'success': False})
 
 
 def modify(request):
@@ -164,8 +164,8 @@ def resume_upload(request):
     if request.method == 'POST':
         upload_resume = request.FILES.get('upload')
         if not upload_resume:
-            context = {'msg':'没有上传简历'}
-            return render(request,"UserAuth/alert_page.html",context=context)
+            context = {'msg':'没有上传简历','success':False}
+            return render(request,"UserInfo/upload_resume_result.html",context=context)
         save_path = os.path.join(settings.RESUME_ROOT + str(request.session['UserInfo'].get("id")))
         if not os.path.exists(save_path):
             os.mkdir(save_path)
@@ -176,13 +176,15 @@ def resume_upload(request):
         # 这里对文件后缀名进行检验、设置白名单
         white_list = {'.pdf'}
         if file_extension not in white_list:
-            return HttpResponse('你上传的文件格式不对,请上传pdf格式的简历')
+            context = {'msg': '你上传的文件格式不对,请上传pdf格式的简历', 'success': False}
+            return render(request, "UserInfo/upload_resume_result.html", context=context)
         save_path = os.path.join(save_path )
         # 保存文件
         with open(save_path, 'wb') as file:
             for chunk in upload_resume.chunks():
                 file.write(chunk)
-        return HttpResponse("上传简历成功")
+        context = {'msg': '上传简历成功', 'success': True}
+        return render(request, "UserInfo/upload_resume_result.html", context=context)
 
 
 def resume_download(request):
@@ -199,6 +201,8 @@ def resume_download(request):
     # 设置响应的文件名，并指定字符编码
     response['Content-Disposition'] = 'inline; filename*=UTF-8\'\'{}'.format(encoded_resume_id)
     return response
+
+
 def show_index(request):
     # 用GET获取用户name
     guest_name = request.GET.get('guest_name')

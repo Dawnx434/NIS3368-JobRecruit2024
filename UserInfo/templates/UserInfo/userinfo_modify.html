@@ -16,6 +16,14 @@
         .custom-text-color {
             color: #17a2b8;
         }
+
+        h4 {
+            padding-bottom: 5px;
+            margin-bottom: 20px;
+            border-bottom: 1.5px solid;
+            font-weight: bold;
+        }
+
     </style>
 </head>
 <body class="custom-background">
@@ -25,7 +33,7 @@
         <div class="col-md-12">
             <div class="card">
                 <div class="card-header custom-bg-color text-white">
-                    修改个人信息
+                    修改个人资料
                 </div>
                 <div class="card-body">
                     <form method="post" action="/info/info/">
@@ -33,18 +41,14 @@
                         {% csrf_token %}
 
                         <input type="hidden" id="id" name="id" value="{{ userinfo.id }}">
+                        <input type="hidden" id="username" name="username" value="{{ userinfo.username }}">
+                        <input type="hidden" id="mobile_phone" name="mobile_phone" value="{{ userinfo.mobile_phone }}">
+                        <input type="hidden" id="email" name="email" value="{{ userinfo.email }}">
 
                         <div class="row">
                             <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="username" class="custom-text-color">用户名</label>
-                                    <input type="text" id="username" name="username" value="{{ userinfo.username }}" class="form-control" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="mobile_phone" class="custom-text-color">手机号</label>
-                                    <input type="text" id="mobile_phone" name="mobile_phone" value="{{ userinfo.mobile_phone }}" class="form-control" required>
-                                </div>
 
+                                <h4 class="col-md-8">个人信息</h4>
 
                                 <div class="form-group">
                                     <label for="gender" class="custom-text-color">性别</label>
@@ -55,42 +59,44 @@
                                     </select>
                                 </div>
 
-
-
-
-                                <div class="form-group">
-                                    <label for="email" class="custom-text-color">邮箱</label>
-                                    <input type="text" id="email" name="email" value="{{ userinfo.email }}" class="form-control" required>
-                                </div>
                                 <div class="form-group">
                                     <label for="edu_ground" class="custom-text-color">学历</label>
                                     <input type="text" id="edu_ground" name="edu_ground" value="{{ userinfo.edu_ground }}" class="form-control" required>
                                 </div>
-                            </div>
-
-
-                            <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="school" class="custom-text-color">毕业学校</label>
-                                    <input type="text" id="school" name="school" value="{{ userinfo.school }}" class="form-control" required>
+                                    <label for="school" class="custom-text-color">学校</label>
+                                    <input type="text" id="school" name="school" value="{{ userinfo.school }}" class="form-control">
                                 </div>
                                  <div class="form-group">
                                     <label for="major" class="custom-text-color">专业</label>
                                     <input type="text" id="major" name="major" value="{{ userinfo.major }}" class="form-control" required>
                                 </div>
+                            </div>
+
+
+                            <div class="col-md-6">
+
+                                <h4 class="col-md-8">求职意向</h4>
+
                                 <div class="form-group">
-                                    <label for="excepting_position" class="custom-text-color">预期职业</label>
-                                    <input type="text" id="excepting_position" name="excepting_position" value="{{ userinfo.excepting_position }}" class="form-control" required>
+                                    <label for="excepting_position" class="custom-text-color">预期职位</label>
+                                    <input type="text" id="excepting_position" name="excepting_position" value="{{ userinfo.excepting_position }}" class="form-control">
                                 </div>
                                 <div class="form-group">
-                                    <label for="excepting_location" class="custom-text-color">位置</label>
-                                    <input type="text" id="excepting_location" name="excepting_location" value="{{ userinfo.excepting_location }}" class="form-control" required>
+                                    <label for="excepting_location" class="custom-text-color">预期地点</label>
+                                    <input type="text" id="excepting_location" name="excepting_location" value="{{ userinfo.excepting_location }}" class="form-control">
+
                                 </div>
                                 <div class="row">
-                                    <div class="offset-md-6 col-md-3">
-                                        <button type="submit" class="btn btn-block custom-bg-color text-white mt-4">提交</button>
+                                    <div class="offset-md-6 col-md-4" style="margin-top:10px;">
+                                        <button type="submit" class="btn btn-block custom-bg-color text-white mt-4">确认修改</button>
                                     </div>
                                 </div>
+                                <div class="row" style="padding-left: 50px;padding-right:40px; padding-top: 40px">
+                                    <div style="font-weight:bold;">
+                                        <p><span class="custom-text-color">提示：</span>若您希望修改用户名/联系电话/电子邮箱，请至<span class="custom-text-color">账号安全</span>进行修改。</p>
+                                </div>
+
 
 
 
