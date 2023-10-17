@@ -115,7 +115,7 @@ def generate_verification_code(request):
     # img 储存到内存流中
     img.save(stream, 'png')
     request.session["login_verification_code"] = code
-    request.session.set_expiry(120)  # 验证码60秒有效期
+    request.session.set_expiry(120)  # 验证码120秒有效期
     return HttpResponse(stream.getvalue())
 
 

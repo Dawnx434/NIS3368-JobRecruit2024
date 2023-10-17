@@ -1,0 +1,11 @@
+<h1>{{ position_name }}</h1>
+{% if HR.id == user_id %}
+<a href="/position/modify/{{ position_id }}/">修改信息</a>
+{% endif %}
+<p>简介：</p>
+<p>{{ summary }}</p>
+<p>发布者：{{ HR }}</p>
+<p>岗位地点：{{ district }}</p>
+<p>薪水：{{ salary }}</p>
+<p>详细要求：</p>
+<p>{{ detail }}</p>

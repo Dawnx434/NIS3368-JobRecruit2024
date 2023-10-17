@@ -33,11 +33,13 @@ def resume(request):
         os.mkdir(save_path)
     file_names = os.listdir(save_path)
     file_position = [os.path.join(save_path, filename) for filename in file_names]
+    image = find_image(request)
     lenth = len(file_names)
     context = {"resumes": file_names ,
                "id": id,
                'file_position':file_position,
-               'length':lenth,}
+               'length':lenth,
+               'image':image}
     return render(request, "UserInfo/resume.html", context=context)
 
 
@@ -208,6 +210,7 @@ def show_index(request):
     guest_name = request.GET.get('guest_name')
     query_set = User.objects.filter(username=guest_name)
     obj = query_set.first()
+    img = find_image(request)
     # 获取头像
     if not obj:
         return HttpResponse('用户昵称错误')
@@ -221,5 +224,17 @@ def show_index(request):
     if not matching_files:
         matching_files.append('default.jpeg')
     context = {"username": guest_name,
-               "id": matching_files[0]}
+               "id": matching_files[0],
+               'image':img}
     return render(request, "UserInfo/show_index.html", context)
+def find_image(request):
+    pattern = re.compile(str(request.session['UserInfo'].get("id")) + r'.*')
+    file_names = os.listdir(settings.MEDIA_ROOT)
+    matching_files = []
+    for file_name in file_names:
+        if pattern.match(file_name):
+            matching_files.append(file_name)
+    # 没有上传就用默认的
+    if not matching_files:
+        matching_files.append('default.jpeg')
+    return matching_files[0]
