@@ -1,6 +1,6 @@
 def check_publish_position_form(data_dict):
     """
-    :param data_dict: 数据参数， 目前检查以下字段：'position_name', 'salary', 'summary', 'detail', 'province', 'published_state'
+    :param data_dict: 数据参数， 目前检查以下字段：'position_name', 'salary', 'summary', 'detail', 'district', 'published_state'
     :return:
         data_dict: 清洗数据后的数据字典
         error_dict: 存在问题的字段以及对应的问题反馈
@@ -29,14 +29,14 @@ def check_publish_position_form(data_dict):
     if not (0 < len(data_dict['detail']) < 3000):
         error_dict['detail'] = '详细介绍最多不超过3000字符'
         check_passed_flag = False
-    # check province
+    # check district
     try:
-        data_dict['province'] = int(data_dict['province'])
-        if not (1 <= data_dict['province'] <= 34):
-            error_dict['province'] = "非法的省份代号"
+        data_dict['district'] = int(data_dict['district'])
+        if not (1 <= data_dict['district'] <= 953):
+            error_dict['district'] = "非法的省份代号"
             check_passed_flag = False
     except ValueError as e:
-        error_dict['province'] = "非法的省份代号"
+        error_dict['district'] = "非法的省份代号"
         check_passed_flag = False
     # 字段检查结束
     return data_dict, error_dict, check_passed_flag
