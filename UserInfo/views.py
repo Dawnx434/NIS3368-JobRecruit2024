@@ -225,7 +225,7 @@ def show_index(request):
         matching_files.append('default.jpeg')
     context = {"username": guest_name,
                "id": matching_files[0],
-               'image':img}
+               'image': img}
     return render(request, "UserInfo/show_index.html", context)
 
 
