@@ -39,6 +39,8 @@ def view_position_detail(request, nid):
 
     position = obj.first()
     context = {
+        "user_id": request.session.get("UserInfo")['id'],
+        "position_id": position.id,
         "position_name": position.position_name,
         "salary": position.salary,
         "summary": position.summary,
