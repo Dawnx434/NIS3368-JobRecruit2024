@@ -1,3 +1,5 @@
+from PublishPosition.utils.check_html_keywords import dont_contain_html_keywords
+
 def check_publish_position_form(data_dict):
     """
     :param data_dict: 数据参数， 目前检查以下字段：'position_name', 'salary', 'summary', 'detail', 'district', 'published_state'
@@ -26,13 +28,18 @@ def check_publish_position_form(data_dict):
         error_dict['summary'] = "摘要需要在1至100字符以内"
         check_passed_flag = False
     # check detail
+    # length check
     if not (0 < len(data_dict['detail']) < 3000):
         error_dict['detail'] = '详细介绍最多不超过3000字符'
+        check_passed_flag = False
+    # special security check
+    if not dont_contain_html_keywords(data_dict['detail']):
+        error_dict['detail'] = '包含非法的字符'
         check_passed_flag = False
     # check district
     try:
         data_dict['district'] = int(data_dict['district'])
-        if not (1 <= data_dict['district'] <= 953):
+        if not (0 <= data_dict['district'] <= 953):
             error_dict['district'] = "非法的省份代号"
             check_passed_flag = False
     except ValueError as e:

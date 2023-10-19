@@ -110,6 +110,14 @@
             margin-top: 0;
         }
 
+        .dropdown-toggle::after {
+            content: none;
+        }
+
+        .custom-nav-link:hover {
+            color: #17a2b8 !important;
+            font-weight: bold;
+        }
 
     </style>
 </head>
@@ -124,13 +132,13 @@
         <div class="collapse navbar-collapse" id="navbar">
             <ul class="navbar-nav me-auto">
                 <li class="nav-item">
-                    <a class="nav-link" href="#">首页</a>
+                    <a class="nav-link custom-nav-link" style="margin-left: 1rem;" href="#">首页</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">内推</a>
+                    <a class="nav-link custom-nav-link" style="margin-left: 1rem;" href="#">内推</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">面经</a>
+                    <a class="nav-link custom-nav-link" style="margin-left: 1rem;" href="#">面经</a>
                 </li>
             </ul>
             <form class="d-flex">
@@ -148,6 +156,15 @@
                     <a class="dropdown-item" href="../info/">个人资料</a>
                     <a class="dropdown-item" href="../account/">账号安全</a>
                     <a class="dropdown-item" href="../logout/">退出登录</a>
+                </div>
+            </div>
+            <div class="nav-item dropdown">
+                <button type="button" class="btn btn-primary custom-button dropdown-toggle" onclick="window.location.href='#'" data-toggle="dropdown">
+                    发布
+                </button>
+                <div class="dropdown-menu">
+                    <a class="dropdown-item" href="#">发动态</a>
+                    <a class="dropdown-item" href="{% url 'PublishPosition:publish'%}">发职位</a>
                 </div>
             </div>
         </div>

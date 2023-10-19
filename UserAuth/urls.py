@@ -1,6 +1,8 @@
 from django.urls import path
 from UserAuth import views
 
+
+app_name = 'UserAuth'
 urlpatterns = [
     path("login/", views.login),
     path("register/", views.register),
@@ -11,6 +13,6 @@ urlpatterns = [
     path("resetpasswordemail/", views.reset_password_email),
 
     path("state/", views.check_login_state),
-    path("logout/", views.logout),
+    path("logout/", views.logout, name='logout'),
 
 ]

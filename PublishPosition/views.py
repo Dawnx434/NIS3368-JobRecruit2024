@@ -1,12 +1,18 @@
 from django.shortcuts import render, HttpResponse, redirect
+from django.utils.safestring import mark_safe
+import markdown
 
 from PublishPosition.models import Position
 from UserAuth.models import User
+from PublishPosition.utils.forms.MyForm import PublishPositionForm
 
 from PublishPosition.utils.provincelist import province_dictionary
 from PublishPosition.utils.district import district_dictionary
 from PublishPosition.utils.check_position_form import check_publish_position_form
 
+import os
+from django.conf import settings
+import re
 
 # Create your views here.
 def position_list(request):
@@ -45,7 +51,14 @@ def view_position_detail(request, nid):
         "position_name": position.position_name,
         "salary": position.salary,
         "summary": position.summary,
-        "detail": position.detail,
+        # XSS alert; need fix
+        "detail": mark_safe(markdown.markdown(position.detail,
+                                    extensions=[
+                                        'markdown.extensions.extra',
+                                        'markdown.extensions.codehilite',
+                                        'markdown.extensions.toc',
+                                    ])),
+        # "detail": position.detail,
         "HR": position.HR,
         "district": position.get_district_display(),
     }
@@ -54,9 +67,30 @@ def view_position_detail(request, nid):
 
 
 def publish_position(request):
+    # Publish Position理应只能HR身份登录，因此优先校验是否是HR身份
+    # 获取当前登录用户信息
+    user_obj = User.objects.filter(id=request.session.get("UserInfo")['id']).first()
+    # 检查发布职位者的身份是否为HR
+    if user_obj.identity != 2:
+        # 当前登录用户非HR身份
+        return HttpResponse("请使用HR身份登录！")
+
+    # 获取头像
+    pattern = re.compile(str(request.session['UserInfo'].get("id")) + r'.*')
+    file_names = os.listdir(settings.PROFILE_ROOT)
+    matching_files = []
+    for file_name in file_names:
+        if pattern.match(file_name):
+            matching_files.append(file_name)
+    # 没有上传就用默认的
+    if not matching_files:
+        matching_files.append('default.jpeg')
+
     if request.method == 'GET':
+        form = PublishPositionForm()
         context = {
-            'district_dictionary': district_dictionary
+            'district_dictionary': district_dictionary,
+            "matching_files": matching_files[0],
         }
         return render(request, "PublishPosition/position_publish.html", context)
 
@@ -66,23 +100,21 @@ def publish_position(request):
     for field in ['position_name', 'salary', 'summary', 'detail', 'district', 'published_state']:
         data_dict[field] = request.POST.get(field)
 
-    # 获取当前登录用户信息
-    user_obj = User.objects.filter(id=request.session.get("UserInfo")['id']).first()
+    # print(data_dict['detail'])
+    # 补充字段
     data_dict['HR'] = user_obj
-    # 检查发布职位者的身份是否为HR
-    if user_obj.identity != 2:
-        # 当前登录用户非HR身份
-        return HttpResponse("请使用HR身份登录！")
 
     # 字段校验
     data_dict, error_dict, check_passed_flag = check_publish_position_form(data_dict)
 
+    print(check_passed_flag)
     if not check_passed_flag:
         # 未通过检查
         context = {
             'district_dictionary': district_dictionary,
             'data_dict': data_dict,
-            'error_dict': error_dict
+            'error_dict': error_dict,
+            "matching_files": matching_files[0],
         }
         return render(request, "PublishPosition/position_publish.html", context)
 
@@ -99,6 +131,18 @@ def modify_position(request, nid):
     position_obj = query_set.first()
     # 获取当前登录用户信息
     user_obj = User.objects.filter(id=request.session.get("UserInfo")['id']).first()
+
+    # 获取头像
+    pattern = re.compile(str(request.session['UserInfo'].get("id")) + r'.*')
+    file_names = os.listdir(settings.PROFILE_ROOT)
+    matching_files = []
+    for file_name in file_names:
+        if pattern.match(file_name):
+            matching_files.append(file_name)
+    # 没有上传就用默认的
+    if not matching_files:
+        matching_files.append('default.jpeg')
+
     # 检查发布职位者的身份是否为HR
     if user_obj.identity != 2:
         # 当前登录用户非HR身份
@@ -119,7 +163,8 @@ def modify_position(request, nid):
         }
         context = {
             'district_dictionary': district_dictionary,
-            'data_dict': data_dict
+            'data_dict': data_dict,
+            "matching_files": matching_files[0],
         }
 
         return render(request, "PublishPosition/position_modify.html", context)
@@ -137,7 +182,8 @@ def modify_position(request, nid):
         context = {
             'district_dictionary': district_dictionary,
             'data_dict': data_dict,
-            'error_dict': error_dict
+            'error_dict': error_dict,
+            "matching_files": matching_files[0],
         }
         return render(request, "PublishPosition/position_modify.html", context)
 
