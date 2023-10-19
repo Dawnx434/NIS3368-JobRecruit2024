@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     # My app
     'UserAuth',
     'UserInfo',
+    'PublishPosition',
 ]
 
 MIDDLEWARE = [
@@ -54,7 +55,10 @@ MIDDLEWARE = [
 
     # My middleware
     "UserAuth.middlewares.CheckLoginState.CheckLoginStateMiddleware",
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
+
+X_FRAME_OPTIONS = "SAMEORIGIN"
 
 ROOT_URLCONF = "JobRecruitment.urls"
 
@@ -130,6 +134,7 @@ STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
 MEDIA_ROOT = os.path.join(BASE_DIR, 'static/images/')
+RESUME_ROOT = os.path.join(BASE_DIR, 'resumes/')
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 

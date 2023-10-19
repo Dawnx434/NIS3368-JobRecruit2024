@@ -52,7 +52,6 @@ EMAIL_HOST_PASSWORD = ""     # 您的授权码
 EMAIL_USE_TLS = True       
 EMAIL_FROM = "example@qq.com"      # 邮箱来自（这里是和账号一样的）
 EMAIL_TITLE = '邮箱激活'	# 邮件标题
-MEDIA_ROOT = 'C:\Users\86186\Desktop\JobRecruitment\static\images' #照片储存的绝对路径
 ```
 
 **请务必注意，为了隐私，不要将上述配置尤其是授权码放在`settings.py`传到git仓库中！**

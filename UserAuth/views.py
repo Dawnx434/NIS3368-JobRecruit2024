@@ -71,7 +71,7 @@ def login(request):
         'username': row_obj.username
     }
     request.session.set_expiry(60 * 60 * 24 * 7)  # 7天免登录
-    return redirect('/')
+    return redirect('/info/info')
 
 
 def reset_password(request):
@@ -115,7 +115,7 @@ def generate_verification_code(request):
     # img 储存到内存流中
     img.save(stream, 'png')
     request.session["login_verification_code"] = code
-    request.session.set_expiry(120)  # 验证码60秒有效期
+    request.session.set_expiry(120)  # 验证码120秒有效期
     return HttpResponse(stream.getvalue())
 
 
