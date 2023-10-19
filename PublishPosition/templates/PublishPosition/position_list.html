@@ -1,30 +1,170 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/5.1.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <title>职位列表</title>
-</head>
-<body>
-<table>
-    <thead>
-    <tr>
-        <th>岗位名称</th>
-        <th>薪水</th>
-        <th>地区</th>
-        <th>发布者</th>
-        <th>操作</th>
-    </tr>
-    </thead>
-    {% for obj in query_set %}
-        <tr>
-            <td>{{ obj.position_name }}</td>
-            <td>{{ obj.salary }}</td>
-            <td>{{ obj.get_district_display }}</td>
-            <td>{{ obj.HR }}</td>
-            <th><a href="/position/view/{{ obj.id }}">查看详细</a></th>
-        </tr>
-    {% endfor %}
+    <style>
 
-</table>
+        .custom-text-color {
+            color: #17a2b8 !important;
+            font-weight: bold;
+        }
+
+
+        .custom-background{
+            background-color: #E5E5E5;
+        }
+
+        .custom-bg-color {
+            background-color: #17a2b8;
+        }
+
+        .custom-button{
+            background-color: #17a2b8;
+            color: white;
+            border: 1px solid #17a2b8;
+        }
+
+
+        .progress {
+            margin-top: 5px;
+        }
+
+        .dropdown-container {
+            position: relative;
+            left: -50px;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+
+        .dropdown:hover .dropdown-menu{
+        display: block;
+        }
+
+        .dropdown-menu{
+            margin-top: 0;
+        }
+
+        .card-container {
+            margin-top: 20px;
+            padding-right: 20px;
+            padding-left: 20px;
+
+        }
+
+
+
+
+    </style>
+
+</head>
+<body class="custom-background">
+
+<nav class="navbar navbar-expand-sm navbar-light bg-light">
+    <div class="container">
+        <a class="navbar-brand custom-text-color" href="#">JobRecruitment</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbar">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="#">首页</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">内推</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">面经</a>
+                </li>
+            </ul>
+            <form class="d-flex">
+                <input class="form-control me-2" type="text" placeholder="按条件搜索...">
+                <button class="btn btn-primary custom-button" type="submit"><i class="fas fa-search"></i></button>
+            </form>
+            <div class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="../index/" id="navbardrop" data-toggle="dropdown">
+                    <img src="../../static/images/{{ matching_files }}?rand=<%= Date.now() %>" alt="头像"
+                         style="width:30px; height:30px;">
+                </a>
+                <div class="dropdown-menu">
+                    <a class="dropdown-item" href="../resume">我的简历</a>
+                    <a class="dropdown-item" href="../application/">我的投递</a>
+                    <a class="dropdown-item" href="../info/">个人资料</a>
+                    <a class="dropdown-item" href="../account/">账号安全</a>
+                    <a class="dropdown-item" href="../logout/">退出登录</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+
+
+<div class="container">
+
+
+    <div class="container">
+    <div class="row">
+        {% for obj in query_set %}
+            <div class="col-md-4 card-container">
+                <div class="card-header custom-bg-color text-white">{{ obj.position_name }}</div>
+                <div class="card">
+                    <div class="card-body">
+                        <p class="card-text">Salary: {{ obj.salary }}</p>
+                        <p class="card-text">Location: {{ obj.get_district_display }}</p>
+                        <p class="card-text">HR: {{ obj.HR }}</p>
+                        <a href="/position/view/{{ obj.id }}" class="btn btn-light">View Details</a>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+
+
+</div>
+
+
+
+
+<script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://cdn.staticfile.org/popper.js/1.15.0/umd/popper.min.js"></script>
+<script src="https://cdn.staticfile.org/twitter-bootstrap/5.1.1/js/bootstrap.min.js"></script>
+
+<script>
+    $(document).ready(function(){
+        $(".dropdown").hover(function(){
+            var dropdownMenu = $(this).children(".dropdown-menu");
+            if(dropdownMenu.is(":visible")){
+                dropdownMenu.parent().toggleClass("open");
+            }
+        });
+    });
+
+    $(document).ready(function(){
+        $(document).off('click.bs.dropdown.data-api');
+    });
+
+
+</script>
 </body>
 </html>
