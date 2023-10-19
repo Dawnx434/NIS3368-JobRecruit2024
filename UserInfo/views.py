@@ -255,17 +255,9 @@ def show_index(request):
     # 获取头像
     if not obj:
         return HttpResponse('用户昵称错误')
-    pattern = re.compile(str(obj.id) + r'.*')
-    file_names = os.listdir(settings.MEDIA_ROOT)
-    matching_files = []
-    for file_name in file_names:
-        if pattern.match(file_name):
-            matching_files.append(file_name)
+
     name = request.session.get("UserInfo")
-    if not matching_files:
-        matching_files.append('default.jpeg')
     context = {"username": guest_name,
-               "id": matching_files[0],
                'image':img}
     return render(request, "UserInfo/show_index.html", context)
 

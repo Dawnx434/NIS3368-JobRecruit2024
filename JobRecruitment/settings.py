@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    'mdeditor',
 
     # My app
     'UserAuth',
@@ -133,6 +134,7 @@ STATICFILES_DIRS = [
     # 全局目录下的静态文件
     BASE_DIR / "static",
 ]
+
 MEDIA_ROOT = os.path.join(BASE_DIR, 'static/images/')
 RESUME_ROOT = os.path.join(BASE_DIR, 'resumes/')
 # Default primary key field type
