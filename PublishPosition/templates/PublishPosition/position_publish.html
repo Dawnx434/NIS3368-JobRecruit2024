@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -296,6 +297,7 @@
                     
                 </div>
 
+
                 <div class="mb-3">
                     <label for="district" class="+form-label">所属地区</label>
                     <select name="district" id="district" class="form-select">
@@ -324,4 +326,20 @@
         var simplemde = new SimpleMDE({ element: document.getElementById("detail") });
     </script>
 </body>
+<script>
+    $(function () {
+        initEditorMd();
+    });
+
+
+    function initEditorMd() {
+        // 第一个参数是页面中位置（如上，我这里是id="editor"）
+        // 第二个参数是生成md编辑器后的配置
+        editormd('editor', {
+            placeholder: "请输入内容",
+            height: 500,
+        })
+    }
+
+</script>
 </html>

@@ -4,6 +4,7 @@ import markdown
 
 from PublishPosition.models import Position
 from UserAuth.models import User
+from PublishPosition.utils.forms.MyForm import PublishPositionForm
 
 from PublishPosition.utils.provincelist import province_dictionary
 from PublishPosition.utils.district import district_dictionary
@@ -50,12 +51,14 @@ def view_position_detail(request, nid):
         "position_name": position.position_name,
         "salary": position.salary,
         "summary": position.summary,
+        # XSS alert; need fix
         "detail": mark_safe(markdown.markdown(position.detail,
                                     extensions=[
                                         'markdown.extensions.extra',
                                         'markdown.extensions.codehilite',
                                         'markdown.extensions.toc',
                                     ])),
+        # "detail": position.detail,
         "HR": position.HR,
         "district": position.get_district_display(),
     }
@@ -64,6 +67,14 @@ def view_position_detail(request, nid):
 
 
 def publish_position(request):
+    # Publish Position理应只能HR身份登录，因此优先校验是否是HR身份
+    # 获取当前登录用户信息
+    user_obj = User.objects.filter(id=request.session.get("UserInfo")['id']).first()
+    # 检查发布职位者的身份是否为HR
+    if user_obj.identity != 2:
+        # 当前登录用户非HR身份
+        return HttpResponse("请使用HR身份登录！")
+
     pattern = re.compile(str(request.session['UserInfo'].get("id")) + r'.*')
     file_names = os.listdir(settings.MEDIA_ROOT)
     matching_files = []
@@ -100,7 +111,9 @@ def publish_position(request):
     #              "matching_files": matching_files[0],
     #              }
     # return render(request, "UserInfo/userinfo.html", context=user_info)
+
     if request.method == 'GET':
+        form = PublishPositionForm()
         context = {
             'district_dictionary': district_dictionary,
             "matching_files": matching_files[0],
@@ -114,14 +127,8 @@ def publish_position(request):
         data_dict[field] = request.POST.get(field)
 
     print(data_dict['detail'])
-
-    # 获取当前登录用户信息
-    user_obj = User.objects.filter(id=request.session.get("UserInfo")['id']).first()
+    # 补充字段
     data_dict['HR'] = user_obj
-    # 检查发布职位者的身份是否为HR
-    if user_obj.identity != 2:
-        # 当前登录用户非HR身份
-        return HttpResponse("请使用HR身份登录！")
 
     # 字段校验
     data_dict, error_dict, check_passed_flag = check_publish_position_form(data_dict)
