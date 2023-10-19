@@ -1,4 +1,3 @@
-{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -25,17 +24,17 @@
             font-weight: bold;
         }
 
-        .custom-background{
+        .custom-background {
             background-color: #E5E5E5;
         }
 
-        .custom-button{
+        .custom-button {
             background-color: #17a2b8;
             color: white;
             border: 1px solid #17a2b8;
         }
 
-        .custom-text-color{
+        .custom-text-color {
             color: #17a2b8 !important;
         }
 
@@ -92,15 +91,16 @@
             font-weight: bold;
         }
 
-		.content-container {
-			padding-top: 40px;
+        .content-container {
+            padding-top: 40px;
 
-		}
+        }
 
-		.circle-image {
+        .circle-image {
             border-radius: 50%;
             overflow: hidden;
         }
+
         .circle-image img {
             width: 100%;
             height: 100%;
@@ -188,11 +188,11 @@
             z-index: 999;
         }
 
-        .dropdown:hover .dropdown-menu{
-        display: block;
+        .dropdown:hover .dropdown-menu {
+            display: block;
         }
 
-        .dropdown-menu{
+        .dropdown-menu {
             margin-top: 0;
         }
 
@@ -206,7 +206,7 @@
         }
 
         legend {
-            color: #17a2b8; 
+            color: #17a2b8;
             border-bottom: 1px solid #17a2b8;
             padding-bottom: 5px;
             margin-bottom: 15px;
@@ -262,39 +262,64 @@
                 </div>
             </div>
         </div>
-    </nav>
+    </div>
+</nav>
 
-    <div class="container content-container bg-light" style="margin-top: 3rem; margin-bottom: 3rem; border-radius: 10px;">
-        <div class="row" style="padding-left: 5rem; padding-right: 5rem; padding-bottom: 5rem;">
-            <form method="post" action="/position/publish/" novalidate>
-                <fieldset>
+<div class="container content-container bg-light" style="margin-top: 3rem; margin-bottom: 3rem; border-radius: 10px;">
+    <div class="row" style="padding-left: 5rem; padding-right: 5rem; padding-bottom: 5rem;">
+        <form method="post" action="/position/publish/" novalidate>
+            <fieldset>
                 <legend>发布职位</legend>
                 {% csrf_token %}
                 <div class="mb-3">
                     <label for="position_name" class="form-label">岗位名称</label>
+<<<<<<< HEAD
                     <input type="text" id="position_name" name="position_name" class='form-control' aria-describedby="position_name_Help" value="{{ data_dict.position_name }}" required>
                     <div id="position_name_Help" class="form-text" style="color: red;">{{ error_dict.position_name }}</div>
+=======
+                    <input type="text" id="position_name" name="position_name" class='form-control'
+                           value="{{ data_dict.position_name }}" required>
+                    <span style="color: red">{{ error_dict.position_name }}</span>
+>>>>>>> 79562c8 (Fix: XSS vulnerability when publishing position)
                 </div>
 
                 <div class="mb-3">
                     <label for="salary" class="form-label">薪资</label>
+<<<<<<< HEAD
                     <input type="number" id="salary" name="salary" class="form-control" aria-describedby="salary_Help" value="{{ data_dict.salary }}" required>
                     <div id="salary_Help" class="form-text" style="color: red;">{{ error_dict.salary }}</div>
                     
+=======
+                    <input type="number" id="salary" name="salary" class="form-control" value="{{ data_dict.salary }}"
+                           required>
+                    <span style="color: red">{{ error_dict.salary }}</span>
+>>>>>>> 79562c8 (Fix: XSS vulnerability when publishing position)
                 </div>
 
                 <div class="mb-3">
                     <label for="summary" class="form-label">岗位简介</label>
+<<<<<<< HEAD
                     <input type="text" id="summary" name="summary" class="form-control" aria-describedby="summary-Help" value="{{ data_dict.summary }}" required>
                     <div id="summary_Help" class="form-text" style="color: red;">{{ error_dict.summary }}</div>
                     
+=======
+                    <input type="text" id="summary" name="summary" class="form-control" value="{{ data_dict.summary }}"
+                           required>
+                    <span style="color: red">{{ error_dict.summary }}</span>
+>>>>>>> 79562c8 (Fix: XSS vulnerability when publishing position)
                 </div>
-                
+
                 <div class="mb-3">
                     <label for="detail" class="form-label">岗位详细内容</label>
+<<<<<<< HEAD
                     <textarea rows="10" id="detail" name="detail" class="form-control" aria-describedby="detail_Help" value="{{ data_dict.detail }}" required></textarea>
                     <div id="detail_Help" class="form-text" style="color: red;">{{ error_dict.detail }}</div>
                     
+=======
+                    <textarea rows="10" id="detail" name="detail" class="form-control" value="{{ data_dict.detail }}"
+                              required></textarea>
+                    <span style="color: red">{{ error_dict.detail }}</span>
+>>>>>>> 79562c8 (Fix: XSS vulnerability when publishing position)
                 </div>
 
 
@@ -302,12 +327,13 @@
                     <label for="district" class="+form-label">所属地区</label>
                     <select name="district" id="district" class="form-select">
                         {% for key,value in district_dictionary.items %}
-                            <option value="{{ key }}" {% if key ==  data_dict.district  %}selected{% endif %}>{{ value }}</option>
+                            <option value="{{ key }}"
+                                    {% if key ==  data_dict.district %}selected{% endif %}>{{ value }}</option>
                         {% endfor %}
                     </select>
                 </div>
 
-                
+
                 <div class="mb-3">
                     <label for="published_state" class="form-label">发布状态</label>
                     <select name="published_state" id="published_state" class="form-select">
@@ -315,16 +341,17 @@
                         <option value="1" {% if data_dict.published_state == 1 %}selected{% endif %}>已发布</option>
                     </select>
                 </div>
-                
-                <button type="submit" class="btn btn-primary">提交</button>
-                </fieldset>
-            </form>
-        </div>
-    </div>
 
-    <script>
-        var simplemde = new SimpleMDE({ element: document.getElementById("detail") });
-    </script>
+                <button type="submit" class="btn btn-primary">提交</button>
+            </fieldset>
+        </form>
+    </div>
+</div>
+
+<script>
+    var simplemde = new SimpleMDE({element: document.getElementById("detail")});
+    simplemde.value("{{ data_dict.detail }}");
+</script>
 </body>
 <script>
     $(function () {

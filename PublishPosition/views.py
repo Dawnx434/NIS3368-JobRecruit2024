@@ -100,7 +100,7 @@ def publish_position(request):
     for field in ['position_name', 'salary', 'summary', 'detail', 'district', 'published_state']:
         data_dict[field] = request.POST.get(field)
 
-    print(data_dict['detail'])
+    # print(data_dict['detail'])
     # 补充字段
     data_dict['HR'] = user_obj
 
