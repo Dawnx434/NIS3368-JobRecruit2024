@@ -273,53 +273,26 @@
                 {% csrf_token %}
                 <div class="mb-3">
                     <label for="position_name" class="form-label">岗位名称</label>
-<<<<<<< HEAD
                     <input type="text" id="position_name" name="position_name" class='form-control' aria-describedby="position_name_Help" value="{{ data_dict.position_name }}" required>
-                    <div id="position_name_Help" class="form-text" style="color: red;">{{ error_dict.position_name }}</div>
-=======
-                    <input type="text" id="position_name" name="position_name" class='form-control'
-                           value="{{ data_dict.position_name }}" required>
-                    <span style="color: red">{{ error_dict.position_name }}</span>
->>>>>>> 79562c8 (Fix: XSS vulnerability when publishing position)
+                    <span id="position_name_Help" class="form-text" style="color: red">{{ error_dict.position_name }}</span>
                 </div>
 
                 <div class="mb-3">
                     <label for="salary" class="form-label">薪资</label>
-<<<<<<< HEAD
-                    <input type="number" id="salary" name="salary" class="form-control" aria-describedby="salary_Help" value="{{ data_dict.salary }}" required>
-                    <div id="salary_Help" class="form-text" style="color: red;">{{ error_dict.salary }}</div>
-                    
-=======
-                    <input type="number" id="salary" name="salary" class="form-control" value="{{ data_dict.salary }}"
-                           required>
-                    <span style="color: red">{{ error_dict.salary }}</span>
->>>>>>> 79562c8 (Fix: XSS vulnerability when publishing position)
+                    <input type="number" id="salary" name="salary" class="form-control" aria-describedby="salary_Help"  value="{{ data_dict.salary }}" required>
+                    <span id="salary_Help" class="form-text" style="color: red">{{ error_dict.salary }}</span>
                 </div>
 
                 <div class="mb-3">
                     <label for="summary" class="form-label">岗位简介</label>
-<<<<<<< HEAD
                     <input type="text" id="summary" name="summary" class="form-control" aria-describedby="summary-Help" value="{{ data_dict.summary }}" required>
-                    <div id="summary_Help" class="form-text" style="color: red;">{{ error_dict.summary }}</div>
-                    
-=======
-                    <input type="text" id="summary" name="summary" class="form-control" value="{{ data_dict.summary }}"
-                           required>
-                    <span style="color: red">{{ error_dict.summary }}</span>
->>>>>>> 79562c8 (Fix: XSS vulnerability when publishing position)
+                    <span id="summary-Help" class="form-text" style="color: red">{{ error_dict.summary }}</span>
                 </div>
 
                 <div class="mb-3">
                     <label for="detail" class="form-label">岗位详细内容</label>
-<<<<<<< HEAD
                     <textarea rows="10" id="detail" name="detail" class="form-control" aria-describedby="detail_Help" value="{{ data_dict.detail }}" required></textarea>
-                    <div id="detail_Help" class="form-text" style="color: red;">{{ error_dict.detail }}</div>
-                    
-=======
-                    <textarea rows="10" id="detail" name="detail" class="form-control" value="{{ data_dict.detail }}"
-                              required></textarea>
-                    <span style="color: red">{{ error_dict.detail }}</span>
->>>>>>> 79562c8 (Fix: XSS vulnerability when publishing position)
+                    <span id="detail_Help" class="form-text" style="color: red">{{ error_dict.detail }}</span>
                 </div>
 
 
