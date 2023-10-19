@@ -83,7 +83,7 @@
             z-index: 0;
         }
 
-        <!-- modal -->
+        /* modal */
         #myModal {
             display: none;
             position: fixed;
@@ -159,7 +159,26 @@
             z-index: 999;
         }
 
+        .dropdown:hover .dropdown-menu{
+            display: block;
+        }
 
+        .dropdown-menu{
+            margin-top: 0;
+        }
+
+        .dropdown-toggle::after {
+            content: none;
+        }
+
+        .dropdown-toggle::after {
+            content: none;
+        }
+
+        .custom-nav-link:hover {
+            color: #17a2b8 !important;
+            font-weight: bold;
+        }
 
 
 
@@ -177,21 +196,21 @@
         <div class="collapse navbar-collapse" id="navbar">
             <ul class="navbar-nav me-auto">
                 <li class="nav-item">
-                    <a class="nav-link" href="#">首页</a>
+                    <a class="nav-link custom-nav-link" style="margin-left: 1rem;">首页</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">内推</a>
+                    <a class="nav-link custom-nav-link" style="margin-left: 1rem;">内推</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">面经</a>
+                    <a class="nav-link custom-nav-link" style="margin-left: 1rem;">面经</a>
                 </li>
             </ul>
             <form class="d-flex">
                 <input class="form-control me-2" type="text" placeholder="按条件搜索...">
                 <button class="btn btn-primary custom-button" type="submit"><i class="fas fa-search"></i></button>
             </form>
-            <div class="d-flex nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-bs-toggle="dropdown">
+            <div class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="{% url 'UserInfo:index' %}" id="navbardrop" data-toggle="dropdown">
                     <img src="../../static/images/{{ image }}" alt="头像" style="width:30px; height:30px;">
                 </a>
                 <div class="dropdown-menu">
@@ -200,6 +219,15 @@
                     <a class="dropdown-item" href="../info/">个人资料</a>
                     <a class="dropdown-item" href="../account/">账号安全</a>
                     <a class="dropdown-item" href="../logout/">退出登录</a>
+                </div>
+            </div>
+            <div class="nav-item dropdown">
+                <button type="button" class="btn btn-primary custom-button dropdown-toggle" onclick="window.location.href='#'" data-toggle="dropdown">
+                    发布
+                </button>
+                <div class="dropdown-menu">
+                    <a class="dropdown-item" href="#">发动态</a>
+                    <a class="dropdown-item" href="{% url 'PublishPosition:publish'%}">发职位</a>
                 </div>
             </div>
         </div>
@@ -218,7 +246,7 @@
                         <span class="close" onclick="closeModal()" id="closeModalBtn">&times;</span>
                         <h2 style="text-align: center;">请选择您要上传的简历文件</h2>
                         <p style="text-align: center; color: #17a2b8; font-weight: bold;">文件格式必须以.pdf为后缀</p>
-                        <form method="post" action="{% url 'resume_upload' %}" enctype="multipart/form-data"
+                        <form method="post" action="{% url 'UserInfo:resume_upload' %}" enctype="multipart/form-data"
                               class="d-flex justify-content-center align-items-center flex-wrap">
                             {% csrf_token %}
                             <label class="btn btn-primary custom-button" style="margin:20px;">

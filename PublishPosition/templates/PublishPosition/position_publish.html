@@ -3,41 +3,307 @@
 <head>
     <meta charset="UTF-8">
     <title>发布职位</title>
+    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/5.1.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+
+        .custom-text-color {
+            color: #17a2b8 !important;
+            font-weight: bold;
+        }
+
+        .custom-background{
+            background-color: #E5E5E5;
+        }
+
+        .custom-button{
+            background-color: #17a2b8;
+            color: white;
+            border: 1px solid #17a2b8;
+        }
+
+        .custom-text-color{
+            color: #17a2b8 !important;
+        }
+
+        .left {
+            background-color: #17a2b8 !important;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            border-top-left-radius: 10px;
+            border-bottom-left-radius: 10px;
+        }
+
+        .right {
+            background-color: white;
+            padding: 20px;
+            border-top-right-radius: 10px;
+            border-bottom-right-radius: 10px;
+        }
+
+        .column {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+
+        .column p {
+            width: 48%;
+        }
+
+        .lbox {
+            margin: 20px;
+            padding: 10px;
+        }
+
+        .lbox.row {
+            padding: 8px 0px;
+        }
+
+        .progress {
+            margin-top: 5px;
+        }
+
+        .rbox {
+            margin: 30px;
+        }
+
+        .rbox h4 {
+            padding-bottom: 5px;
+            color: #17a2b8;
+            border-bottom: 1px solid #17a2b8;
+            font-weight: bold;
+        }
+
+		.content-container {
+			padding-top: 40px;
+
+		}
+
+		.circle-image {
+            border-radius: 50%;
+            overflow: hidden;
+        }
+        .circle-image img {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        .dropdown-container {
+            position: relative;
+            left: -50px;
+        }
+
+        /* modal */
+        #myModal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(0, 0, 0, 0.6);
+        }
+
+        #photoModal {
+            position: relative;
+            transform: translate(40%, 0%);
+            width: 400px;
+            height: 300px;
+            background-color: #fff;
+            border: 0px solid #000;
+            padding: 20px;
+        }
+
+
+        .modal {
+            position: fixed;
+            top: 35%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border: 1px solid #888;
+            color: #000;
+        }
+
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 50%;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+
+        #uploadedPhoto {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .modal,
+        #modalBackdrop {
+            display: none;
+        }
+
+        #modalBackdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(128, 128, 128, 0.6);
+            z-index: 999;
+        }
+
+        .dropdown:hover .dropdown-menu{
+        display: block;
+        }
+
+        .dropdown-menu{
+            margin-top: 0;
+        }
+
+        .dropdown-toggle::after {
+            content: none;
+        }
+
+        .custom-nav-link:hover {
+            color: #17a2b8 !important;
+            font-weight: bold;
+        }
+
+        legend {
+            color: #17a2b8; 
+            border-bottom: 1px solid #17a2b8;
+            padding-bottom: 5px;
+            margin-bottom: 15px;
+        }
+
+    </style>
 </head>
-<body>
-<h1>发布职位</h1>
-<form method="post" action="/position/publish/" novalidate>
-    {% csrf_token %}
-    <label for="position_name">岗位名称</label>
-    <input type="text" id="position_name" name="position_name" value="{{ data_dict.position_name }}" required>
-    {{ error_dict.position_name }}
+<body class="custom-background">
 
-    <label for="salary">薪资</label>
-    <input type="number" id="salary" name="salary" value="{{ data_dict.salary }}" required>
-    {{ error_dict.salary }}
+    <nav class="navbar navbar-expand-sm navbar-light bg-light">
+        <div class="container">
+            <a class="navbar-brand custom-text-color" href="#">JobRecruitment</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbar">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link custom-nav-link" style="margin-left: 1rem;" href="#">首页</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link custom-nav-link" style="margin-left: 1rem;" href="#">内推</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link custom-nav-link" style="margin-left: 1rem;" href="#">面经</a>
+                    </li>
+                </ul>
+                <form class="d-flex">
+                    <input class="form-control me-2" type="text" placeholder="按条件搜索...">
+                    <button class="btn btn-primary custom-button" type="submit"><i class="fas fa-search"></i></button>
+                </form>
+                <div class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="{% url 'UserInfo:index'%}" id="navbardrop" data-toggle="dropdown">
+                        <img src="../../static/images/{{ matching_files }}?rand=<%= Date.now() %>" alt="头像"
+                             style="width:30px; height:30px;">
+                    </a>
+                    <div class="dropdown-menu">
+                        <a class="dropdown-item" href="{% url 'UserInfo:resume' %}">我的简历</a>
+                        <a class="dropdown-item" href="../application/">我的投递</a>
+                        <a class="dropdown-item" href="{% url 'UserInfo:user_info' %}">个人资料</a>
+                        <a class="dropdown-item" href="{% url 'UserInfo:account' %}">账号安全</a>
+                        <a class="dropdown-item" href="{% url 'UserAuth:logout' %}">退出登录</a>
+                    </div>
+                </div>
+                <div class="nav-item dropdown">
+                    <button type="button" class="btn btn-primary custom-button dropdown-toggle" onclick="window.location.href='#'" data-toggle="dropdown">
+                        发布
+                    </button>
+                    <div class="dropdown-menu">
+                        <a class="dropdown-item" href="#">发动态</a>
+                        <a class="dropdown-item" href="{% url 'PublishPosition:publish'%}">发职位</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
 
-    <label for="summary">岗位简介</label>
-    <input type="text" id="summary" name="summary" value="{{ data_dict.summary }}" required>
-    {{ error_dict.summary }}
+    <div class="container content-container bg-light" style="margin-top: 3rem; margin-bottom: 3rem; border-radius: 10px;">
+        <div class="row" style="padding-left: 5rem; padding-right: 5rem; padding-bottom: 5rem;">
+            <form method="post" action="/position/publish/" novalidate>
+                <fieldset>
+                <legend>发布职位</legend>
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="position_name" class="form-label">岗位名称</label>
+                    <input type="text" id="position_name" name="position_name" class='form-control' value="{{ data_dict.position_name }}" required>
+                    {{ error_dict.position_name }}
+                </div>
 
-    <label for="detail">岗位详细内容</label>
-    <input type="text" id="detail" name="detail" value="{{ data_dict.detail }}" required>
-    {{ error_dict.detail }}
+                <div class="mb-3">
+                    <label for="salary" class="form-label">薪资</label>
+                    <input type="number" id="salary" name="salary" class="form-control" value="{{ data_dict.salary }}" required>
+                    {{ error_dict.salary }}
+                </div>
 
-    <label for="district">所属地区</label>
-    <select name="district" id="district">
-        {% for key,value in district_dictionary.items %}
-            <option value="{{ key }}" {% if key ==  data_dict.district  %}selected{% endif %}>{{ value }}</option>
-        {% endfor %}
-    </select>
+                <div class="mb-3">
+                    <label for="summary" class="form-label">岗位简介</label>
+                    <input type="text" id="summary" name="summary" class="form-control" value="{{ data_dict.summary }}" required>
+                    {{ error_dict.summary }}
+                </div>
+                
+                <div class="mb-3">
+                    <label for="detail" class="form-label">岗位详细内容</label>
+                    <input type="text" id="detail" name="detail" class="form-control" value="{{ data_dict.detail }}" required>
+                    {{ error_dict.detail }}
+                </div>
 
-    <label for="published_state">发布状态</label>
-    <select name="published_state" id="published_state">
-        <option value="0" {% if data_dict.published_state == 0 %}selected{% endif %}>未发布</option>
-        <option value="1" {% if data_dict.published_state == 1 %}selected{% endif %}>已发布</option>
-    </select>
+                <div class="mb-3">
+                    <label for="district" class="form-label">所属地区</label>
+                    <select name="district" id="district" class="form-select">
+                        {% for key,value in district_dictionary.items %}
+                            <option value="{{ key }}" {% if key ==  data_dict.district  %}selected{% endif %}>{{ value }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
 
-    <button type="submit">提交</button>
-</form>
+                
+                <div class="mb-3">
+                    <label for="published_state" class="form-label">发布状态</label>
+                    <select name="published_state" id="published_state" class="form-select">
+                        <option value="0" {% if data_dict.published_state == 0 %}selected{% endif %}>未发布</option>
+                        <option value="1" {% if data_dict.published_state == 1 %}selected{% endif %}>已发布</option>
+                    </select>
+                </div>
+                
+                <button type="submit" class="btn btn-primary">提交</button>
+                </fieldset>
+            </form>
+        </div>
+    </div>
 </body>
 </html>
