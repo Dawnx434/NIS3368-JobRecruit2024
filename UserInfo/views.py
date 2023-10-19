@@ -11,19 +11,60 @@ import urllib.parse
 
 # Create your views here.
 def index(request):
-    # 获取头像
     pattern = re.compile(str(request.session['UserInfo'].get("id")) + r'.*')
     file_names = os.listdir(settings.MEDIA_ROOT)
     matching_files = []
     for file_name in file_names:
         if pattern.match(file_name):
             matching_files.append(file_name)
-    name = request.session.get("UserInfo")
+    # 没有上传就用默认的
     if not matching_files:
         matching_files.append('default.jpeg')
-    context = {"username": name,
-               "id": matching_files[0]}
-    return render(request, "UserInfo/index.html", context)
+    if request.method == "GET":
+        # 查询并返回数据
+        query_set = User.objects.filter(id=request.session["UserInfo"].get("id"))
+        # 获取用户数据
+        obj = query_set.first()
+        user_info = {"id": request.session['UserInfo'].get("id"),
+                     "username": obj.username,
+                     "mobile_phone": obj.mobile_phone,
+                     "gender": obj.get_gender_display(),
+                     "email": obj.email,
+                     "edu_ground": obj.edu_ground,
+                     "school": obj.school,
+                     "major": obj.major,
+                     "excepting_position": obj.excepting_position,
+                     "excepting_location": obj.excepting_location,
+                     "matching_files": matching_files[0],
+                     }
+        return render(request, "UserInfo/index.html", context=user_info)
+    # else POST
+    data = request.POST
+    fields = ['username', 'mobile_phone', 'gender', 'email',
+              'edu_ground', 'school', 'major', 'excepting_position', 'excepting_location']
+    # 获取当前用户数据行
+    query_set = User.objects.filter(id=request.session['UserInfo'].get("id"))
+    # 正常来说根据id查表应该查询出唯一的用户，这里作检查
+    if len(query_set) != 1:
+        return HttpResponse("不合法的身份")
+    # 获取用户数据
+    obj = query_set.first()
+    for field in fields:
+        setattr(obj, field, data.get(field))
+    obj.save()
+    user_info = {"id": request.session['UserInfo'].get("id"),
+                 "username": obj.username,
+                 "mobile_phone": obj.mobile_phone,
+                 "gender": obj.get_gender_display(),
+                 "email": obj.email,
+                 "edu_ground": obj.edu_ground,
+                 "school": obj.school,
+                 "major": obj.major,
+                 "excepting_position": obj.excepting_position,
+                 "excepting_location": obj.excepting_location,
+                 "matching_files": matching_files[0],
+                 }
+    return render(request, "UserInfo/index.html", context=user_info)
 
 
 def resume(request):
@@ -219,6 +260,8 @@ def show_index(request):
     context = {"username": guest_name,
                'image':img}
     return render(request, "UserInfo/show_index.html", context)
+
+
 def find_image(request):
     pattern = re.compile(str(request.session['UserInfo'].get("id")) + r'.*')
     file_names = os.listdir(settings.MEDIA_ROOT)

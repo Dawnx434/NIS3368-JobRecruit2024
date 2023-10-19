@@ -41,10 +41,23 @@
             justify-content: center;
         }
 
+
+        .custom-nav .nav-link:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+            border-radius: 5px;
+        }
+
+        .custom-nav .nav-link.active {
+            background-color: rgba(255, 255, 255, 0.3);
+            color: white;
+            border-radius: 5px;
+        }
+
         .divider {
             border-top: 1px solid white;
-            margin-top: 5px;
-            margin-bottom: 5px;
+            margin-top: 8px;
+            margin-bottom: 8px;
         }
 
         .upload-button{
@@ -57,11 +70,7 @@
             justify-content: center;
         }
 
-        .active {
-            background-color: rgba(255, 255, 255, 0.3);
-            color: white;
-            border-radius: 5px;
-        }
+
 
         .full-width-nav {
             position: fixed;
@@ -264,7 +273,7 @@
 
 <script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
 <script src="https://cdn.staticfile.org/popper.js/1.15.0/umd/popper.min.js"></script>
-<script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+<script src="https://cdn.staticfile.org/twitter-bootstrap/5.1.1/js/bootstrap.min.js"></script>
 
 
 <script>
@@ -334,14 +343,16 @@
 
 
     function toggleNavColor(targetId) {
-        console.log('Clicked: ' + targetId);
 
         var targetNavItem = document.getElementById(targetId);
         var isCurrentlyActive = targetNavItem.classList.contains('active');
         var navItems = document.querySelectorAll('.nav-link');
 
         var currentActiveResume = document.querySelector('.resume-content.show');
-        if (currentActiveResume && !isCurrentlyActive) {
+        var resumeContentId = targetId.replace('resume_clicked', 'resume');
+        var resumeContent = document.getElementById(resumeContentId);
+
+        if (currentActiveResume) {
             currentActiveResume.classList.remove('show');
         }
 
@@ -353,11 +364,9 @@
             console.log('Clicked: NOT ACTIVE' + targetId);
 
             targetNavItem.classList.add('active');
+            resumeContent.classList.add('show');
         }
     }
-
-
-
 
 </script>
 
