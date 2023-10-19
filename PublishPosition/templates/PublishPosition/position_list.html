@@ -67,10 +67,25 @@
             margin-top: 20px;
             padding-right: 20px;
             padding-left: 20px;
-
         }
 
+        .card-body {
+            background-color: white;
+        }
 
+        .card-container a {
+            text-decoration: none;
+            color: black;
+        }
+
+        .card-header {
+            font-weight: bold;
+            font-size: 30px;
+        }
+
+        .card:hover{
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+        }
 
 
     </style>
@@ -125,15 +140,16 @@
     <div class="row">
         {% for obj in query_set %}
             <div class="col-md-4 card-container">
-                <div class="card-header custom-bg-color text-white">{{ obj.position_name }}</div>
+                <a href="/position/view/{{ obj.id }}" class="card-link">
                 <div class="card">
+                    <div class="card-header custom-bg-color text-white">{{ obj.position_name }}</div>
                     <div class="card-body">
-                        <p class="card-text">Salary: {{ obj.salary }}</p>
-                        <p class="card-text">Location: {{ obj.get_district_display }}</p>
+                        <p class="card-text">薪水: {{ obj.salary }}</p>
+                        <p class="card-text">地点: {{ obj.get_district_display }}</p>
                         <p class="card-text">HR: {{ obj.HR }}</p>
-                        <a href="/position/view/{{ obj.id }}" class="btn btn-light">View Details</a>
                     </div>
                 </div>
+                </a>
             </div>
         {% endfor %}
     </div>
