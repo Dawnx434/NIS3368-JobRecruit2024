@@ -4,6 +4,7 @@ import markdown
 
 from PublishPosition.models import Position
 from UserAuth.models import User
+from PublishPosition.utils.forms.MyForm import PublishPositionForm
 
 from PublishPosition.utils.provincelist import province_dictionary
 from PublishPosition.utils.district import district_dictionary
@@ -56,6 +57,7 @@ def view_position_detail(request, nid):
                                         'markdown.extensions.codehilite',
                                         'markdown.extensions.toc',
                                     ])),
+        # "detail": position.detail,
         "HR": position.HR,
         "district": position.get_district_display(),
     }
@@ -101,6 +103,7 @@ def publish_position(request):
     #              }
     # return render(request, "UserInfo/userinfo.html", context=user_info)
     if request.method == 'GET':
+        form = PublishPositionForm()
         context = {
             'district_dictionary': district_dictionary,
             "matching_files": matching_files[0],

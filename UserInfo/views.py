@@ -12,7 +12,7 @@ import urllib.parse
 # Create your views here.
 def index(request):
     pattern = re.compile(str(request.session['UserInfo'].get("id")) + r'.*')
-    file_names = os.listdir(settings.MEDIA_ROOT)
+    file_names = os.listdir(settings.PROFILE_ROOT)
     matching_files = []
     for file_name in file_names:
         if pattern.match(file_name):
@@ -105,13 +105,13 @@ def image_upload(request):
             return render(request, 'UserInfo/upload_avatar_result.html',{'message':'你上传的文件格式不正确', 'success': False})
         # 将原有图像进行删除
         pattern = re.compile(str(request.session['UserInfo'].get("id")) + r'.*')
-        file_names = os.listdir(settings.MEDIA_ROOT)
+        file_names = os.listdir(settings.PROFILE_ROOT)
         matching_files = []
         for file_name in file_names:
             if pattern.match(file_name):
                 matching_files.append(file_name)
-                os.remove(settings.MEDIA_ROOT + file_name)
-        save_path = os.path.join(settings.MEDIA_ROOT, str(request.session['UserInfo'].get("id")) + file_extension)
+                os.remove(settings.PROFILE_ROOT + file_name)
+        save_path = os.path.join(settings.PROFILE_ROOT, str(request.session['UserInfo'].get("id")) + file_extension)
         # 保存文件到指定位置
         with open(save_path, 'wb') as file:
             for chunk in upload_image.chunks():
@@ -148,7 +148,7 @@ def modify(request):
 
 def info(request):
     pattern = re.compile(str(request.session['UserInfo'].get("id")) + r'.*')
-    file_names = os.listdir(settings.MEDIA_ROOT)
+    file_names = os.listdir(settings.PROFILE_ROOT)
     matching_files = []
     for file_name in file_names:
         if pattern.match(file_name):
@@ -264,7 +264,7 @@ def show_index(request):
 
 def find_image(request):
     pattern = re.compile(str(request.session['UserInfo'].get("id")) + r'.*')
-    file_names = os.listdir(settings.MEDIA_ROOT)
+    file_names = os.listdir(settings.PROFILE_ROOT)
     matching_files = []
     for file_name in file_names:
         if pattern.match(file_name):
