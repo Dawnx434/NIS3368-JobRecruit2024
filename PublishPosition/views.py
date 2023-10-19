@@ -131,6 +131,18 @@ def modify_position(request, nid):
     position_obj = query_set.first()
     # 获取当前登录用户信息
     user_obj = User.objects.filter(id=request.session.get("UserInfo")['id']).first()
+
+    # 获取头像
+    pattern = re.compile(str(request.session['UserInfo'].get("id")) + r'.*')
+    file_names = os.listdir(settings.PROFILE_ROOT)
+    matching_files = []
+    for file_name in file_names:
+        if pattern.match(file_name):
+            matching_files.append(file_name)
+    # 没有上传就用默认的
+    if not matching_files:
+        matching_files.append('default.jpeg')
+
     # 检查发布职位者的身份是否为HR
     if user_obj.identity != 2:
         # 当前登录用户非HR身份
@@ -151,7 +163,8 @@ def modify_position(request, nid):
         }
         context = {
             'district_dictionary': district_dictionary,
-            'data_dict': data_dict
+            'data_dict': data_dict,
+            "matching_files": matching_files[0],
         }
 
         return render(request, "PublishPosition/position_modify.html", context)
@@ -169,7 +182,8 @@ def modify_position(request, nid):
         context = {
             'district_dictionary': district_dictionary,
             'data_dict': data_dict,
-            'error_dict': error_dict
+            'error_dict': error_dict,
+            "matching_files": matching_files[0],
         }
         return render(request, "PublishPosition/position_modify.html", context)
 
