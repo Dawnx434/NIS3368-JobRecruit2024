@@ -32,7 +32,7 @@ def check_publish_position_form(data_dict):
     # check district
     try:
         data_dict['district'] = int(data_dict['district'])
-        if not (1 <= data_dict['district'] <= 953):
+        if not (0 <= data_dict['district'] <= 953):
             error_dict['district'] = "非法的省份代号"
             check_passed_flag = False
     except ValueError as e:

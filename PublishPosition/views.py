@@ -1,4 +1,6 @@
 from django.shortcuts import render, HttpResponse, redirect
+from django.utils.safestring import mark_safe
+import markdown
 
 from PublishPosition.models import Position
 from UserAuth.models import User
@@ -45,7 +47,12 @@ def view_position_detail(request, nid):
         "position_name": position.position_name,
         "salary": position.salary,
         "summary": position.summary,
-        "detail": position.detail,
+        "detail": mark_safe(markdown.markdown(position.detail,
+                                    extensions=[
+                                        'markdown.extensions.extra',
+                                        'markdown.extensions.codehilite',
+                                        'markdown.extensions.toc',
+                                    ])),
         "HR": position.HR,
         "district": position.get_district_display(),
     }
@@ -66,6 +73,8 @@ def publish_position(request):
     for field in ['position_name', 'salary', 'summary', 'detail', 'district', 'published_state']:
         data_dict[field] = request.POST.get(field)
 
+    print(data_dict['detail'])
+
     # 获取当前登录用户信息
     user_obj = User.objects.filter(id=request.session.get("UserInfo")['id']).first()
     data_dict['HR'] = user_obj
@@ -77,6 +86,7 @@ def publish_position(request):
     # 字段校验
     data_dict, error_dict, check_passed_flag = check_publish_position_form(data_dict)
 
+    print(check_passed_flag)
     if not check_passed_flag:
         # 未通过检查
         context = {
