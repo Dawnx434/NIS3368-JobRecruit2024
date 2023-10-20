@@ -87,6 +87,62 @@
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
         }
 
+        .card-content{
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: left;
+            height: 100%;
+        }
+
+        .card-title{
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            color: #17a2b8;
+            font-weight: bold;
+            font-size: 25px;
+        }
+
+        .hr-line {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 3px;
+            height: 100%;
+            background-color: #17a2b8;
+        }
+
+        .hr-line-light {
+            position: relative;
+            left: 0;
+            top: 0;
+            width: 1px;
+            height: 100%;
+            background-color: #17a2b8;
+            background-color: rgba(23, 162, 184, 0.6);
+        }
+
+        .property-box {
+            background-color: rgba(229, 229, 229, 0.6);
+            padding: 3px;
+            margin: 3px;
+            border-radius: 1px;
+            font-size: 13px;
+            max-width: 50px;
+            text-align: center;
+        }
+
+        .card{
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+            border-top-right-radius: 10px;
+            border-bottom-right-radius: 10px;
+        }
+
+
 
     </style>
 
@@ -102,30 +158,41 @@
         <div class="collapse navbar-collapse" id="navbar">
             <ul class="navbar-nav me-auto">
                 <li class="nav-item">
-                    <a class="nav-link" href="#">首页</a>
+                    <a class="nav-link custom-nav-link" style="margin-left: 1rem;" href="#">首页</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">内推</a>
+                    <a class="nav-link custom-nav-link" style="margin-left: 1rem;" href="#">内推</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">面经</a>
+                    <a class="nav-link custom-nav-link" style="margin-left: 1rem;" href="#">面经</a>
                 </li>
             </ul>
             <form class="d-flex">
                 <input class="form-control me-2" type="text" placeholder="按条件搜索...">
                 <button class="btn btn-primary custom-button" type="submit"><i class="fas fa-search"></i></button>
             </form>
-            <div class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="../index/" id="navbardrop" data-toggle="dropdown">
-                    <img src="../../static/images/{{ matching_files }}?rand=<%= Date.now() %>" alt="头像"
+            <div class="nav-item dropdown" style="margin-left: 1rem;">
+                <a class="nav-link dropdown-toggle" href="{% url 'UserInfo:index'%}" id="navbardrop"
+                   data-toggle="dropdown">
+                    <img src="../../../static/images/{{ matching_files }}?rand=<%= Date.now() %>" alt="头像"
                          style="width:30px; height:30px;">
                 </a>
                 <div class="dropdown-menu">
-                    <a class="dropdown-item" href="../resume">我的简历</a>
+                    <a class="dropdown-item" href="{% url 'UserInfo:resume' %}">我的简历</a>
                     <a class="dropdown-item" href="../application/">我的投递</a>
-                    <a class="dropdown-item" href="../info/">个人资料</a>
-                    <a class="dropdown-item" href="../account/">账号安全</a>
-                    <a class="dropdown-item" href="../logout/">退出登录</a>
+                    <a class="dropdown-item" href="{% url 'UserInfo:user_info' %}">个人资料</a>
+                    <a class="dropdown-item" href="{% url 'UserInfo:account' %}">账号安全</a>
+                    <a class="dropdown-item" href="{% url 'UserAuth:logout' %}">退出登录</a>
+                </div>
+            </div>
+            <div class="nav-item dropdown" style="margin-left: 1rem;">
+                <button type="button" class="btn btn-primary custom-button dropdown-toggle"
+                        onclick="window.location.href='#'" data-toggle="dropdown">
+                    发布
+                </button>
+                <div class="dropdown-menu">
+                    <a class="dropdown-item" href="#">发动态</a>
+                    <a class="dropdown-item" href="{% url 'PublishPosition:publish'%}">发职位</a>
                 </div>
             </div>
         </div>
@@ -137,29 +204,50 @@
 
 
     <div class="container">
-    <div class="row">
-        {% for obj in query_set %}
-            <div class="col-md-4 card-container">
-                <a href="/position/view/{{ obj.id }}" class="card-link">
-                <div class="card">
-                    <div class="card-header custom-bg-color text-white">{{ obj.position_name }}</div>
-                    <div class="card-body">
-                        <p class="card-text">薪水: {{ obj.salary }}</p>
-                        <p class="card-text">地点: {{ obj.get_district_display }}</p>
-                        <p class="card-text">HR: {{ obj.HR }}</p>
-                    </div>
+
+
+        <div class="container">
+            <div class="row">
+                {% for obj in query_set %}
+                <div class="col-md-6 card-container">
+                    <a href="/position/view/{{ obj.id }}" class="card-link">
+                        <div class="card">
+                            <div class="hr-line"></div>
+                            <div class="card-body" style="border-radius: 20px;">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="card-title">
+                                            {{ obj.position_name }}
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="card-content">
+                                            <div class="col-md-6 property-box">{{ obj.salary }}</div>
+                                            <div class="col-md-6 property-box">{{ obj.get_district_display }}</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-1">
+                                        <div class="hr-line-light"></div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="card-content">
+                                            发布者: {{ obj.HR }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
                 </div>
-                </a>
+                {% endfor %}
             </div>
-        {% endfor %}
+        </div>
+
+
     </div>
-</div>
-
 
 
 </div>
-
-
 
 
 <script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>

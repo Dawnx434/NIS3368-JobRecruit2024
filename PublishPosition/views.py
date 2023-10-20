@@ -17,6 +17,17 @@ import re
 # Create your views here.
 def position_list(request):
     """返回职位列表"""
+    # 获取头像
+    pattern = re.compile(str(request.session['UserInfo'].get("id")) + r'.*')
+    file_names = os.listdir(settings.PROFILE_ROOT)
+    matching_files = []
+    for file_name in file_names:
+        if pattern.match(file_name):
+            matching_files.append(file_name)
+    # 没有上传就用默认的
+    if not matching_files:
+        matching_files.append('default.jpeg')
+
     # get query condition: Page and PageSize
     try:
         page = 1 if not request.GET.get('Page') else int(request.GET.get('Page'))
@@ -31,8 +42,8 @@ def position_list(request):
     query_set = query_set[(page - 1) * pagesize: page * pagesize - 1]
 
     context = {
-        'query_set': query_set
-
+        'query_set': query_set,
+        'matching_files': matching_files[0],
     }
     return render(request, 'PublishPosition/position_list.html', context)
 
@@ -44,8 +55,20 @@ def view_position_detail(request, nid):
     if not obj:
         return HttpResponse("不存在的招聘信息或未开放的招聘信息")
 
+    # 获取头像
+    pattern = re.compile(str(request.session['UserInfo'].get("id")) + r'.*')
+    file_names = os.listdir(settings.PROFILE_ROOT)
+    matching_files = []
+    for file_name in file_names:
+        if pattern.match(file_name):
+            matching_files.append(file_name)
+    # 没有上传就用默认的
+    if not matching_files:
+        matching_files.append('default.jpeg')
+
     position = obj.first()
     context = {
+        "matching_files": matching_files[0],
         "user_id": request.session.get("UserInfo")['id'],
         "position_id": position.id,
         "position_name": position.position_name,

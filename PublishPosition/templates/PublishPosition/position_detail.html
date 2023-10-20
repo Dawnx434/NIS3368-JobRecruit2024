@@ -1,11 +1,214 @@
-<h1>{{ position_name }}</h1>
-{% if HR.id == user_id %}
-<a href="/position/modify/{{ position_id }}/">修改信息</a>
-{% endif %}
-<p>简介：</p>
-<p>{{ summary }}</p>
-<p>发布者：{{ HR }}</p>
-<p>岗位地点：{{ district }}</p>
-<p>薪水：{{ salary }}</p>
-<p>详细要求：</p>
-<p>{{ detail }}</p>
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/5.1.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <title>职位列表</title>
+    <style>
+
+        .custom-text-color {
+            color: #17a2b8 !important;
+            font-weight: bold;
+        }
+
+
+        .custom-background{
+            background-color: #E5E5E5;
+        }
+
+        .custom-bg-color {
+            background-color: #17a2b8;
+        }
+
+        .custom-button{
+            background-color: #17a2b8;
+            color: white;
+            border: 1px solid #17a2b8;
+        }
+
+
+        .progress {
+            margin-top: 5px;
+        }
+
+        .dropdown-container {
+            position: relative;
+            left: -50px;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+
+        .dropdown:hover .dropdown-menu{
+        display: block;
+        }
+
+        .dropdown-menu{
+            margin-top: 0;
+        }
+
+        .content-container{
+            width: 70%;
+        }
+
+        .position-title{
+            color: #17a2b8;
+            border-bottom: 2px solid #17a2b8;
+            padding-bottom: 5px;
+            margin-bottom: 15px;
+        }
+
+        .float-right{
+            float: right;
+        }
+
+        .position-detail{
+            margin-left: 15px;
+            margin-right:50px;
+            padding: 15px;
+            border-radius: 5px;
+            border: solid 1px grey;
+            word-wrap:break-word;
+            white-space:pre-wrap;
+        }
+
+
+
+
+
+
+
+    </style>
+
+</head>
+<body class="custom-background">
+
+<nav class="navbar navbar-expand-sm navbar-light bg-light">
+    <div class="container">
+        <a class="navbar-brand custom-text-color" href="#">JobRecruitment</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbar">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link custom-nav-link" style="margin-left: 1rem;" href="#">首页</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link custom-nav-link" style="margin-left: 1rem;" href="#">内推</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link custom-nav-link" style="margin-left: 1rem;" href="#">面经</a>
+                </li>
+            </ul>
+            <form class="d-flex">
+                <input class="form-control me-2" type="text" placeholder="按条件搜索...">
+                <button class="btn btn-primary custom-button" type="submit"><i class="fas fa-search"></i></button>
+            </form>
+            <div class="nav-item dropdown" style="margin-left: 1rem;">
+                <a class="nav-link dropdown-toggle" href="{% url 'UserInfo:index'%}" id="navbardrop"
+                   data-toggle="dropdown">
+                    <img src="../../../static/images/{{ matching_files }}?rand=<%= Date.now() %>" alt="头像"
+                         style="width:30px; height:30px;">
+                </a>
+                <div class="dropdown-menu">
+                    <a class="dropdown-item" href="{% url 'UserInfo:resume' %}">我的简历</a>
+                    <a class="dropdown-item" href="../application/">我的投递</a>
+                    <a class="dropdown-item" href="{% url 'UserInfo:user_info' %}">个人资料</a>
+                    <a class="dropdown-item" href="{% url 'UserInfo:account' %}">账号安全</a>
+                    <a class="dropdown-item" href="{% url 'UserAuth:logout' %}">退出登录</a>
+                </div>
+            </div>
+            <div class="nav-item dropdown" style="margin-left: 1rem;">
+                <button type="button" class="btn btn-primary custom-button dropdown-toggle"
+                        onclick="window.location.href='#'" data-toggle="dropdown">
+                    发布
+                </button>
+                <div class="dropdown-menu">
+                    <a class="dropdown-item" href="#">发动态</a>
+                    <a class="dropdown-item" href="{% url 'PublishPosition:publish'%}">发职位</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+
+
+<div class="container content-container bg-light" style="margin-top: 3rem; margin-bottom: 3rem; border-radius: 10px;">
+    <div class="row" style="padding-left: 5rem; padding-top:3.5rem; padding-right: 5rem; padding-bottom: 5rem;">
+
+        <div class="row">
+            <div class="col-md-7">
+                <div class="position-title">
+                    <h1 class="custom-text-color">{{ position_name }}</h1>
+                </div>
+            </div>
+            <div class="col-md-5">
+                {% if HR.id == user_id %}
+                <a href="/position/modify/{{ position_id }}/" class="btn btn-primary custom-button float-right"
+                   style="text-align: right;">修改职位信息</a>
+                {% endif %}
+            </div>
+        </div>
+        <div class="row" style="margin-top: 10px;">
+            <p><span style="font-weight: bold;">简介：</span>{{ summary }}</p>
+            <p><span style="font-weight: bold;">发布者：</span>{{ HR }}</p>
+            <p><span style="font-weight: bold;">岗位地点：</span>{{ district }}</p>
+            <p><span style="font-weight: bold;">薪水：</span>{{ salary }}</p>
+            <p><span style="font-weight: bold;">详细要求：</span></p>
+        </div>
+        <div class="row position-detail">
+            <p>{{ detail }}</p>
+        </div>
+
+
+    </div>
+</div>
+
+
+<script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://cdn.staticfile.org/popper.js/1.15.0/umd/popper.min.js"></script>
+<script src="https://cdn.staticfile.org/twitter-bootstrap/5.1.1/js/bootstrap.min.js"></script>
+
+<script>
+    $(document).ready(function(){
+        $(".dropdown").hover(function(){
+            var dropdownMenu = $(this).children(".dropdown-menu");
+            if(dropdownMenu.is(":visible")){
+                dropdownMenu.parent().toggleClass("open");
+            }
+        });
+    });
+
+    $(document).ready(function(){
+        $(document).off('click.bs.dropdown.data-api');
+    });
+
+
+
+
+
+
+
+
+
+</script>
+</body>
+</html>
+
