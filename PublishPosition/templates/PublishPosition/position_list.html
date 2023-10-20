@@ -95,7 +95,7 @@
             height: 100%;
         }
 
-        .card-title{
+        .card-title {
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -104,6 +104,7 @@
             color: #17a2b8;
             font-weight: bold;
             font-size: 25px;
+            word-wrap: break-word;
         }
 
         .hr-line {
@@ -127,11 +128,11 @@
 
         .property-box {
             background-color: rgba(229, 229, 229, 0.6);
-            padding: 3px;
-            margin: 3px;
+            padding: 1px;
+            margin-top: 3px;
             border-radius: 1px;
             font-size: 13px;
-            max-width: 50px;
+            width: 100%;
             text-align: center;
         }
 
@@ -141,6 +142,32 @@
             border-top-right-radius: 10px;
             border-bottom-right-radius: 10px;
         }
+
+        .list-content{
+            background-color: white;
+            border-radius: 10px;
+            padding-top: 30px;
+            padding-bottom: 50px;
+            padding-left: 50px;
+            padding-right: 50px;
+            margin: auto;
+            margin-top: 20px;
+        }
+
+        .content-container{
+            display: flex;
+            width: 80%;
+            margin: auto;
+        }
+
+        h1{
+            font-weight: bold;
+            font-size: 30px;
+            padding-left: 20px;
+        }
+
+
+
 
 
 
@@ -200,53 +227,58 @@
 </nav>
 
 
-<div class="container">
+<div class="content-container">
 
-
-    <div class="container">
-
-
-        <div class="container">
-            <div class="row">
-                {% for obj in query_set %}
-                <div class="col-md-6 card-container">
-                    <a href="/position/view/{{ obj.id }}" class="card-link">
-                        <div class="card">
-                            <div class="hr-line"></div>
-                            <div class="card-body" style="border-radius: 20px;">
-                                <div class="row">
-                                    <div class="col-md-4">
-                                        <div class="card-title">
-                                            {{ obj.position_name }}
-                                        </div>
+    <div class="list-content">
+        <h1>最新发布职位</h1>
+        <div class="row">
+            {% for obj in query_set %}
+            <div class="col-md-6 card-container">
+                <a href="/position/view/{{ obj.id }}" class="card-link">
+                    <div class="card">
+                        <div class="hr-line"></div>
+                        <div class="card-body" style="border-radius: 20px;">
+                            <div class="row">
+                            <div class="col-md-6">
+                                <div class="card-title" id="position-name-{{ obj.id }}">
+                                    {{ obj.position_name }}
+                                </div>
+                            </div>
+                            <script>
+                                console.log('test the length of title');
+                                var myBox = document.getElementById('position-name-{{ obj.id }}');
+                                var text = myBox.innerText;
+                                console.log(text);
+                                console.log(text.length);
+                                var maxLength = 15;
+                                if (text.length > maxLength) {
+                                    text = text.substring(0, maxLength) + '...';
+                                }
+                                myBox.innerText = text;
+                            </script>
+                                <div class="col-md-2" style="padding: 0;">
+                                    <div class="card-content">
+                                        <div class="col-md-6 property-box">{{ obj.salary }}</div>
+                                        <div class="col-md-6 property-box">{{ obj.get_district_display }}</div>
                                     </div>
-                                    <div class="col-md-4">
-                                        <div class="card-content">
-                                            <div class="col-md-6 property-box">{{ obj.salary }}</div>
-                                            <div class="col-md-6 property-box">{{ obj.get_district_display }}</div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-1">
-                                        <div class="hr-line-light"></div>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <div class="card-content">
-                                            发布者: {{ obj.HR }}
-                                        </div>
+                                </div>
+                                <div class="col-md-1">
+                                    <div class="hr-line-light"></div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="card-content">
+                                        发布者: {{ obj.HR }}
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </a>
-                </div>
-                {% endfor %}
+                    </div>
+                </a>
             </div>
+            {% endfor %}
         </div>
 
-
     </div>
-
-
 </div>
 
 
@@ -267,6 +299,10 @@
     $(document).ready(function(){
         $(document).off('click.bs.dropdown.data-api');
     });
+
+
+
+
 
 
 </script>
