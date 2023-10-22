@@ -30,13 +30,18 @@ def position_list(request):
 
     # get query condition: Page and PageSize
     try:
-        page = 1 if not request.GET.get('Page') else int(request.GET.get('Page'))
-        pagesize = 20 if not request.GET.get('PageSize') else int(request.GET.get('PageSize'))
+        page = 1 if not request.GET.get('page') else int(request.GET.get('page'))
+        pagesize = 20 if not request.GET.get('page_size') else int(request.GET.get('page_size'))
+        keyword = '' if not request.GET.get('keyword') else request.GET.get('keyword')
+        target_place = None if not request.GET.get('target_place') else int(request.GET.get('target_place'))
     except ValueError as e:
         return HttpResponse("异常的查询参数")
 
     # get list
-    query_set = Position.objects.filter(published_state=1)
+    if target_place:
+        query_set = Position.objects.filter(published_state=1,position_name__contains=keyword, district=target_place)
+    else:
+        query_set = Position.objects.filter(published_state=1, position_name__contains=keyword)
 
     # filter according to query params
     query_set = query_set[(page - 1) * pagesize: page * pagesize - 1]
@@ -44,6 +49,7 @@ def position_list(request):
     context = {
         'query_set': query_set,
         'matching_files': matching_files[0],
+        'district_dictionary': district_dictionary,
     }
     return render(request, 'PublishPosition/position_list.html', context)
 
