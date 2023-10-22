@@ -37,12 +37,16 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    'django.contrib.humanize',
     'mdeditor',
 
+    'widget_tweaks',
+    
     # My app
     'UserAuth',
     'UserInfo',
     'PublishPosition',
+    'Forum',
 ]
 
 MIDDLEWARE = [

@@ -4,6 +4,7 @@ import re
 from django.shortcuts import render, HttpResponse, redirect
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from django.urls import reverse
 from UserAuth.utils.Forms import RegisterForm, LoginForm, ResetPasswordForm
 
 from UserAuth import models
@@ -71,7 +72,7 @@ def login(request):
         'username': row_obj.username
     }
     request.session.set_expiry(60 * 60 * 24 * 7)  # 7天免登录
-    return redirect('/info/info')
+    return redirect(reverse('Forum:home'))
 
 
 def reset_password(request):

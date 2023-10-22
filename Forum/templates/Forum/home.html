@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% load static humanize %}
+
+{% block content %}
+    <div style="border-radius: 10px;" class="mt-4 p-4 bg-light">
+        <div>
+            <div class="mb-4">
+                <a href="{% url 'Forum:new_topic' %}" class="btn btn-primary custom-button"><i class="fas fa-plus me-1"></i>新建动态</a>
+            </div>
+            {% if topics %}
+                {% for topic in topics %}
+                    <div class="p-2" style="{% if forloop.first %}border-top: 1px solid #17a2b8;{% else %}border-top: 1px solid #dddddd;{% endif %}">
+                        <div class="row">
+                            <div class="col-8 d-flex align-items-center">
+                                <a href="{% url 'Forum:topic_posts' topic.pk %}" class="text-decoration-none text-black">
+                                    {{ topic.subject }}
+                                </a>
+
+                            </div>
+                            <div class="col-1 d-flex align-items-center">
+                                <a href="{% url 'UserInfo:index' %}">
+                                    <img src="{% static 'images/' %}{{ matching_files }}?rand=<%= Date.now() %>" class="rounded-circle" alt="头像" style="width:40px; height:40px;">
+                                </a>
+                            </div>
+                            <div class="col-1 d-flex justify-content-center align-items-center text-muted">
+                                {{ topic.views }}
+                            </div>
+                            <div class="col-2 d-flex justify-content-center align-items-center text-muted">
+                                {{ topic.last_updated|naturaltime }}
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        </div>
+    </div>
+
+
+{% endblock %}

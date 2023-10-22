@@ -17,7 +17,7 @@ class CheckLoginStateMiddleware(MiddlewareMixin):
         # 均不满足访问控制条件，则检查是否是登录状态
         user_info = request.session.get("UserInfo")
         if not user_info:
-            return redirect('/auth/login/')
+            return redirect('/auth/login')
         return None
 
     def respond_request(self, request, response):
