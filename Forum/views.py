@@ -4,7 +4,7 @@ from django.conf import settings
 
 from UserAuth.models import User
 from .models import Topic, Post
-from .forms import NewTopicForm
+from .forms import NewTopicForm, PostForm
 
 import re
 import os
@@ -70,3 +70,18 @@ def topic_posts(request, pk):
     }
 
     return render(request, 'Forum/topic_posts.html', context)
+
+
+def reply_topic(request, pk):
+    topic = get_object_or_404(Topic, pk=pk)
+    if request.method == 'POST':
+        form = PostForm(request.POST)
+        if form.is_valid():
+            post = form.save(commit=False)
+            post.topic = topic
+            post.created_by = User.objects.get(pk=request.session['UserInfo'].get('id'))
+            post.save()
+            return redirect('Forum:topic_posts', pk=pk)
+    else:
+        form = PostForm()
+    return render(request, 'Forum/reply_topic.html', {'topic': topic, 'form': form})

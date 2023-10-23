@@ -1,12 +1,14 @@
 {% extends 'base.html' %}
 
-{% load static widget_tweaks %}
+{% load static humanize widget_tweaks %}
 
-{% block title %}New Topic{% endblock %}
+{% block title %}
+    Post a reply
+{% endblock %}
 
 {% block content %}
     <div style="border-radius: 10px;" class="mt-4 p-4 bg-light">
-        <form method="post" novalidate>
+        <form method="post" class="mb-4" novalidate>
             {% csrf_token %}
             {% for field in form %}
                 <div class="form-group mb-3">
@@ -36,18 +38,19 @@
                             {{ field.help_text }}
                         </small>
                     {% endif %}
-
                 </div>
             {% endfor %}
 
-            <button type="submit" class="btn btn-success custom-button"><i class="fas fa-plus me-1"></i>新建动态</button>
+{#            <button type="submit" class="btn btn-success custom-button"><i class="fas fa-reply me-1"></i>回复</button>#}
+            <button type="submit" class="btn btn-success custom-button">回复</button>
         </form>
+
     </div>
 
 {% endblock %}
 
 {% block js %}
-        <script>
-            var simplemde = new SimpleMDE();
-        </script>
-    {% endblock %}
+    <script>
+        var simplemde = new SimpleMDE();
+    </script>
+{% endblock %}

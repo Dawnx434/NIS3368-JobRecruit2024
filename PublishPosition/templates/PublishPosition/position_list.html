@@ -1,13 +1,9 @@
+{% extends 'base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/5.1.1/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-    <title>职位列表</title>
+
+{% block title %}职位列表{% endblock %}
+
+{% block stylesheet %}
     <style>
 
         .custom-text-color {
@@ -165,146 +161,91 @@
             font-size: 30px;
             padding-left: 20px;
         }
-
-
-
-
-
-
     </style>
 
-</head>
-<body class="custom-background">
+{% endblock %}
 
-<nav class="navbar navbar-expand-sm navbar-light bg-light">
-    <div class="container">
-        <a class="navbar-brand custom-text-color" href="#">JobRecruitment</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbar">
-            <ul class="navbar-nav me-auto">
-                <li class="nav-item">
-                    <a class="nav-link custom-nav-link" style="margin-left: 1rem;" href="#">首页</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link custom-nav-link" style="margin-left: 1rem;" href="#">内推</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link custom-nav-link" style="margin-left: 1rem;" href="#">面经</a>
-                </li>
-            </ul>
-            <form class="d-flex">
-                <input class="form-control me-2" type="text" placeholder="按条件搜索...">
-                <button class="btn btn-primary custom-button" type="submit"><i class="fas fa-search"></i></button>
-            </form>
-            <div class="nav-item dropdown" style="margin-left: 1rem;">
-                <a class="nav-link dropdown-toggle" href="{% url 'UserInfo:index'%}" id="navbardrop"
-                   data-toggle="dropdown">
-                    <img src="../../../static/images/{{ matching_files }}?rand=<%= Date.now() %>" alt="头像"
-                         style="width:30px; height:30px;">
-                </a>
-                <div class="dropdown-menu">
-                    <a class="dropdown-item" href="{% url 'UserInfo:resume' %}">我的简历</a>
-                    <a class="dropdown-item" href="../application/">我的投递</a>
-                    <a class="dropdown-item" href="{% url 'UserInfo:user_info' %}">个人资料</a>
-                    <a class="dropdown-item" href="{% url 'UserInfo:account' %}">账号安全</a>
-                    <a class="dropdown-item" href="{% url 'UserAuth:logout' %}">退出登录</a>
-                </div>
-            </div>
-            <div class="nav-item dropdown" style="margin-left: 1rem;">
-                <button type="button" class="btn btn-primary custom-button dropdown-toggle"
-                        onclick="window.location.href='#'" data-toggle="dropdown">
-                    发布
-                </button>
-                <div class="dropdown-menu">
-                    <a class="dropdown-item" href="#">发动态</a>
-                    <a class="dropdown-item" href="{% url 'PublishPosition:publish'%}">发职位</a>
-                </div>
-            </div>
-        </div>
-    </div>
-</nav>
+{% block content %}
 
+    <div class="content-container">
 
-<div class="content-container">
-
-    <div class="list-content">
-        <h1>最新发布职位</h1>
-        <div class="row">
-            {% for obj in query_set %}
-            <div class="col-md-6 card-container">
-                <a href="/position/view/{{ obj.id }}" class="card-link">
-                    <div class="card">
-                        <div class="hr-line"></div>
-                        <div class="card-body" style="border-radius: 20px;">
-                            <div class="row">
-                            <div class="col-md-6">
-                                <div class="card-title" id="position-name-{{ obj.id }}">
-                                    {{ obj.position_name }}
-                                </div>
-                            </div>
-                            <script>
-                                console.log('test the length of title');
-                                var myBox = document.getElementById('position-name-{{ obj.id }}');
-                                var text = myBox.innerText;
-                                console.log(text);
-                                console.log(text.length);
-                                var maxLength = 15;
-                                if (text.length > maxLength) {
-                                    text = text.substring(0, maxLength) + '...';
-                                }
-                                myBox.innerText = text;
-                            </script>
-                                <div class="col-md-2" style="padding: 0;">
-                                    <div class="card-content">
-                                        <div class="col-md-6 property-box">{{ obj.salary }}</div>
-                                        <div class="col-md-6 property-box">{{ obj.get_district_display }}</div>
+        <div class="list-content">
+            <h1>最新发布职位</h1>
+            <div class="row">
+                {% for obj in query_set %}
+                <div class="col-md-6 card-container">
+                    <a href="/position/view/{{ obj.id }}" class="card-link">
+                        <div class="card">
+                            <div class="hr-line"></div>
+                            <div class="card-body" style="border-radius: 20px;">
+                                <div class="row">
+                                <div class="col-md-6">
+                                    <div class="card-title" id="position-name-{{ obj.id }}">
+                                        {{ obj.position_name }}
                                     </div>
                                 </div>
-                                <div class="col-md-1">
-                                    <div class="hr-line-light"></div>
-                                </div>
-                                <div class="col-md-3">
-                                    <div class="card-content">
-                                        发布者: {{ obj.HR }}
+                                <script>
+                                    console.log('test the length of title');
+                                    var myBox = document.getElementById('position-name-{{ obj.id }}');
+                                    var text = myBox.innerText;
+                                    console.log(text);
+                                    console.log(text.length);
+                                    var maxLength = 15;
+                                    if (text.length > maxLength) {
+                                        text = text.substring(0, maxLength) + '...';
+                                    }
+                                    myBox.innerText = text;
+                                </script>
+                                    <div class="col-md-2" style="padding: 0;">
+                                        <div class="card-content">
+                                            <div class="col-md-6 property-box">{{ obj.salary }}</div>
+                                            <div class="col-md-6 property-box">{{ obj.get_district_display }}</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-1">
+                                        <div class="hr-line-light"></div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="card-content">
+                                            发布者: {{ obj.HR }}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </a>
+                    </a>
+                </div>
+                {% endfor %}
             </div>
-            {% endfor %}
+
         </div>
-
     </div>
-</div>
 
+{% endblock %}
 
-<script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
-<script src="https://cdn.staticfile.org/popper.js/1.15.0/umd/popper.min.js"></script>
-<script src="https://cdn.staticfile.org/twitter-bootstrap/5.1.1/js/bootstrap.min.js"></script>
+{% block js %}
+    <script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdn.staticfile.org/popper.js/1.15.0/umd/popper.min.js"></script>
+    <script src="https://cdn.staticfile.org/twitter-bootstrap/5.1.1/js/bootstrap.min.js"></script>
 
-<script>
-    $(document).ready(function(){
-        $(".dropdown").hover(function(){
-            var dropdownMenu = $(this).children(".dropdown-menu");
-            if(dropdownMenu.is(":visible")){
-                dropdownMenu.parent().toggleClass("open");
-            }
+    <script>
+        $(document).ready(function(){
+            $(".dropdown").hover(function(){
+                var dropdownMenu = $(this).children(".dropdown-menu");
+                if(dropdownMenu.is(":visible")){
+                    dropdownMenu.parent().toggleClass("open");
+                }
+            });
         });
-    });
 
-    $(document).ready(function(){
-        $(document).off('click.bs.dropdown.data-api');
-    });
-
+        $(document).ready(function(){
+            $(document).off('click.bs.dropdown.data-api');
+        });
 
 
 
 
 
-</script>
-</body>
-</html>
+
+    </script>
+{% endblock %}

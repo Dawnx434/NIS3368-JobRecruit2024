@@ -27,11 +27,11 @@
                             <a class="nav-link custom-nav-link" style="margin-left: 1rem;" href="{% url 'Forum:home' %}">首页</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link custom-nav-link" style="margin-left: 1rem;" href="#">内推</a>
+                            <a class="nav-link custom-nav-link" style="margin-left: 1rem;" href="{% url 'PublishPosition:publish_list' %}">职位</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link custom-nav-link" style="margin-left: 1rem;" href="#">面经</a>
-                        </li>
+{#                        <li class="nav-item">#}
+{#                            <a class="nav-link custom-nav-link" style="margin-left: 1rem;" href="#">面经</a>#}
+{#                        </li>#}
                     </ul>
                     <form class="d-flex">
                         <input class="form-control me-2" type="text" placeholder="按条件搜索...">

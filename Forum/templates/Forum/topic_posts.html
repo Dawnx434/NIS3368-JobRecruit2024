@@ -5,12 +5,12 @@
 {% block content %}
     <div style="border-radius: 10px;" class="mt-4 p-4 bg-light">
 
-        <h1 style="border-bottom: 1px solid #17a2b8;">
+        <h1 style="border-bottom: 2px solid #17a2b8;" class="pb-2">
             {{ topic.subject }}
         </h1>
         {% for post in topic.posts.all %}
-            <div style="border-bottom: 1px solid #dddddd;">
-                <div class="row mb-2">
+            <div style="{% if forloop.first %}border-bottom: 2px solid #17a2b8;{% else %}border-bottom: 1px solid #dddddd;{% endif %}">
+                <div class="row mb-2 mt-2">
                     <div class="d-inline-block">
                         <a href="{% url 'UserInfo:index' post.created_by.id %}" class="text-decoration-none">
                             {% with user_id=post.created_by.id|stringformat:'d' %}
@@ -31,17 +31,22 @@
                             {{ post.created_by.username }}
                         </span>
                     </div>
-
                 </div>
                 <div class="row" style="margin-left: 47px;">
                     {{ post.get_message_as_markdown }}
                 </div>
+
+                {% if forloop.first %}
+                    <div class="d-flex justify-content-end mb-2">
+                        <a href="{% url 'Forum:reply' topic.pk %}" class="btn btn-primary custom-button"><i class="fas fa-reply me-1"></i>回复</a>
+                    </div>
+                {% endif %}
             </div>
 
         {% endfor %}
 
         <div class="mt-4">
-            <a href="#" class="btn btn-primary custom-button"><i class="fas fa-reply me-1"></i>回复</a>
+            <a href="{% url 'Forum:reply' topic.pk %}" class="btn btn-primary custom-button"><i class="fas fa-reply me-1"></i>回复</a>
         </div>
     </div>
 
