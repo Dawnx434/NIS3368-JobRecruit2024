@@ -210,8 +210,8 @@
                 <button class="btn btn-primary custom-button" type="submit"><i class="fas fa-search"></i></button>
             </form>
             <div class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="{% url 'UserInfo:index' %}" id="navbardrop" data-toggle="dropdown">
-                    <img src="../../static/images/{{ image }}" alt="头像" style="width:30px; height:30px;">
+                <a class="nav-link dropdown-toggle" href="{% url 'UserInfo:index' request.session.UserInfo.id %}" id="navbardrop" data-toggle="dropdown">
+                    <img src="../../static/images/{{ image }}" alt="头像" class="rounded-circle" style="width:40px; height:40px;">
                 </a>
                 <div class="dropdown-menu">
                     <a class="dropdown-item" href="../resume">我的简历</a>

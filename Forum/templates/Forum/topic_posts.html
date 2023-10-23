@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% load static %}
+{% load static humanize static_tags %}
 
 {% block content %}
     <div style="border-radius: 10px;" class="mt-4 p-4 bg-light">
@@ -12,8 +12,20 @@
             <div style="border-bottom: 1px solid #dddddd;">
                 <div class="row mb-2">
                     <div class="d-inline-block">
-                        <a href="{% url 'UserInfo:index' %}" class="text-decoration-none">
-                            <img src="{% static 'images/' %}{{ matching_files }}?rand=<%= Date.now() %>" class="rounded-circle" alt="头像" style="width:50px; height:50px;">
+                        <a href="{% url 'UserInfo:index' post.created_by.id %}" class="text-decoration-none">
+                            {% with user_id=post.created_by.id|stringformat:'d' %}
+                                {% with user_avatar_path="images/"|add:user_id|add:".jpg" %}
+                                    {% with default_avatar_path='images/default.jpeg' %}
+                                        {% if user_avatar_path|static_file_exists%}
+                                            <img src="{% static user_avatar_path %}?rand=<%= Date.now() %>" alt="用户头像" class="rounded-circle" style="width:50px; height:50px;">
+                                        {% else %}
+                                            <img src="{% static default_avatar_path %}" alt="默认头像" class="rounded-circle" style="width:50px; height:50px;">
+                                        {% endif %}
+                                    {% endwith %}
+                                {% endwith %}
+                            {% endwith %}
+{#                            <img src="{% static 'images/' %}{{ post.created_by.id }}.jpg?rand=<%= Date.now() %>" class="rounded-circle" alt="头像" style="width:50px; height:50px;">#}
+{#                            <img src="{% static 'images/' %}{{ matching_files }}?rand=<%= Date.now() %>" class="rounded-circle" alt="头像" style="width:50px; height:50px;">#}
                         </a>
                         <span class="ms-1 text-muted">
                             {{ post.created_by.username }}

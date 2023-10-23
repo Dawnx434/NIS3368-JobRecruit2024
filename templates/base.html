@@ -1,4 +1,4 @@
-{% load static %}
+{% load static static_tags %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -39,12 +39,25 @@
                     </form>
                     {% if 'UserInfo' in request.session %}
                         <div class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="{% url 'UserInfo:index' %}" id="navbardrop" data-toggle="dropdown">
-                              <img src="{% static 'images/' %}{{ matching_files }}?rand=<%= Date.now() %>" class="rounded-circle" alt="头像"
-                                     style="width:30px; height:30px;">
-    {#                            <img src="{% static 'images/' %}{{ request.session.UserInfo.id }}.jpg?rand=<%= Date.now()" alt="头像"#}
-    {#                                 style="width:30px; height:30px;">#}
-                            </a>
+                            {% with id=request.session.UserInfo.id %}
+                                <a class="nav-link dropdown-toggle" href="{% url 'UserInfo:index' id %}" id="navbardrop" data-toggle="dropdown">
+                                    {% with user_id=id|stringformat:'d' %}
+                                        {% with user_avatar_path="images/"|add:user_id|add:".jpg" %}
+                                            {% with default_avatar_path='images/default.jpeg' %}
+                                                {% if user_avatar_path|static_file_exists%}
+                                                    <img src="{% static user_avatar_path %}?rand=<%= Date.now() %>" alt="用户头像" class="rounded-circle" style="width:40px; height:40px;">
+                                                {% else %}
+                                                    <img src="{% static default_avatar_path %}" alt="默认头像" class="rounded-circle" style="width:40px; height:40px;">
+                                                {% endif %}
+                                            {% endwith %}
+                                        {% endwith %}
+                                    {% endwith %}
+    {#                                <img src="{% static 'images/' %}{{ matching_files }}?rand=<%= Date.now() %>" class="rounded-circle" alt="头像"#}
+    {#                                     style="width:30px; height:30px;">#}
+        {#                            <img src="{% static 'images/' %}{{ request.session.UserInfo.id }}.jpg?rand=<%= Date.now()" alt="头像"#}
+        {#                                 style="width:30px; height:30px;">#}
+                                </a>
+                            {% endwith %}
                             <div class="dropdown-menu">
                                 <a class="dropdown-item" href="{% url 'UserInfo:resume' %}">我的简历</a>
                                 <a class="dropdown-item" href="{% url 'UserInfo:application' %}">我的投递</a>

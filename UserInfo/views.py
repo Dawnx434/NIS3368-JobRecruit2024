@@ -10,8 +10,8 @@ import urllib.parse
 
 
 # Create your views here.
-def index(request):
-    pattern = re.compile(str(request.session['UserInfo'].get("id")) + r'.*')
+def index(request, pk):
+    pattern = re.compile(str(pk) + r'.*')
     file_names = os.listdir(settings.PROFILE_ROOT)
     matching_files = []
     for file_name in file_names:
@@ -22,10 +22,10 @@ def index(request):
         matching_files.append('default.jpeg')
     if request.method == "GET":
         # 查询并返回数据
-        query_set = User.objects.filter(id=request.session["UserInfo"].get("id"))
+        query_set = User.objects.filter(id=pk)
         # 获取用户数据
         obj = query_set.first()
-        user_info = {"id": request.session['UserInfo'].get("id"),
+        user_info = {"id": pk,
                      "username": obj.username,
                      "mobile_phone": obj.mobile_phone,
                      "gender": obj.get_gender_display(),

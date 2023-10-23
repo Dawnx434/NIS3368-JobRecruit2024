@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% load static humanize %}
+{% load static humanize static_tags %}
 
 {% block content %}
     <div style="border-radius: 10px;" class="mt-4 p-4 bg-light">
@@ -19,8 +19,18 @@
 
                             </div>
                             <div class="col-1 d-flex align-items-center">
-                                <a href="{% url 'UserInfo:index' %}">
-                                    <img src="{% static 'images/' %}{{ matching_files }}?rand=<%= Date.now() %>" class="rounded-circle" alt="头像" style="width:40px; height:40px;">
+                                <a href="{% url 'UserInfo:index' topic.starter.id %}">
+                                    {% with user_id=topic.starter.id|stringformat:'d' %}
+                                        {% with user_avatar_path="images/"|add:user_id|add:".jpg" %}
+                                            {% with default_avatar_path='images/default.jpeg' %}
+                                                {% if user_avatar_path|static_file_exists%}
+                                                    <img src="{% static user_avatar_path %}?rand=<%= Date.now() %>" alt="用户头像" class="rounded-circle" style="width:40px; height:40px;">
+                                                {% else %}
+                                                    <img src="{% static default_avatar_path %}" alt="默认头像" class="rounded-circle" style="width:40px; height:40px;">
+                                                {% endif %}
+                                            {% endwith %}
+                                        {% endwith %}
+                                    {% endwith %}
                                 </a>
                             </div>
                             <div class="col-1 d-flex justify-content-center align-items-center text-muted">
