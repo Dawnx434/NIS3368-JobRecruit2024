@@ -12,14 +12,7 @@ import urllib.parse
 # Create your views here.
 def index(request):
     pattern = re.compile(str(request.session['UserInfo'].get("id")) + r'.*')
-    file_names = os.listdir(settings.PROFILE_ROOT)
-    matching_files = []
-    for file_name in file_names:
-        if pattern.match(file_name):
-            matching_files.append(file_name)
-    # 没有上传就用默认的
-    if not matching_files:
-        matching_files.append('default.jpeg')
+    matching_files = find_image(request)
     if request.method == "GET":
         # 查询并返回数据
         query_set = User.objects.filter(id=request.session["UserInfo"].get("id"))
@@ -35,7 +28,7 @@ def index(request):
                      "major": obj.major,
                      "excepting_position": obj.excepting_position,
                      "excepting_location": obj.excepting_location,
-                     "matching_files": matching_files[0],
+                     "matching_files": matching_files,
                      }
         return render(request, "UserInfo/index.html", context=user_info)
     # else POST
@@ -62,7 +55,7 @@ def index(request):
                  "major": obj.major,
                  "excepting_position": obj.excepting_position,
                  "excepting_location": obj.excepting_location,
-                 "matching_files": matching_files[0],
+                 "matching_files": matching_files,
                  }
     return render(request, "UserInfo/index.html", context=user_info)
 
@@ -148,14 +141,15 @@ def modify(request):
 
 def info(request):
     pattern = re.compile(str(request.session['UserInfo'].get("id")) + r'.*')
-    file_names = os.listdir(settings.PROFILE_ROOT)
-    matching_files = []
-    for file_name in file_names:
-        if pattern.match(file_name):
-            matching_files.append(file_name)
-    # 没有上传就用默认的
-    if not matching_files:
-        matching_files.append('default.jpeg')
+    # file_names = os.listdir(settings.PROFILE_ROOT)
+    # matching_files = []
+    # for file_name in file_names:
+    #     if pattern.match(file_name):
+    #         matching_files.append(file_name)
+    # # 没有上传就用默认的
+    # if not matching_files:
+    #     matching_files.append('default.jpeg')
+    matching_files = find_image(request)
     if request.method == "GET":
         # 查询并返回数据
         query_set = User.objects.filter(id=request.session["UserInfo"].get("id"))
@@ -171,7 +165,7 @@ def info(request):
                      "major": obj.major,
                      "excepting_position": obj.excepting_position,
                      "excepting_location": obj.excepting_location,
-                     "matching_files": matching_files[0],
+                     "matching_files": matching_files,
                      }
         return render(request, "UserInfo/userinfo.html", context=user_info)
     # else POST
@@ -198,7 +192,7 @@ def info(request):
                  "major": obj.major,
                  "excepting_position": obj.excepting_position,
                  "excepting_location": obj.excepting_location,
-                 "matching_files": matching_files[0],
+                 "matching_files": matching_files,
                  }
     return render(request, "UserInfo/userinfo.html", context=user_info)
 
@@ -207,7 +201,7 @@ def resume_upload(request):
     if request.method == 'POST':
         upload_resume = request.FILES.get('upload')
         if not upload_resume:
-            context = {'msg':'没有上传简历','success':False}
+            context = {'msg':'您没有上传您的简历文件','success':False}
             return render(request,"UserInfo/upload_resume_result.html",context=context)
         save_path = os.path.join(settings.RESUME_ROOT + str(request.session['UserInfo'].get("id")))
         if not os.path.exists(save_path):

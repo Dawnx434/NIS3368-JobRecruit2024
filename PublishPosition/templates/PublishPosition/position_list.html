@@ -61,6 +61,7 @@
 
         .dropdown-menu{
             margin-top: 0;
+            min-width: 100px;
         }
 
         .card-container {
@@ -85,6 +86,9 @@
 
         .card:hover{
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            transform: translateY(-3px);
+            transition: transform 0.4s;
+            color: #17a2b8;
         }
 
         .card-content{
@@ -151,13 +155,14 @@
             padding-left: 50px;
             padding-right: 50px;
             margin: auto;
-            margin-top: 20px;
+            margin-top: 30px;
+            margin-bottom: 30px;
+            width: 100%;
         }
 
         .content-container{
-            display: flex;
-            width: 80%;
             margin: auto;
+            display: flex;
         }
 
         h1{
@@ -166,10 +171,39 @@
             padding-left: 20px;
         }
 
+        .page-button {
+            background-color: rgba(229, 229, 229, 0.5);
+            color: black;
+            padding-top: 5px;
+            padding-bottom: 5px;
+            padding-left: 7px;
+            padding-right: 7px;
+            border-radius: 3px;
+            font-size: 15px;
+            font-weight: bold;
+            width: 100%;
+            text-align: center;
+            text-decoration: none;
+        }
 
+        .page-button:hover {
+            color: #17a2b8;
+        }
 
-
-
+        .current-page{
+            background-color: #17a2b8;
+            color: white;
+            padding-top: 5px;
+            padding-bottom: 5px;
+            padding-left: 9px;
+            padding-right: 9px;
+            border-radius: 3px;
+            font-size: 15px;
+            font-weight: bold;
+            width: 100%;
+            text-align: center;
+            text-decoration: none;
+        }
 
     </style>
 
@@ -194,8 +228,11 @@
                     <a class="nav-link custom-nav-link" style="margin-left: 1rem;" href="#">面经</a>
                 </li>
             </ul>
-            <form class="d-flex">
-                <input class="form-control me-2" type="text" placeholder="按条件搜索...">
+            <form class="d-flex" method="get" action="/position/list/">
+                <input class="form-control me-2" type="text" name="keyword" placeholder="搜索职位...">
+                <input type="hidden" name="target_place" value="0">
+                <input type="hidden" name="page" value="1">
+                <input type="hidden" name="page_size" value="10">
                 <button class="btn btn-primary custom-button" type="submit"><i class="fas fa-search"></i></button>
             </form>
             <div class="nav-item dropdown" style="margin-left: 1rem;">
@@ -227,10 +264,10 @@
 </nav>
 
 
-<div class="content-container">
+<div class="content-container col-md-10">
 
     <div class="list-content">
-        <h1>最新发布职位</h1>
+        <h1>{{ page_title }}</h1>
         <div class="row">
             {% for obj in query_set %}
             <div class="col-md-6 card-container">
@@ -239,23 +276,21 @@
                         <div class="hr-line"></div>
                         <div class="card-body" style="border-radius: 20px;">
                             <div class="row">
-                            <div class="col-md-6">
-                                <div class="card-title" id="position-name-{{ obj.id }}">
-                                    {{ obj.position_name }}
+                                <div class="col-md-6">
+                                    <div class="card-title" id="position-name-{{ obj.id }}">
+                                        {{ obj.position_name }}
+                                    </div>
                                 </div>
-                            </div>
-                            <script>
-                                console.log('test the length of title');
-                                var myBox = document.getElementById('position-name-{{ obj.id }}');
-                                var text = myBox.innerText;
-                                console.log(text);
-                                console.log(text.length);
-                                var maxLength = 15;
-                                if (text.length > maxLength) {
-                                    text = text.substring(0, maxLength) + '...';
-                                }
-                                myBox.innerText = text;
-                            </script>
+                                <script>
+                                    var myBox = document.getElementById('position-name-{{ obj.id }}');
+                                    var text = myBox.innerText;
+                                    var maxLength = 15;
+                                    if (text.length > maxLength) {
+                                        text = text.substring(0, maxLength) + '...';
+                                    }
+                                    myBox.innerText = text;
+
+                                </script>
                                 <div class="col-md-2" style="padding: 0;">
                                     <div class="card-content">
                                         <div class="col-md-6 property-box">{{ obj.salary }}</div>
@@ -276,9 +311,46 @@
                 </a>
             </div>
             {% endfor %}
+
         </div>
 
+        <div class="row col-md-12" style="margin-top: 50px;">
+            <div class="pagination" style="display: flex; justify-content: center; align-items: center;">
+            <span class="step-links">
+                {% if query_set.has_previous %}
+                    <a href="?page=1&keyword={{ keyword }}&target_place={{ target_place }}&page_size={{ page_size }}" class="page-button">首页</a>
+                    <a href="?page={{ query_set.previous_page_number }}&keyword={{ keyword }}&target_place={{ target_place }}&page_size={{ page_size }}" class="page-button"><i class="bi bi-chevron-left"></i></a>
+                {% endif %}
+
+                {% if query_set.has_previous and query_set.number != 2 %}
+                    <a href="?page={{ query_set.previous_page_number |add:'-1'}}&keyword={{ keyword }}&target_place={{ target_place }}&page_size={{ page_size }}" class="page-button">{{ query_set.previous_page_number|add:"-1" }}</a>
+                {% endif %}
+                {% if query_set.has_previous %}
+                    <a href="?page={{ query_set.previous_page_number }}&keyword={{ keyword }}&target_place={{ target_place }}&page_size={{ page_size }}" class="page-button">{{ query_set.previous_page_number }}</a>
+                {% endif %}
+
+                <span class="current-page">{{ query_set.number }}</span>
+
+
+                {% if query_set.has_next %}
+                    <a href="?page={{ query_set.next_page_number }}&keyword={{ keyword }}&target_place={{ target_place }}&page_size={{ page_size }}" class="page-button">{{ query_set.next_page_number }}</a>
+                {% endif %}
+                {% if query_set.has_next and query_set.next_page_number != query_set.paginator.num_pages %}
+                    <a href="?page={{ query_set.next_page_number | add:'1' }}&keyword={{ keyword }}&target_place={{ target_place }}&page_size={{ page_size }}" class="page-button">{{ query_set.next_page_number|add:"1" }}</a>
+                {% endif %}
+
+                {% if query_set.has_next %}
+                    <a href="?page={{ query_set.next_page_number }}&keyword={{ keyword }}&target_place={{ target_place }}&page_size={{ page_size }}" class="page-button"><i class="bi bi-chevron-right"></i></a>
+                    <a href="?page={{ query_set.paginator.num_pages }}&keyword={{ keyword }}&target_place={{ target_place }}&page_size={{ page_size }}" class="page-button">末页</a>
+                {% endif %}
+            </span>
+            </div>
+        </div>
+
+
     </div>
+
+
 </div>
 
 
@@ -299,6 +371,10 @@
     $(document).ready(function(){
         $(document).off('click.bs.dropdown.data-api');
     });
+
+
+
+
 
 
 

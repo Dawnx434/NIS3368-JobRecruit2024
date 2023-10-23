@@ -1,6 +1,7 @@
 from django.shortcuts import render, HttpResponse, redirect
 from django.utils.safestring import mark_safe
 import markdown
+from django.core.paginator import Paginator, EmptyPage
 
 from PublishPosition.models import Position
 from UserAuth.models import User
@@ -13,6 +14,7 @@ from PublishPosition.utils.check_position_form import check_publish_position_for
 import os
 from django.conf import settings
 import re
+
 
 # Create your views here.
 def position_list(request):
@@ -31,7 +33,7 @@ def position_list(request):
     # get query condition: Page and PageSize
     try:
         page = 1 if not request.GET.get('page') else int(request.GET.get('page'))
-        pagesize = 20 if not request.GET.get('page_size') else int(request.GET.get('page_size'))
+        pagesize = 10 if not request.GET.get('page_size') else int(request.GET.get('page_size'))
         keyword = '' if not request.GET.get('keyword') else request.GET.get('keyword')
         target_place = None if not request.GET.get('target_place') else int(request.GET.get('target_place'))
     except ValueError as e:
@@ -44,12 +46,25 @@ def position_list(request):
         query_set = Position.objects.filter(published_state=1, position_name__contains=keyword)
 
     # filter according to query params
-    query_set = query_set[(page - 1) * pagesize: page * pagesize - 1]
+    paginator = Paginator(query_set, pagesize)
+    # query_set = query_set[(page - 1) * pagesize: page * pagesize ]
 
+    try:
+        page = int(page)
+    except ValueError:
+        page = 1
+
+    try:
+        current_page = paginator.page(page)
+    except EmptyPage:
+        current_page = paginator.page(1)
+
+    page_title = f'"{ keyword }" 的搜索结果' if keyword else '最新发布职位'
     context = {
-        'query_set': query_set,
+        'query_set': current_page,
         'matching_files': matching_files[0],
         'district_dictionary': district_dictionary,
+        'page_title': page_title,
     }
     return render(request, 'PublishPosition/position_list.html', context)
 
