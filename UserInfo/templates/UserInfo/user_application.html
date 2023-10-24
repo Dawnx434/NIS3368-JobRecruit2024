@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<table>
+    <thead>
+    <tr>
+        <th>序号</th>
+        <th>申请者</th>
+        <th>岗位名称</th>
+        <th>申请时间</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for obj in position_list %}
+        <tr>
+        <td>{{ obj.id }}</td>
+        <td>{{ obj.applicant }}</td>
+        <td><a href="/position/view/{{ obj.position_id }}/">{{ obj.position_name }}</a></td>
+        <td>{{ obj.application_time }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+</body>
+</html>
