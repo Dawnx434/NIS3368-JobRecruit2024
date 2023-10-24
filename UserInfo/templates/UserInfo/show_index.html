@@ -1,12 +1,10 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <title>个人主页</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/5.1.1/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+{% extends 'base.html' %}
+
+{% load static widget_tweaks %}
+
+{% block title %}个人主页{% endblock %}
+
+{% block stylesheet %}
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <style>
 
@@ -24,50 +22,9 @@
             color: white;
             border: 1px solid #17a2b8;
         }
-
-
-
     </style>
-</head>
-<body class="custom-background">
+{% endblock %}
 
-<nav class="navbar navbar-expand-sm navbar-light bg-light">
-    <div class="container">
-        <a class="navbar-brand custom-text-color" href="#">JobRecruitment</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbar">
-            <ul class="navbar-nav me-auto">
-                <li class="nav-item">
-                    <a class="nav-link" href="#">首页</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">内推</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">面经</a>
-                </li>
-            </ul>
-            <form class="d-flex">
-                <input class="form-control me-2" type="text" placeholder="按条件搜索...">
-                <button class="btn btn-primary custom-button" type="submit"><i class="fas fa-search"></i></button>
-            </form>
-            <div class="d-flex nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-bs-toggle="dropdown">
-                    <img src="../../static/images/{{ image }}" alt="头像" style="width:30px; height:30px;">
-                </a>
-                <div class="dropdown-menu">
-                    <a class="dropdown-item" href="../resume">我的简历</a>
-                    <a class="dropdown-item" href="../application/">我的投递</a>
-                    <a class="dropdown-item" href="../info/">个人资料</a>
-                    <a class="dropdown-item" href="../account/">账号安全</a>
-                    <a class="dropdown-item" href="../logout/">退出登录</a>
-                </div>
-            </div>
-        </div>
-    </div>
-</nav>
+{% block content %}
 
-</body>
-</html>
+{% end block %}

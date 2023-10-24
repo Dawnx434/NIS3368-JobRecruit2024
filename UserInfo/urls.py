@@ -5,9 +5,9 @@ from UserAuth import views as auth_model
 
 app_name = "UserInfo"
 urlpatterns = [
-   path("index/", views.index, name='index'),
+   path("index/<int:pk>", views.index, name='index'),
    path("resume/", views.resume, name="resume"),
-   path("application/", views.apply),
+   path("application/", views.apply, name='application'),
    path("info/", views.info, name='user_info'),
    path("account/",views.account, name='account'),
    path("logout/",auth_model.logout),

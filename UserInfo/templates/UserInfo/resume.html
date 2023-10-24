@@ -1,29 +1,13 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <title>个人主页</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/5.1.1/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-    <style>
+{% extends 'base.html' %}
 
-        .custom-text-color {
-            color: #17a2b8 !important;
-            font-weight: bold;
-        }
+{% load static widget_tweaks %}
 
-        .custom-background{
-            background-color: #E5E5E5;
-        }
+{% block title %}个人简历{% endblock %}
 
-        .custom-button{
-            background-color: #17a2b8;
-            color: white;
-            border: 1px solid #17a2b8;
-        }
+
+{% block stylesheet %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+<style>
 
         .left-nav{
             background-color: #17a2b8;
@@ -156,27 +140,6 @@
             z-index: 0;
         }
 
-        .dropdown:hover .dropdown-menu{
-            display: block;
-        }
-
-        .dropdown-menu{
-            margin-top: 0;
-        }
-
-        .dropdown-toggle::after {
-            content: none;
-        }
-
-        .dropdown-toggle::after {
-            content: none;
-        }
-
-        .custom-nav-link:hover {
-            color: #17a2b8 !important;
-            font-weight: bold;
-        }
-
         .nav-item-left{
             width: 100%;
             text-overflow: ellipsis;
@@ -185,70 +148,19 @@
         }
 
 
+</style>
+{% endblock%}
 
 
-
-
-    </style>
-</head>
-<body class="custom-background">
-
-<nav class="navbar navbar-expand-sm navbar-light bg-light" style="z-index:1;">
-    <div class="container">
-        <a class="navbar-brand custom-text-color" href="#">JobRecruitment</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbar">
-            <ul class="navbar-nav me-auto">
-                <li class="nav-item">
-                    <a class="nav-link custom-nav-link" style="margin-left: 1rem;">首页</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link custom-nav-link" style="margin-left: 1rem;">内推</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link custom-nav-link" style="margin-left: 1rem;">面经</a>
-                </li>
-            </ul>
-            <form class="d-flex">
-                <input class="form-control me-2" type="text" placeholder="按条件搜索...">
-                <button class="btn btn-primary custom-button" type="submit"><i class="fas fa-search"></i></button>
-            </form>
-            <div class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="{% url 'UserInfo:index' %}" id="navbardrop"
-                   data-toggle="dropdown">
-                    <img src="../../static/images/{{ image }}" alt="头像" style="width:30px; height:30px;">
-                </a>
-                <div class="dropdown-menu">
-                    <a class="dropdown-item" href="../resume">我的简历</a>
-                    <a class="dropdown-item" href="../application/">我的投递</a>
-                    <a class="dropdown-item" href="../info/">个人资料</a>
-                    <a class="dropdown-item" href="../account/">账号安全</a>
-                    <a class="dropdown-item" href="../logout/">退出登录</a>
-                </div>
-            </div>
-            <div class="nav-item dropdown">
-                <button type="button" class="btn btn-primary custom-button dropdown-toggle"
-                        onclick="window.location.href='#'" data-toggle="dropdown">
-                    发布
-                </button>
-                <div class="dropdown-menu">
-                    <a class="dropdown-item" href="#">发动态</a>
-                    <a class="dropdown-item" href="{% url 'PublishPosition:publish'%}">发职位</a>
-                </div>
-            </div>
-        </div>
-    </div>
-</nav>
-
+{% block content %}
 <div class="container-fluid">
     <div class="row">
         <nav class="d-md-block sidebar left-nav full-width-nav" style="width: 20%;">
             <div class="position-sticky">
-                <a class="btn btn-primary w-100 mb-2 mt-4 upload-button"
-                   style="font-weight: bold;" id="uploadResumeBtn" onclick="openModal()"><i style="font-size: 1.5rem;"
-                                                                                            class="bi bi-cloud-upload"></i>&nbsp;&nbsp;上传新简历</a>
+                <a class="btn btn-primary w-100 mb-2 upload-button"
+                   style="font-weight: bold; margin-top: 40px;" id="uploadResumeBtn" onclick="openModal()"><i
+                        style="font-size: 1.5rem;"
+                        class="bi bi-cloud-upload"></i>&nbsp;&nbsp;上传新简历</a>
 
                 <div id="myModal" class="modal">
                     <div class="modal-content">
@@ -299,6 +211,7 @@
                         }
                         myBox.innerText = text;
 
+
                     </script>
                     <hr class="divider">
                     {% endfor %}
@@ -307,7 +220,7 @@
         </nav>
 
 
-        <main class="px-md-4" style="width: 80%; padding-top:10px; margin-left:20%">
+        <main class="px-md-4" style="width: 90%; padding-top:10px; margin-left:15%">
             {% for resume in resumes %}
             <div id="resume{{ forloop.counter }}" class="collapse resume-content">
                 <embed src="../resume_download?resume_id={{ resume }}" type="application/pdf" width="100%" height="600">
@@ -318,13 +231,10 @@
 
     </div>
 </div>
+{% endblock %}
 
 
-<script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
-<script src="https://cdn.staticfile.org/popper.js/1.15.0/umd/popper.min.js"></script>
-<script src="https://cdn.staticfile.org/twitter-bootstrap/5.1.1/js/bootstrap.min.js"></script>
-
-
+{% block js %}
 <script>
 
 
@@ -419,9 +329,8 @@
 
 
 
-</script>
 
-</body>
-</html>
+</script>
+{% endblock %}
 
 

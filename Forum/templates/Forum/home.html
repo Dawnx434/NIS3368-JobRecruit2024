@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% load static humanize static_tags %}
+
+{% block stylesheet %}
+<style>
+    .topic-card:hover{
+        color: #17a2b8 !important;
+        font-weight: bold;
+    }
+</style>
+{% endblock %}
+
+
+{% block content %}
+    <div style="border-radius: 10px;" class="mt-4 p-4 bg-light">
+        <div>
+            <div class="mb-4">
+                <a href="{% url 'Forum:new_topic' %}" class="btn btn-primary custom-button"><i class="fas fa-plus me-1"></i>新建动态</a>
+            </div>
+            {% if topics %}
+                {% for topic in topics %}
+                    <div class="p-2 topic-card" style="{% if forloop.first %}border-top: 1px solid #17a2b8;{% else %}border-top: 1px solid #dddddd;{% endif %}{% if forloop.last %}border-bottom: 1px solid #17a2b8;{% endif %}">
+                        <div class="row">
+                            <div class="col-8 d-flex align-items-center">
+                                <a href="{% url 'Forum:topic_posts' topic.pk %}" class="text-decoration-none text-black">
+                                    {{ topic.subject }}
+                                </a>
+
+                            </div>
+                            <div class="col-1 d-flex align-items-center">
+                                <a href="{% url 'UserInfo:index' topic.starter.id %}">
+                                    {% with user_id=topic.starter.id|stringformat:'d' %}
+                                        {% with user_avatar_path="images/"|add:user_id|add:".jpg" %}
+                                            {% with default_avatar_path='images/default.jpeg' %}
+                                                {% if user_avatar_path|static_file_exists%}
+                                                    <img src="{% static user_avatar_path %}?rand=<%= Date.now() %>" alt="用户头像" class="rounded-circle" style="width:40px; height:40px;">
+                                                {% else %}
+                                                    <img src="{% static default_avatar_path %}" alt="默认头像" class="rounded-circle" style="width:40px; height:40px;">
+                                                {% endif %}
+                                            {% endwith %}
+                                        {% endwith %}
+                                    {% endwith %}
+                                </a>
+                            </div>
+                            <div class="col-1 d-flex justify-content-center align-items-center text-muted">
+                                {{ topic.views }}
+                            </div>
+                            <div class="col-2 d-flex justify-content-center align-items-center text-muted">
+                                {{ topic.last_updated|naturaltime }}
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        </div>
+    </div>
+
+
+{% endblock %}

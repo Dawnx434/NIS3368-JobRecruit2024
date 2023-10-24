@@ -1,11 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>个人信息</title>
-    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/5.1.1/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+{% extends 'base.html' %}
+
+{% block stylesheet %}
+
     <style>
 
         .custom-text-color {
@@ -195,7 +191,10 @@
         }
 
     </style>
-</head>
+
+{% endblock %}
+
+
 <body class="custom-background">
 
 <nav class="navbar navbar-expand-sm navbar-light bg-light">
@@ -246,178 +245,177 @@
     </div>
 </nav>
 
-
-<div class="container content-container">
-    <div class="row" style="margin:0 auto; padding-left:100px;">
-        <div class="col-md-3 bg-info text-white left" style="width: 30%">
-            <div class="lbox">
-                <img src="../../static/images/{{ matching_files }}?rand=<%= Date.now() %>" alt="头像"
-                     class="img-fluid d-block m-auto" style="width:250px;height: 250px;">
-                <button class="btn btn-primary custom-button" id="uploadAvatarBtn" onclick="openModal()">
-                    <i class="bi bi-camera"></i> 上传头像
-                </button>
-
-
-                <div id="myModal" class="modal">
-                    <div class="modal-content">
-                        <span class="close" onclick="closeModal()" id="closeModalBtn">&times;</span>
-                        <h2 style="text-align: center;">请选择您要上传的头像</h2>
-                        <form method="post" action="{% url 'UserInfo:image_upload' %}" enctype="multipart/form-data"
-                              class="d-flex justify-content-center align-items-center flex-wrap">
-                            {% csrf_token %}
-                            <label class="btn btn-primary custom-button" style="margin:20px;">
-                                选择文件
-                                <input type="file" name="upload" accept="image/*" id="fileInput" style="display: none;">
-                            </label>
-                            <button type="submit" class="btn btn-primary custom-button" style="margin:20px;">确认上传</button>
-                        </form>
+{% block content %}
+    <div class="container content-container">
+        <div class="row" style="margin:0 auto; padding-left:100px;">
+            <div class="col-md-3 bg-info text-white left" style="width: 30%">
+                <div class="lbox">
+                    <img src="../../static/images/{{ matching_files }}?rand=<%= Date.now() %>" alt="头像"
+                         class="img-fluid d-block m-auto" style="width:250px;height: 250px;">
+                    <button class="btn btn-primary custom-button" id="uploadAvatarBtn" onclick="openModal()">
+                        <i class="fas fa-camera"></i> 上传头像
+                    </button>
 
 
-                        <div id="photoModal">
-                            <img id="uploadedPhoto" src="" alt="Uploaded Photo">
+                    <div id="myModal" class="modal">
+                        <div class="modal-content">
+                            <span class="close" onclick="closeModal()" id="closeModalBtn">&times;</span>
+                            <h2 style="text-align: center;">请选择您要上传的头像</h2>
+                            <form method="post" action="{% url 'UserInfo:image_upload' %}" enctype="multipart/form-data"
+                                  class="d-flex justify-content-center align-items-center flex-wrap">
+                                {% csrf_token %}
+                                <label class="btn btn-primary custom-button" style="margin:20px;">
+                                    选择文件
+                                    <input type="file" name="upload" accept="image/*" id="fileInput" style="display: none;">
+                                </label>
+                                <button type="submit" class="btn btn-primary custom-button" style="margin:20px;">确认上传</button>
+                            </form>
+
+
+                            <div id="photoModal">
+                                <img id="uploadedPhoto" src="" alt="Uploaded Photo">
+                            </div>
+                            <div style="margin: 40px; text-align: center;">
+                                <div id="noImageText">您还没有上传头像</div>
+                            </div>
+                            <div id="uploadMessage" style="display: none;"></div>
                         </div>
-                        <div style="margin: 40px; text-align: center;">
-                            <div id="noImageText">您还没有上传头像</div>
+                    </div>
+                    <div id="modalBackdrop" class="modal-backdrop"></div>
+
+
+                </div>
+            </div>
+            <div class="col-md-7 border right bg-light" style="width: 60%">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="rbox">
+                            <h3 id="username" style="font-weight: bold;">{{ username }}</h3>
                         </div>
-                        <div id="uploadMessage" style="display: none;"></div>
-                    </div>
-                </div>
-                <div id="modalBackdrop" class="modal-backdrop"></div>
+                        <div class="rbox">
+                            <p><span class="custom-text-color" style="padding-top:100px !important;">联系电话:</span> {{ mobile_phone }}</p>
+                            <p><span class="custom-text-color">电子邮箱:</span> {{ email }}</p>
+                        </div>
 
-
-            </div>
-        </div>
-        <div class="col-md-7 border right bg-light" style="width: 60%">
-            <div class="row">
-                <div class="col-sm-12">
-                    <div class="rbox">
-                        <h3 id="username" style="font-weight: bold;">{{ username }}</h3>
-                    </div>
-                    <div class="rbox">
-                        <p><span class="custom-text-color" style="padding-top:100px !important;">联系电话:</span> {{ mobile_phone }}</p>
-                        <p><span class="custom-text-color">电子邮箱:</span> {{ email }}</p>
                     </div>
 
                 </div>
-
-            </div>
-            <div class="row">
-                <div class="col-md-11 d-flex justify-content-end">
-                    <a href="/info/modify/" class="btn btn-primary custom-button">修改个人资料</a>
+                <div class="row">
+                    <div class="col-md-11 d-flex justify-content-end">
+                        <a href="/info/modify/" class="btn btn-primary custom-button">修改个人资料</a>
+                    </div>
                 </div>
-            </div>
-            <div class="rbox col-md-10" style="margin-top: 10px;">
-                <h4>个人信息</h4>
-                <div class="column">
-                    <p>
-                        <span class="custom-text-color">性别:</span>
-                    {% if gender == '1' %}
-                        不愿透露
-                    {% elif gender == '2' %}
-                        男
-                    {% elif gender == '3' %}
-                        女
-                    {% else %}
-                        {{ gender }}
-                    {% endif %}
+                <div class="rbox col-md-10" style="margin-top: 10px;">
+                    <h4>个人信息</h4>
+                    <div class="column">
+                        <p>
+                            <span class="custom-text-color">性别:</span>
+                        {% if gender == '1' %}
+                            不愿透露
+                        {% elif gender == '2' %}
+                            男
+                        {% elif gender == '3' %}
+                            女
+                        {% else %}
+                            {{ gender }}
+                        {% endif %}
+                        </p>
+                        <p><span class="custom-text-color">学历:</span> {{ edu_ground }}</p>
+                        <p><span class="custom-text-color">学校:</span> {{ school }}</p>
+                        <p><span class="custom-text-color">专业:</span> {{ major }}</p>
+                    </div>
+                </div>
+                <div class="rbox col-md-10">
+                    <h4>求职意向</h4>
+                    <p><span class="custom-text-color" style="margin-top: 20px;">预期职位：</span>{{ excepting_position }}
                     </p>
-                    <p><span class="custom-text-color">学历:</span> {{ edu_ground }}</p>
-                    <p><span class="custom-text-color">学校:</span> {{ school }}</p>
-                    <p><span class="custom-text-color">专业:</span> {{ major }}</p>
+                    <p><span class="custom-text-color">预期地点：</span>{{ excepting_location }}</p>
                 </div>
-            </div>
-            <div class="rbox col-md-10">
-                <h4>求职意向</h4>
-                <p><span class="custom-text-color" style="margin-top: 20px;">预期职位：</span>{{ excepting_position }}
-                </p>
-                <p><span class="custom-text-color">预期地点：</span>{{ excepting_location }}</p>
             </div>
         </div>
     </div>
-</div>
+{% endblock %}
+
+{% block js %}
+
+    <script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdn.staticfile.org/popper.js/1.15.0/umd/popper.min.js"></script>
+    <script src="https://cdn.staticfile.org/twitter-bootstrap/5.1.1/js/bootstrap.bundle.min.js"></script>
 
 
-<script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
-<script src="https://cdn.staticfile.org/popper.js/1.15.0/umd/popper.min.js"></script>
-<script src="https://cdn.staticfile.org/twitter-bootstrap/5.1.1/js/bootstrap.bundle.min.js"></script>
+    <script>
 
+            document.addEventListener("DOMContentLoaded", function() {
+                document.getElementById("uploadAvatarBtn").addEventListener("click", openModal);
+                document.getElementById("fileInput").addEventListener("change", handleFileSelect);
+            });
 
-<script>
+            function openModal() {
+                            console.log('Submit button clicked!');
 
-        document.addEventListener("DOMContentLoaded", function() {
-            document.getElementById("uploadAvatarBtn").addEventListener("click", openModal);
-            document.getElementById("fileInput").addEventListener("change", handleFileSelect);
-        });
+                var modal = document.getElementById("myModal");
+                var modalBackdrop = document.getElementById("modalBackdrop");
 
-        function openModal() {
-                        console.log('Submit button clicked!');
+                if (modal && modalBackdrop) {
+                    modal.style.display = "block";
+                    modalBackdrop.style.display = "block";
+                    photoModal.style.display = "none";
+                    noImageText.style.display = "block";
 
-            var modal = document.getElementById("myModal");
-            var modalBackdrop = document.getElementById("modalBackdrop");
-
-            if (modal && modalBackdrop) {
-                modal.style.display = "block";
-                modalBackdrop.style.display = "block";
-                photoModal.style.display = "none";
-                noImageText.style.display = "block";
-
-                var closeBtn = document.getElementById("closeModalBtn");
-                closeBtn.addEventListener("click", closeModal);
-            } else {
-                console.error("modal or modalBackdrop element not found.");
-            }
-        }
-
-        function closeModal() {
-            var modal = document.getElementById("myModal");
-            var modalBackdrop = document.getElementById("modalBackdrop");
-            modal.style.display = "none";
-            modalBackdrop.style.display = "none";
-            photoModal.style.display = "none";
-            noImageText.style.display = "none";
-        }
-
-        function handleFileSelect(event) {
-            const fileInput = event.target;
-            const selectedFile = fileInput.files[0];
-            const uploadedPhoto = document.getElementById("uploadedPhoto");
-            const noImageText = document.getElementById("noImageText");
-
-
-            if (selectedFile) {
-                const reader = new FileReader();
-
-                reader.onload = function(event) {
-                    photoModal.style.display = "block";
-                    uploadedPhoto.src = event.target.result;
-                    noImageText.style.display = "none";
-                    document.getElementById("photoModal").style.display = "block";
-                };
-
-                reader.readAsDataURL(selectedFile);
-            } else {
-                photoModal.style.display = "none";
-                noImageText.style.display = "block";
-                document.getElementById("photoModal").style.display = "block";
-            }
-        }
-
-        $(document).ready(function(){
-            $(".dropdown").hover(function(){
-                var dropdownMenu = $(this).children(".dropdown-menu");
-                if(dropdownMenu.is(":visible")){
-                    dropdownMenu.parent().toggleClass("open");
+                    var closeBtn = document.getElementById("closeModalBtn");
+                    closeBtn.addEventListener("click", closeModal);
+                } else {
+                    console.error("modal or modalBackdrop element not found.");
                 }
+            }
+
+            function closeModal() {
+                var modal = document.getElementById("myModal");
+                var modalBackdrop = document.getElementById("modalBackdrop");
+                modal.style.display = "none";
+                modalBackdrop.style.display = "none";
+                photoModal.style.display = "none";
+                noImageText.style.display = "none";
+            }
+
+            function handleFileSelect(event) {
+                const fileInput = event.target;
+                const selectedFile = fileInput.files[0];
+                const uploadedPhoto = document.getElementById("uploadedPhoto");
+                const noImageText = document.getElementById("noImageText");
+
+
+                if (selectedFile) {
+                    const reader = new FileReader();
+
+                    reader.onload = function(event) {
+                        photoModal.style.display = "block";
+                        uploadedPhoto.src = event.target.result;
+                        noImageText.style.display = "none";
+                        document.getElementById("photoModal").style.display = "block";
+                    };
+
+                    reader.readAsDataURL(selectedFile);
+                } else {
+                    photoModal.style.display = "none";
+                    noImageText.style.display = "block";
+                    document.getElementById("photoModal").style.display = "block";
+                }
+            }
+
+            $(document).ready(function(){
+                $(".dropdown").hover(function(){
+                    var dropdownMenu = $(this).children(".dropdown-menu");
+                    if(dropdownMenu.is(":visible")){
+                        dropdownMenu.parent().toggleClass("open");
+                    }
+                });
             });
-        });     
 
-        $(document).ready(function(){
-            $(document).off('click.bs.dropdown.data-api');
-            });
+            $(document).ready(function(){
+                $(document).off('click.bs.dropdown.data-api');
+                });
 
+    </script>
 
-</script>
-
-
-</body>
-</html>
+{% endblock %}

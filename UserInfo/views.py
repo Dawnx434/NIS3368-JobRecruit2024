@@ -10,15 +10,15 @@ import urllib.parse
 
 
 # Create your views here.
-def index(request):
+def index(request, pk):
     pattern = re.compile(str(request.session['UserInfo'].get("id")) + r'.*')
     matching_files = find_image(request)
     if request.method == "GET":
         # 查询并返回数据
-        query_set = User.objects.filter(id=request.session["UserInfo"].get("id"))
+        query_set = User.objects.filter( id=pk )
         # 获取用户数据
         obj = query_set.first()
-        user_info = {"id": request.session['UserInfo'].get("id"),
+        user_info = {"id": pk,
                      "username": obj.username,
                      "mobile_phone": obj.mobile_phone,
                      "gender": obj.get_gender_display(),
@@ -141,14 +141,6 @@ def modify(request):
 
 def info(request):
     pattern = re.compile(str(request.session['UserInfo'].get("id")) + r'.*')
-    # file_names = os.listdir(settings.PROFILE_ROOT)
-    # matching_files = []
-    # for file_name in file_names:
-    #     if pattern.match(file_name):
-    #         matching_files.append(file_name)
-    # # 没有上传就用默认的
-    # if not matching_files:
-    #     matching_files.append('default.jpeg')
     matching_files = find_image(request)
     if request.method == "GET":
         # 查询并返回数据
