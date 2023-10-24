@@ -21,3 +21,11 @@ def is_username_valid(username):
     else:
         return False  # 字符串包含其他字符
 
+
+def is_mobile_phone_valid(mobile_phone):
+    pattern = r'^(1[3456789]\d{9})$'
+
+    if re.match(pattern, mobile_phone):
+        return True
+    else:
+        return False

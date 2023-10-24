@@ -10,6 +10,9 @@ from django.conf import settings
 import re
 import random
 import urllib.parse
+from django.views.decorators.csrf import csrf_exempt
+from UserAuth.utils.generateCode import send_sms_code
+from UserAuth.utils import validators
 
 
 # Create your views here.
@@ -94,9 +97,9 @@ def apply(request):
             'id': obj.id,
             'applicant': obj.applicant.username,
             'position_id': obj.position.id,
-            'position_name':obj.position.position_name,
+            'position_name': obj.position.position_name,
             'application_time': (obj.application_time + datetime.timedelta(hours=8)).strftime(
-                                           "%Y-%m-%d %H:%M:%S"),
+                "%Y-%m-%d %H:%M:%S"),
             'application_state': obj.get_active_state_display(),
         }
         position_list.append(list_obj)
@@ -109,7 +112,103 @@ def apply(request):
 
 
 def account(request):
-    return 1
+    """修改用户敏感数据"""
+    # 获取用户对象
+    user_obj = User.objects.filter(id=request.session.get("UserInfo").get("id")).first()
+
+    if request.method == 'GET':
+        data_dict = {
+            'username': user_obj.username,
+            'mobile_phone': user_obj.mobile_phone,
+            'email': user_obj.email,
+        }
+        context = {
+            'data_dict': data_dict
+        }
+        return render(request, "UserInfo/user_account.html", context=context)
+
+    # else POST
+    error_dict = {}
+    fields = ['username', 'password', 'confirm_password', 'mobile_phone', 'email', 'verification_code']
+    post_data = {}
+    for field in fields:
+        post_data[field] = request.POST.get(field)
+    # 校验字段值
+    check_passed = True
+    # check username 唯一性/不包含特殊字符
+    user_query_set = User.objects.filter(username=post_data['username'])
+    if user_query_set and user_query_set.first().id != user_obj.id:
+        # 存在其他用户具有相同的用户名
+        error_dict['username'] = "用户名已存在"
+        check_passed = False
+    if not validators.is_username_valid(post_data['username']):
+        error_dict['username'] = "用户名只能包含数字和字母"
+        check_passed = False
+
+    # check password and confirm_password
+    if post_data['password'] or post_data['confirm_password']:
+        if post_data['password'] != post_data['confirm_password']:
+            error_dict['confirm_password'] = "两次密码不一致"
+            check_passed = False
+
+    # check mobile_phone and email
+    if not validators.is_valid_email(post_data['email']):
+        error_dict['email'] = "非法的邮箱格式"
+        check_passed = False
+    if not validators.is_mobile_phone_valid(post_data['mobile_phone']):
+        error_dict['mobile_phone'] = "非法的手机号格式"
+        check_passed = False
+
+    # check verification_code
+    if post_data['verification_code'] != request.session.get("account_verification_code"):
+        error_dict['verification_code'] = "验证码错误"
+        check_passed = False
+
+    if not check_passed:
+        return render(request, "UserInfo/user_account.html", {"data_dict": post_data, "error_dict": error_dict})
+
+    # ready to save
+    save_data = {
+        'username': post_data['username'],
+        'mobile_phone': post_data['mobile_phone'],
+        'email': post_data['email']
+    }
+    if post_data['password']:
+        save_data['password'] = post_data['password']
+
+    print(save_data)
+    User.objects.filter(id=request.session.get("UserInfo").get("id")).update(**save_data)
+    return redirect("/info/info/")
+
+
+@csrf_exempt
+def sendemail(request):
+    if not request.method == "POST":
+        return JsonResponse({
+            'state': False,
+            'msg': "Invalid request method!"
+        })
+
+    # else POST
+    user_obj = User.objects.filter(id=request.session.get("UserInfo").get("id")).first()
+    new_email = request.POST.get("new_email_address")
+    data_dict = {}
+    # 发送邮箱验证码
+    state, code = send_sms_code(user_obj.email)
+    if not state:
+        data_dict['state'] = False
+        data_dict['msg'] = '邮件发送失败，请稍后重试'
+
+    # state = True
+    request.session['account_verification_code'] = code
+    request.session.set_expiry(5 * 60)  # 5分钟有效期
+    data_dict['state'] = True
+    if user_obj.email == new_email:
+        data_dict['msg'] = "邮件已发送至{}".format(user_obj.email)
+    else:
+        data_dict['msg'] = "此次修改设置了新邮箱{}，请注意检查！".format(new_email)
+
+    return JsonResponse(data_dict)
 
 
 def image_upload(request):
