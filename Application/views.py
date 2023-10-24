@@ -23,19 +23,30 @@ def apply(request, pid):
     # 检查岗位是否开放
     if not position_obj.published_state == 1:
         return HttpResponse("未开放的岗位")
-    # 检查是否已经申请过
+    # 检查是否未申请过
     application_query_set = Application.objects.filter(applicant=user_obj, position=position_obj)
-    if application_query_set:
-        return HttpResponse("请勿重复申请")
-    # 通过检查
-    data_dict = {
-        'applicant': user_obj,
-        'position': position_obj,
-        'application_time': timezone.localtime(),
-        'create_time': timezone.localtime()
-    }
-    Application.objects.create(**data_dict)
-    return HttpResponse("申请成功")
+    # 没有记录
+    if not application_query_set:
+        # 则写入新记录
+        Application.objects.create(**{
+            'applicant': user_obj,
+            'position': position_obj,
+            'application_time': timezone.localtime(),
+            'create_time': timezone.localtime()
+        })
+        return HttpResponse("申请成功")
+
+    # 如果有记录
+    application_obj = application_query_set.first()
+    if application_obj.active_state == 0:
+        # 未生效则使之生效
+        application_query_set.update(**{
+            'application_time': timezone.localtime(),
+            'active_state': 1,
+        })
+
+    # 已生效则无需更改
+    return HttpResponse("已申请过该职位！")
 
 
 def cancel(request, pid):
@@ -63,5 +74,5 @@ def cancel(request, pid):
         'application_time': timezone.localtime(),
         'active_state': 0
     }
-    Application.objects.update(**data_dict)
-    return HttpResponse("取消")
+    application_query_set.update(**data_dict)
+    return HttpResponse("取消申请成功")

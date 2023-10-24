@@ -12,6 +12,7 @@
         <th>申请者</th>
         <th>岗位名称</th>
         <th>申请时间</th>
+        <th>申请状态</th>
     </tr>
     </thead>
     <tbody>
@@ -21,6 +22,7 @@
         <td>{{ obj.applicant }}</td>
         <td><a href="/position/view/{{ obj.position_id }}/">{{ obj.position_name }}</a></td>
         <td>{{ obj.application_time }}</td>
+        <td>{{ obj.application_state }}</td>
         </tr>
     {% endfor %}
     </tbody>

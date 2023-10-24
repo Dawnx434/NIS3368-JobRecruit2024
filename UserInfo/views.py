@@ -96,7 +96,8 @@ def apply(request):
             'position_id': obj.position.id,
             'position_name':obj.position.position_name,
             'application_time': (obj.application_time + datetime.timedelta(hours=8)).strftime(
-                                           "%Y-%m-%d %H:%M:%S")
+                                           "%Y-%m-%d %H:%M:%S"),
+            'application_state': obj.get_active_state_display(),
         }
         position_list.append(list_obj)
 
