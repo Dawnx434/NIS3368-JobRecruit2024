@@ -5,6 +5,7 @@ from django.core.paginator import Paginator, EmptyPage
 
 from PublishPosition.models import Position
 from UserAuth.models import User
+from Application.models import Application
 from PublishPosition.utils.forms.MyForm import PublishPositionForm
 
 from PublishPosition.utils.provincelist import province_dictionary
@@ -41,7 +42,7 @@ def position_list(request):
 
     # get list
     if target_place:
-        query_set = Position.objects.filter(published_state=1,position_name__contains=keyword, district=target_place)
+        query_set = Position.objects.filter(published_state=1, position_name__contains=keyword, district=target_place)
     else:
         query_set = Position.objects.filter(published_state=1, position_name__contains=keyword)
 
@@ -59,7 +60,7 @@ def position_list(request):
     except EmptyPage:
         current_page = paginator.page(1)
 
-    page_title = f'"{ keyword }" 的搜索结果' if keyword else '最新发布职位'
+    page_title = f'"{keyword}" 的搜索结果' if keyword else '最新发布职位'
     context = {
         'query_set': current_page,
         'matching_files': matching_files[0],
@@ -71,9 +72,9 @@ def position_list(request):
 
 def view_position_detail(request, nid):
     """展示岗位的详细信息"""
-    obj = Position.objects.filter(id=nid, published_state=1)  # 1 表示已发布
+    query_set = Position.objects.filter(id=nid, published_state=1)  # 1 表示已发布
     # 判空
-    if not obj:
+    if not query_set:
         return HttpResponse("不存在的招聘信息或未开放的招聘信息")
 
     # 获取头像
@@ -87,7 +88,11 @@ def view_position_detail(request, nid):
     if not matching_files:
         matching_files.append('default.jpeg')
 
-    position = obj.first()
+    position = query_set.first()
+    # 检查当前登录用户是否申请过该职位
+    user_obj = User.objects.filter(id=request.session.get("UserInfo")['id']).first()
+    position_query_set = Application.objects.filter(applicant=user_obj, position=position, active_state=1)
+
     context = {
         "matching_files": matching_files[0],
         "user_id": request.session.get("UserInfo")['id'],
@@ -95,16 +100,16 @@ def view_position_detail(request, nid):
         "position_name": position.position_name,
         "salary": position.salary,
         "summary": position.summary,
-        # XSS alert; need fix
         "detail": mark_safe(markdown.markdown(position.detail,
-                                    extensions=[
-                                        'markdown.extensions.extra',
-                                        'markdown.extensions.codehilite',
-                                        'markdown.extensions.toc',
-                                    ])),
+                                              extensions=[
+                                                  'markdown.extensions.extra',
+                                                  'markdown.extensions.codehilite',
+                                                  'markdown.extensions.toc',
+                                              ])),
         # "detail": position.detail,
         "HR": position.HR,
         "district": position.get_district_display(),
+        "already_apply": False if not position_query_set else True,
     }
 
     return render(request, "PublishPosition/position_detail.html", context)
