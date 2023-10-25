@@ -15,7 +15,7 @@ def index(request, pk):
     matching_files = find_image(request)
     if request.method == "GET":
         # 查询并返回数据
-        query_set = User.objects.filter( id=pk )
+        query_set = User.objects.filter(id=pk)
         # 获取用户数据
         obj = query_set.first()
         user_info = {"id": pk,
@@ -29,6 +29,7 @@ def index(request, pk):
                      "excepting_position": obj.excepting_position,
                      "excepting_location": obj.excepting_location,
                      "matching_files": matching_files,
+                     'topics': obj.topics.all()
                      }
         return render(request, "UserInfo/index.html", context=user_info)
     # else POST

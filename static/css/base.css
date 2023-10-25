@@ -110,3 +110,38 @@ display: block;
     color: #17a2b8 !important;
     font-weight: bold;
 }
+
+.custom-tabs .nav-link {
+  /* 去掉默认的背景色、边框、阴影等样式 */
+  background-color: transparent;
+  border: none;
+  box-shadow: none;
+
+}
+
+.nav-link.custom-tab {
+  color: #6c757d; /* 未选中选项的字体颜色 */
+  font-size: 1rem; /* 未选中选项的字体大小 */
+}
+
+.nav-link.custom-tab.active {
+  color: #17a2b8; /* 选中选项的字体颜色 */
+  font-size: 1.2rem; /* 选中选项的字体大小 */
+}
+
+.nav-link.custom-tab:hover {
+  color: #17a2b8; /* 鼠标悬停在未选中选项上时的字体颜色 */
+}
+
+.nav-link.custom-tab.active::after {
+  content: "";
+  display: block;
+  height: 2px; /* 短线段的高度 */
+  width: 80%; /* 短线段的宽度 */
+  background-color: #17a2b8; /* 短线段的颜色 */
+  margin-top: 2px; /* 调整短线段与选项之间的间距 */
+}
+
+.nav-link.custom-tab.active::after {
+  content: ""; /* 选中的选项不显示短线段 */
+}

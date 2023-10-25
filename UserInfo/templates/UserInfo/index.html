@@ -1,14 +1,25 @@
 {% extends 'base.html' %}
 
-{% load static static_tags %}
+{% load static static_tags humanize %}
 
 {% block content %}
     <div class="container content-container">
         <div class="row" style="margin:0 auto; padding-left:100px;">
             <div class="col-md-3 bg-info text-white left" style="width: 30%">
                 <div class="lbox">
-                    <img src="../../static/images/{{ matching_files }}?rand=<%= Date.now() %>" alt="头像"
-                         class="img-fluid d-block m-auto" style="width:250px;height: 250px;">
+                    {% with user_id=id|stringformat:'d' %}
+                        {% with user_avatar_path="images/"|add:user_id|add:".jpg" %}
+                            {% with default_avatar_path='images/default.jpeg' %}
+                                {% if user_avatar_path|static_file_exists%}
+                                    <img src="{% static user_avatar_path %}?rand=<%= Date.now() %>" alt="用户头像" class="img-fluid d-block m-auto" style="width:250px;height: 250px;">
+                                {% else %}
+                                    <img src="{% static default_avatar_path %}" alt="默认头像" class="img-fluid d-block m-auto" style="width:250px;height: 250px;">
+                                {% endif %}
+                            {% endwith %}
+                        {% endwith %}
+                    {% endwith %}
+{#                    <img src="../../static/images/{{ matching_files }}?rand=<%= Date.now() %>" alt="头像"#}
+{#                         class="img-fluid d-block m-auto" style="width:250px;height: 250px;">#}
                 </div>
             </div>
             <div class="col-md-7 border right bg-light" style="width: 60%">
@@ -49,4 +60,66 @@
             </div>
         </div>
     </div>
+
+    <div class="container content-container">
+        <div style="margin:0 auto; padding-left:100px;">
+            <div style="width: 90%">
+                <ul class="nav nav-tabs bg-light custom-tabs" style="border-radius: 10px;">
+                    <li class="nav-item ms-2" role="presentation">
+                        <a class="nav-link custom-tab active" id="nav-item-1" data-bs-toggle="tab" href="#content-1">动态</a>
+                    </li>
+                    <li class="nav-item ms-2" role="presentation">
+                        <a class="nav-link custom-tab" id="nav-item-2" data-bs-toggle="tab" href="#content-2">职位</a>
+                    </li>
+                </ul>
+
+                <div class="tab-content">
+                    <div class="tab-pane active bg-light container" style="border-radius: 10px" id="content-1">
+                        <div class="mt-3 mb-3">
+                            {% if topics %}
+                                {% for topic in topics %}
+                                    <div class="p-2 topic-card" style="{% if forloop.first %}{% else %}border-top: 1px solid #dddddd;{% endif %}">
+                                        <div class="row">
+                                            <div class="col-8 d-flex align-items-center">
+                                                <a href="{% url 'Forum:topic_posts' topic.pk %}" class="text-decoration-none text-black">
+                                                    {{ topic.subject }}
+                                                </a>
+
+                                            </div>
+                                            <div class="col-1 d-flex align-items-center">
+                                                <a href="{% url 'UserInfo:index' topic.starter.id %}">
+                                                    {% with user_id=topic.starter.id|stringformat:'d' %}
+                                                        {% with user_avatar_path="images/"|add:user_id|add:".jpg" %}
+                                                            {% with default_avatar_path='images/default.jpeg' %}
+                                                                {% if user_avatar_path|static_file_exists%}
+                                                                    <img src="{% static user_avatar_path %}?rand=<%= Date.now() %>" alt="用户头像" class="rounded-circle" style="width:40px; height:40px;">
+                                                                {% else %}
+                                                                    <img src="{% static default_avatar_path %}" alt="默认头像" class="rounded-circle" style="width:40px; height:40px;">
+                                                                {% endif %}
+                                                            {% endwith %}
+                                                        {% endwith %}
+                                                    {% endwith %}
+                                                </a>
+                                            </div>
+                                            <div class="col-1 d-flex justify-content-center align-items-center text-muted">
+                                                {{ topic.views }}
+                                            </div>
+                                            <div class="col-2 d-flex justify-content-center align-items-center text-muted">
+                                                {{ topic.last_updated|naturaltime }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="tab-pane bg-light container" id="content-2">
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
 {% endblock %}
