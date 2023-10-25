@@ -33,8 +33,11 @@
 {#                            <a class="nav-link custom-nav-link" style="margin-left: 1rem;" href="#">面经</a>#}
 {#                        </li>#}
                     </ul>
-                    <form class="d-flex">
-                        <input class="form-control me-2" type="text" placeholder="按条件搜索...">
+                    <form class="d-flex" method="get" action="/position/list/">
+                        <input class="form-control me-2" type="text" name="keyword" placeholder="搜索职位...">
+                        <input type="hidden" name="target_place" value="0">
+                        <input type="hidden" name="page" value="1">
+                        <input type="hidden" name="page_size" value="10">
                         <button class="btn btn-primary custom-button" type="submit"><i class="fas fa-search"></i></button>
                     </form>
                     {% if 'UserInfo' in request.session %}
@@ -71,7 +74,7 @@
                                 发布
                             </button>
                             <div class="dropdown-menu">
-                                <a class="dropdown-item" href="#">发动态</a>
+                                <a class="dropdown-item" href="{% url 'Forum:new_topic' %}">发动态</a>
                                 <a class="dropdown-item" href="{% url 'PublishPosition:publish'%}">发职位</a>
                             </div>
                         </div>
