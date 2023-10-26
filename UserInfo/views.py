@@ -46,7 +46,7 @@ def index(request, pk):
     query_set = User.objects.filter(id=request.session['UserInfo'].get("id"))
     # 正常来说根据id查表应该查询出唯一的用户，这里作检查
     if len(query_set) != 1:
-        return HttpResponse("不合法的身份")
+        return render(request,"UserAuth/alert_page.html", {'msg': "不合法的身份"})
     # 获取用户数据
     obj = query_set.first()
     for field in fields:
@@ -368,7 +368,7 @@ def show_index(request):
     img = find_image(request)
     # 获取头像
     if not obj:
-        return HttpResponse('用户昵称错误')
+        return render(request, "UserAuth/alert_page.html", {'msg': '不合法的用户名称'})
 
     name = request.session.get("UserInfo")
     context = {"username": guest_name,

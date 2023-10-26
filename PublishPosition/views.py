@@ -38,7 +38,7 @@ def position_list(request):
         keyword = '' if not request.GET.get('keyword') else request.GET.get('keyword')
         target_place = None if not request.GET.get('target_place') else int(request.GET.get('target_place'))
     except ValueError as e:
-        return HttpResponse("异常的查询参数")
+        return render(request,"UserAuth/alert_page.html",{"msg": '异常的查询参数', 'return_path': '/position/list/'})
 
     # get list
     if target_place:
@@ -66,6 +66,7 @@ def position_list(request):
         'matching_files': matching_files[0],
         'district_dictionary': district_dictionary,
         'page_title': page_title,
+        'keyword': keyword
     }
     return render(request, 'PublishPosition/position_list.html', context)
 
@@ -75,7 +76,7 @@ def view_position_detail(request, nid):
     query_set = Position.objects.filter(id=nid, published_state=1)  # 1 表示已发布
     # 判空
     if not query_set:
-        return HttpResponse("不存在的招聘信息或未开放的招聘信息")
+        return render(request, 'UserAuth/alert_page.html', {"msg": "不存在的或者未开放的岗位", "return_path": "/position/list/"})
 
     # 获取头像
     pattern = re.compile(str(request.session['UserInfo'].get("id")) + r'.*')
@@ -122,7 +123,7 @@ def publish_position(request):
     # 检查发布职位者的身份是否为HR
     if user_obj.identity != 2:
         # 当前登录用户非HR身份
-        return HttpResponse("请使用HR身份登录！")
+        return render(request, "UserAuth/alert_page.html", {"msg": "请使用HR身份登录", "return_path": "/info/account/"})
 
     # 获取头像
     pattern = re.compile(str(request.session['UserInfo'].get("id")) + r'.*')
@@ -175,7 +176,7 @@ def publish_position(request):
 def modify_position(request, nid):
     query_set = Position.objects.filter(id=nid)
     if not query_set:
-        return HttpResponse("不存在的岗位信息！")
+        return render(request, "UserAuth/alert_page.html", {"msg": "不存在的岗位信息", "return_path": "/position/list/"})
     # 获取目标岗位对象
     position_obj = query_set.first()
     # 获取当前登录用户信息
@@ -195,10 +196,10 @@ def modify_position(request, nid):
     # 检查发布职位者的身份是否为HR
     if user_obj.identity != 2:
         # 当前登录用户非HR身份
-        return HttpResponse("请使用HR身份登录！")
+        return render(request, "UserAuth/alert_page.html", {"msg": "请使用HR身份登录", "return_path": "/info/account/"})
     # 检查当前用户是否具有编辑权限
     if request.session.get("UserInfo")['id'] != position_obj.HR_id:
-        return HttpResponse("你不具有对当前岗位修改的权限")
+        return render(request, "UserAuth/alert_page.html", {"msg": "您无权修改岗位信息", "return_path": "/position/list/"})
 
     if request.method == 'GET':
         # 获取属性内容['position_name', 'salary', 'summary', 'detail', 'province', 'published_state']
@@ -238,4 +239,4 @@ def modify_position(request, nid):
 
     # 通过字段检查
     query_set.update(**data_dict)
-    return redirect('/position/list/')
+    return redirect('/position/view/{}/'.format(nid))
