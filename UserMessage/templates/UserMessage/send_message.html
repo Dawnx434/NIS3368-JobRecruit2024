@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<form action="/message/send/" method="post">
+    {% csrf_token %}
+    <label for="to_user">收件用户</label>
+    <input type="text" id="to_user" name="to_user">
+
+
+</form>
+</body>
+</html>
