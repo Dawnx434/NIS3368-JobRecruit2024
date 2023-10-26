@@ -269,10 +269,10 @@
                                                         {% if user_avatar_path|static_file_exists%}
                                                         <img src="{% static user_avatar_path %}?rand=<%= Date.now() %>"
                                                              alt="用户头像" class="rounded-circle"
-                                                             style="width: 50%">
+                                                             style="width: 40%">
                                                         {% else %}
                                                         <img src="{% static default_avatar_path %}" alt="默认头像"
-                                                             class="rounded-circle" style="width:50%;">
+                                                             class="rounded-circle" style="width:40%;">
                                                         {% endif %}
                                                         {% endwith %}
                                                         {% endwith %}

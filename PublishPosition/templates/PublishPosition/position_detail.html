@@ -83,16 +83,18 @@
             margin-left: 15px;
             margin-right:50px;
             padding: 0px;
-            word-wrap:break-word;
-            white-space:pre-wrap;
+            word-wrap: break-word;
+            white-space: pre-wrap;
         }
 
-        h4{
+        .detail-title{
+            margin-top: 10px;
             padding-top: 25px;
             padding-bottom: 5px;
             color: black;
             border-top: 2px solid #17a2b8;
             font-weight: bold;
+            font-size: 23px;
             width: 100%;
         }
 
@@ -158,11 +160,10 @@
             <p><span style="font-weight: bold;">简介：</span>{{ summary }}</p>
             <p><span style="font-weight: bold;">岗位地点：</span>{{ district }}</p>
             <p style="margin-bottom: 3px;"><span style="font-weight: bold;">薪水：</span>{{ salary }}</p>
-            <h4>详细要求：</h4>
+            <div class="detail-title">详细要求：</div>
+            <p style="word-wrap: break-word; white-space: pre-wrap;">{{ detail }}</p>
         </div>
-        <div class="row position-detail">
-            <p>{{ detail }}</p>
-        </div>
+
 
 
     </div>
