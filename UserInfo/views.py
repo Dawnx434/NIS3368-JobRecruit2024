@@ -47,7 +47,7 @@ def index(request, pk):
     query_set = User.objects.filter(id=request.session['UserInfo'].get("id"))
     # 正常来说根据id查表应该查询出唯一的用户，这里作检查
     if len(query_set) != 1:
-        return render(request,"UserAuth/alert_page.html", {'msg': "不合法的身份"})
+        return render(request, "UserAuth/alert_page.html", {'msg': "不合法的身份"})
     # 获取用户数据
     obj = query_set.first()
     for field in fields:
@@ -266,6 +266,31 @@ def modify(request):
         'userinfo': user_info
     }
     return render(request, "UserInfo/userinfo_modify.html", context)
+
+
+def my_published_position(request):
+    """返回我发布的职位"""
+    user_query_set = User.objects.filter(id=request.session.get("UserInfo").get("id"))
+    if not user_query_set:
+        return render(request, "UserAuth/alert_page.html", {"msg": "不合法的身份"})
+    user_obj = user_query_set.first()
+    if user_obj.identity != 2:
+        return render(request, "UserAuth/alert_page.html", {"msg": "请先至账号安全处切换至HR身份！"})
+    position_query_set = Position.objects.filter(HR=user_obj)
+    position_list = []
+    for position in position_query_set:
+        position_list.append({
+            "id": position.id,
+            "position_name": position.position_name,
+            "summary": position.summary if len(position.summary) < 40 else position.summary[0:40] + "...",
+            "published_state": position.get_published_state_display()
+        })
+
+    context = {
+        "position_list": position_list
+    }
+
+    return render(request, "UserInfo/my_published_position.html", context)
 
 
 def info(request):
