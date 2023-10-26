@@ -121,7 +121,8 @@
             </div>
         </div>
         <div class="row">
-            <p><span style="font-weight: bold;"> HR:&nbsp;&nbsp;
+            <p>
+                <span style="font-weight: bold;"> HR:&nbsp;&nbsp;
                         <a href="{% url 'UserInfo:index' user_id %}" class="text-decoration-none">
                             {% with user_id=user_id|stringformat:'d' %}
                                 {% with user_avatar_path="images/"|add:user_id|add:".jpg" %}

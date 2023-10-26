@@ -2,124 +2,302 @@
 
 {% load static static_tags humanize %}
 
+{% block stylesheet %}
+<style>
+
+        .card-container {
+            margin-top: 20px;
+            padding-right: 20px;
+            padding-left: 20px;
+        }
+
+        .card-body {
+            background-color: white;
+        }
+
+        .card-container a {
+            text-decoration: none;
+            color: black;
+        }
+
+        .card-header {
+            font-weight: bold;
+            font-size: 30px;
+        }
+
+        .card:hover{
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            transform: translateY(-3px);
+            transition: transform 0.4s;
+            color: #17a2b8;
+        }
+
+        .card-content{
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: left;
+            height: 100%;
+        }
+
+        .card-title {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            color: #17a2b8;
+            font-weight: bold;
+            font-size: 25px;
+            word-wrap: break-word;
+        }
+
+        .hr-line {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 3px;
+            height: 100%;
+            background-color: #17a2b8;
+        }
+
+        .hr-line-light {
+            position: relative;
+            left: 0;
+            top: 0;
+            width: 1px;
+            height: 100%;
+            background-color: #17a2b8;
+            background-color: rgba(23, 162, 184, 0.6);
+        }
+
+        .property-box {
+            background-color: rgba(229, 229, 229, 0.6);
+            padding: 1px;
+            margin-top: 3px;
+            border-radius: 1px;
+            font-size: 13px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .card{
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+            border-top-right-radius: 10px;
+            border-bottom-right-radius: 10px;
+        }
+
+        .list-content{
+            background-color: white;
+            border-radius: 10px;
+            padding-top: 30px;
+            padding-bottom: 50px;
+            padding-left: 50px;
+            padding-right: 50px;
+            margin: auto;
+            margin-top: 0px;
+            margin-bottom: 30px;
+            width: 100%;
+        }
+
+
+        h1{
+            font-weight: bold;
+            font-size: 30px;
+            padding-left: 20px;
+        }
+
+
+</style>
+
+{% endblock %}
+
 {% block content %}
-    <div class="container content-container">
-        <div class="row" style="margin:0 auto; padding-left:100px;">
-            <div class="col-md-3 bg-info text-white left" style="width: 30%">
-                <div class="lbox">
-                    {% with user_id=id|stringformat:'d' %}
-                        {% with user_avatar_path="images/"|add:user_id|add:".jpg" %}
-                            {% with default_avatar_path='images/default.jpeg' %}
-                                {% if user_avatar_path|static_file_exists%}
-                                    <img src="{% static user_avatar_path %}?rand=<%= Date.now() %>" alt="用户头像" class="img-fluid d-block m-auto" style="width:250px;height: 250px;">
-                                {% else %}
-                                    <img src="{% static default_avatar_path %}" alt="默认头像" class="img-fluid d-block m-auto" style="width:250px;height: 250px;">
-                                {% endif %}
-                            {% endwith %}
-                        {% endwith %}
-                    {% endwith %}
-{#                    <img src="../../static/images/{{ matching_files }}?rand=<%= Date.now() %>" alt="头像"#}
-{#                         class="img-fluid d-block m-auto" style="width:250px;height: 250px;">#}
+<div class="container content-container">
+    <div class="row" style="margin:0 auto; padding-left:100px;">
+        <div class="col-md-3 bg-info text-white left" style="width: 30%">
+            <div class="lbox">
+                {% with user_id=id|stringformat:'d' %}
+                {% with user_avatar_path="images/"|add:user_id|add:".jpg" %}
+                {% with default_avatar_path='images/default.jpeg' %}
+                {% if user_avatar_path|static_file_exists%}
+                <img src="{% static user_avatar_path %}?rand=<%= Date.now() %>" alt="用户头像"
+                     class="img-fluid d-block m-auto" style="width:250px;height: 250px;">
+                {% else %}
+                <img src="{% static default_avatar_path %}" alt="默认头像" class="img-fluid d-block m-auto"
+                     style="width:250px;height: 250px;">
+                {% endif %}
+                {% endwith %}
+                {% endwith %}
+                {% endwith %}
+                {# <img src="../../static/images/{{ matching_files }}?rand=<%= Date.now() %>" alt="头像" #}
+                        {# class="img-fluid d-block m-auto" style="width:250px;height: 250px;">#}
+            </div>
+        </div>
+        <div class="col-md-7 border right bg-light" style="width: 60%">
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="rbox">
+                        <h3 id="username" style="font-weight: bold;">{{ username }}</h3>
+                    </div>
+                </div>
+
+            </div>
+            <div class="rbox col-md-10" style="margin-top: 10px;">
+                <h4>个人信息</h4>
+                <div class="column">
+                    <p>
+                        <span class="custom-text-color">性别:</span>
+                        {% if gender == '1' %}
+                        不愿透露
+                        {% elif gender == '2' %}
+                        男
+                        {% elif gender == '3' %}
+                        女
+                        {% else %}
+                        {{ gender }}
+                        {% endif %}
+                    </p>
+                    <p><span class="custom-text-color">学历:</span> {{ edu_ground }}</p>
+                    <p><span class="custom-text-color">学校:</span> {{ school }}</p>
+                    <p><span class="custom-text-color">专业:</span> {{ major }}</p>
                 </div>
             </div>
-            <div class="col-md-7 border right bg-light" style="width: 60%">
-                <div class="row">
-                    <div class="col-sm-6">
-                        <div class="rbox">
-                            <h3 id="username" style="font-weight: bold;">{{ username }}</h3>
-                        </div>
-                    </div>
-
-                </div>
-                <div class="rbox col-md-10" style="margin-top: 10px;">
-                    <h4>个人信息</h4>
-                    <div class="column">
-                        <p>
-                            <span class="custom-text-color">性别:</span>
-                        {% if gender == '1' %}
-                            不愿透露
-                        {% elif gender == '2' %}
-                            男
-                        {% elif gender == '3' %}
-                            女
-                        {% else %}
-                            {{ gender }}
-                        {% endif %}
-                        </p>
-                        <p><span class="custom-text-color">学历:</span> {{ edu_ground }}</p>
-                        <p><span class="custom-text-color">学校:</span> {{ school }}</p>
-                        <p><span class="custom-text-color">专业:</span> {{ major }}</p>
-                    </div>
-                </div>
-                <div class="rbox col-md-10">
-                    <h4>求职意向</h4>
-                    <p><span class="custom-text-color" style="margin-top: 20px;">预期职位：</span>{{ excepting_position }}
-                    </p>
-                    <p><span class="custom-text-color">预期地点：</span>{{ excepting_location }}</p>
-                </div>
+            <div class="rbox col-md-10">
+                <h4>求职意向</h4>
+                <p><span class="custom-text-color" style="margin-top: 20px;">预期职位：</span>{{ excepting_position }}
+                </p>
+                <p><span class="custom-text-color">预期地点：</span>{{ excepting_location }}</p>
             </div>
         </div>
     </div>
+</div>
 
-    <div class="container content-container">
-        <div style="margin:0 auto; padding-left:100px;">
-            <div style="width: 90%">
-                <ul class="nav nav-tabs bg-light custom-tabs" style="border-radius: 10px;">
-                    <li class="nav-item ms-2" role="presentation">
-                        <a class="nav-link custom-tab active" id="nav-item-1" data-bs-toggle="tab" href="#content-1">动态</a>
-                    </li>
-                    <li class="nav-item ms-2" role="presentation">
-                        <a class="nav-link custom-tab" id="nav-item-2" data-bs-toggle="tab" href="#content-2">职位</a>
-                    </li>
-                </ul>
+<div class="container content-container">
+    <div style="margin:0 auto; padding-left:100px;">
+        <div style="width: 90%">
+            <ul class="nav nav-tabs bg-light custom-tabs" style="border-radius: 10px;">
+                <li class="nav-item ms-2" role="presentation">
+                    <a class="nav-link custom-tab active" id="nav-item-1" data-bs-toggle="tab"
+                       href="#content-1">动态</a>
+                </li>
+                <li class="nav-item ms-2" role="presentation">
+                    <a class="nav-link custom-tab" id="nav-item-2" data-bs-toggle="tab" href="#content-2">职位</a>
+                </li>
+            </ul>
 
-                <div class="tab-content">
-                    <div class="tab-pane active bg-light container" style="border-radius: 10px" id="content-1">
-                        <div class="mt-3 mb-3">
-                            {% if topics %}
-                                {% for topic in topics %}
-                                    <div class="p-2 topic-card" style="{% if forloop.first %}{% else %}border-top: 1px solid #dddddd;{% endif %}">
+            <div class="tab-content">
+                <!--                CONTENT 1 -->
+                <div class="tab-pane active bg-light container" style="border-radius: 10px" id="content-1">
+                    <div class="mt-3 mb-3">
+                        {% if topics %}
+                        {% for topic in topics %}
+                        <div class="p-2 topic-card"
+                             style="{% if forloop.first %}{% else %}border-top: 1px solid #dddddd;{% endif %}">
+                            <div class="row">
+                                <div class="col-8 d-flex align-items-center">
+                                    <a href="{% url 'Forum:topic_posts' topic.pk %}"
+                                       class="text-decoration-none text-black">
+                                        {{ topic.subject }}
+                                    </a>
+
+                                </div>
+                                <div class="col-1 d-flex align-items-center">
+                                    <a href="{% url 'UserInfo:index' topic.starter.id %}">
+                                        {% with user_id=topic.starter.id|stringformat:'d' %}
+                                        {% with user_avatar_path="images/"|add:user_id|add:".jpg" %}
+                                        {% with default_avatar_path='images/default.jpeg' %}
+                                        {% if user_avatar_path|static_file_exists%}
+                                        <img src="{% static user_avatar_path %}?rand=<%= Date.now() %>" alt="用户头像"
+                                             class="rounded-circle" style="width:40px; height:40px;">
+                                        {% else %}
+                                        <img src="{% static default_avatar_path %}" alt="默认头像"
+                                             class="rounded-circle" style="width:40px; height:40px;">
+                                        {% endif %}
+                                        {% endwith %}
+                                        {% endwith %}
+                                        {% endwith %}
+                                    </a>
+                                </div>
+                                <div class="col-1 d-flex justify-content-center align-items-center text-muted">
+                                    {{ topic.views }}
+                                </div>
+                                <div class="col-2 d-flex justify-content-center align-items-center text-muted">
+                                    {{ topic.last_updated|naturaltime }}
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                        {% endif %}
+                    </div>
+                </div>
+                <!--                CONTENT 2-->
+                <div class="tab-pane bg-light container" style="border-radius: 10px;" id="content-2">
+
+                    <div class="mt-3 mb-3 row">
+                        {% if positions %}
+                        {% for position in positions %}
+                        <div class="col-md-6 card-container">
+                            <a href="/position/view/{{ position.id }}" class="card-link" style="col-md-6">
+                                <div class="card">
+                                    <div class="hr-line"></div>
+                                    <div class="card-body" style="border-radius: 20px;">
                                         <div class="row">
-                                            <div class="col-8 d-flex align-items-center">
-                                                <a href="{% url 'Forum:topic_posts' topic.pk %}" class="text-decoration-none text-black">
-                                                    {{ topic.subject }}
-                                                </a>
-
+                                            <div class="col-md-9">
+                                                <div class="card-title" id="position-name-{{ position.id }}">
+                                                    {{ position.position_name }}
+                                                </div>
+                                                <script>
+                                                    var myBox = document.getElementById('position-name-{{ position.id }}');
+                                                    var text = myBox.innerText.trim();
+                                                    console.log(text);
+                                                    console.log(text.length);
+                                                    var maxLength = 15;
+                                                    if (text.length > maxLength) {
+                                                        text = text.substring(0, maxLength) + '...';
+                                                    }
+                                                    myBox.innerText = text;
+                                                </script>
                                             </div>
-                                            <div class="col-1 d-flex align-items-center">
-                                                <a href="{% url 'UserInfo:index' topic.starter.id %}">
-                                                    {% with user_id=topic.starter.id|stringformat:'d' %}
-                                                        {% with user_avatar_path="images/"|add:user_id|add:".jpg" %}
-                                                            {% with default_avatar_path='images/default.jpeg' %}
-                                                                {% if user_avatar_path|static_file_exists%}
-                                                                    <img src="{% static user_avatar_path %}?rand=<%= Date.now() %>" alt="用户头像" class="rounded-circle" style="width:40px; height:40px;">
-                                                                {% else %}
-                                                                    <img src="{% static default_avatar_path %}" alt="默认头像" class="rounded-circle" style="width:40px; height:40px;">
-                                                                {% endif %}
-                                                            {% endwith %}
+                                            <div class="col-md-3">
+                                                <div class="card-content">
+                                                    <div style="display: inline-block;">
+                                                        {% with id=id|stringformat:'d' %}
+                                                        {% with user_avatar_path="images/"|add:id|add:".jpg" %}
+                                                        {% with default_avatar_path='images/default.jpeg' %}
+                                                        {% if user_avatar_path|static_file_exists%}
+                                                        <img src="{% static user_avatar_path %}?rand=<%= Date.now() %>"
+                                                             alt="用户头像" class="rounded-circle"
+                                                             style="width: 50%">
+                                                        {% else %}
+                                                        <img src="{% static default_avatar_path %}" alt="默认头像"
+                                                             class="rounded-circle" style="width:50%;">
+                                                        {% endif %}
                                                         {% endwith %}
-                                                    {% endwith %}
-                                                </a>
-                                            </div>
-                                            <div class="col-1 d-flex justify-content-center align-items-center text-muted">
-                                                {{ topic.views }}
-                                            </div>
-                                            <div class="col-2 d-flex justify-content-center align-items-center text-muted">
-                                                {{ topic.last_updated|naturaltime }}
+                                                        {% endwith %}
+                                                        {% endwith %}
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                {% endfor %}
-                            {% endif %}
+                                </div>
+                            </a>
                         </div>
+                        {% endfor %}
+                        {% endif %}
                     </div>
-                    <div class="tab-pane bg-light container" id="content-2">
-                    </div>
+
+
                 </div>
             </div>
 
+
         </div>
+
     </div>
+</div>
 
 
 {% endblock %}

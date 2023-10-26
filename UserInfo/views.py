@@ -29,7 +29,8 @@ def index(request, pk):
                      "excepting_position": obj.excepting_position,
                      "excepting_location": obj.excepting_location,
                      "matching_files": matching_files,
-                     'topics': obj.topics.all()
+                     'topics': obj.topics.all(),
+                     'positions': obj.positions.all(),
                      }
         return render(request, "UserInfo/index.html", context=user_info)
     # else POST
