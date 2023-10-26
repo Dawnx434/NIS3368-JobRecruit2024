@@ -1,0 +1,103 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="{% static 'plugins/bootstrap/css/bootstrap.css' %}">
+</head>
+<body>
+<p>当前用户登陆身份：{{ data_dict.identity }}</p>
+<a href="/auth/changeidentity/" class="btn btn-primary">切换身份</a>
+<form method="post" action="/info/account/">
+    {% csrf_token %}
+    <label for="username">用户名</label>
+    <input type="text" name="username" id="username" value="{{ data_dict.username }}">
+    <span style="color: red">{{ error_dict.username }}</span>
+
+    <label for="password">密码</label>
+    <input type="password" name="password" id="password" value="">
+    <span style="color: red">{{ error_dict.password }}</span>
+
+    <label for="confirm_password">确认密码</label>
+    <input type="password" name="confirm_password" id="confirm_password" value="">
+    <span style="color: red">{{ error_dict.confirm_password }}</span>
+
+    <label for="mobile_phone">手机号</label>
+    <input type="text" name="mobile_phone" id="mobile_phone" value="{{ data_dict.mobile_phone }}">
+    <span style="color: red">{{ error_dict.mobile_phone }}</span>
+
+    <label for="email">邮箱</label>
+    <input type="text" name="email" id="email" value="{{ data_dict.email }}">
+    <span style="color: red">{{ error_dict.email }}</span>
+
+    <label for="verification_code">邮箱验证码</label>
+    <input type="text" name="verification_code" id="verification_code">
+    <span style="color: red">{{ error_dict.verification_code }}</span>
+
+    <button type="button" id="sendemail" class="btn btn-primary">发送验证码</button>
+
+    <button type="submit">提交</button>
+</form>
+<script src="{% static 'js/jquery-3.6.0.min.js' %}"></script>
+<script type="text/javascript">
+    const interval = 30;
+    let countdown = interval;
+    let button = document.getElementById('sendemail');
+    let timer;
+
+    function updateButtonText() {
+        button.innerText = '剩余时间: ' + countdown + ' 秒';
+    }
+
+
+    function countdownTick() {
+        countdown--;
+        updateButtonText(button);
+
+        if (countdown <= 0) {
+            clearInterval(timer);
+            button.innerText = '发送验证码';
+            button.disabled = false;
+            button.className = 'btn btn-primary';
+        }
+    }
+
+    // 使用 JavaScript 事件处理监听按钮点击事件
+    document.getElementById('sendemail').addEventListener('click', function () {
+        //防止按钮再被点击
+        button.disabled = true;
+        countdown = interval;
+        button.className = 'btn btn-secondary';
+        //启动倒计时
+        timer = setInterval(countdownTick, 1000);
+        let email_address = document.getElementById("email").value
+        //发送请求
+        $.ajax({
+            url: '/info/sendemail/',
+            type: 'POST',
+            data: {
+                'new_email_address': email_address,
+            },
+            dataType: 'JSON',
+            success: (
+                function (res) {
+                    if (res['state']) {
+                        // state = true
+                        alert(res['msg']);
+                    } else {
+                        // state = false
+                        alert(res['msg']);
+                        clearInterval(timer);
+                        button.innerText = '发送验证码';
+                        button.disabled = false;
+                        button.className = 'btn btn-primary';
+                    }
+                }
+            )
+        })
+
+    });
+</script>
+</body>
+</html>

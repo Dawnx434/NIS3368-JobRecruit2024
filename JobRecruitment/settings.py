@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'UserInfo',
     'PublishPosition',
     'Forum',
+    'Application',
 ]
 
 MIDDLEWARE = [

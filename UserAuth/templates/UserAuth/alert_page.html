@@ -8,8 +8,8 @@
 </head>
 <body>
 <div class="alert alert-danger" role="alert" style="text-align: center">
-    <h1>{{ msg }}</h1>
-    <h3><a href="/">返回主页</a></h3>
+    <h1>{{ msg | default:'未知的错误信息' }}</h1>
+    <h3><a href="{{ return_path | default:'/' }}">返回主页</a></h3>
 </div>
 <script src="{% static 'js/jquery-3.6.0.min.js' %}"></script>
 </body>
