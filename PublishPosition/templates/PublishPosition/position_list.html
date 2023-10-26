@@ -1,65 +1,13 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load static humanize static_tags %}
+
 
 {% block title %}职位列表{% endblock %}
 
 {% block stylesheet %}
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
 <style>
-
-        .custom-text-color {
-            color: #17a2b8 !important;
-            font-weight: bold;
-        }
-
-
-        .custom-background{
-            background-color: #E5E5E5;
-        }
-
-        .custom-bg-color {
-            background-color: #17a2b8;
-        }
-
-        .custom-button{
-            background-color: #17a2b8;
-            color: white;
-            border: 1px solid #17a2b8;
-        }
-
-
-        .progress {
-            margin-top: 5px;
-        }
-
-        .dropdown-container {
-            position: relative;
-            left: -50px;
-        }
-
-        .close {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-        }
-
-        .close:hover,
-        .close:focus {
-            color: black;
-            text-decoration: none;
-            cursor: pointer;
-        }
-
-
-        .dropdown:hover .dropdown-menu{
-        display: block;
-        }
-
-        .dropdown-menu{
-            margin-top: 0;
-            min-width: 100px;
-        }
 
         .card-container {
             margin-top: 20px;
@@ -205,6 +153,11 @@
 
 
 
+
+
+
+
+
 </style>
 
 {% endblock %}
@@ -219,43 +172,51 @@
             <h1>{{ page_title }}</h1>
             <div class="row">
                 {% for obj in query_set %}
-                <div class="col-md-6 card-container">
+                <div class="card-container" style="width:50%;">
                     <a href="/position/view/{{ obj.id }}" class="card-link">
                         <div class="card">
                             <div class="hr-line"></div>
                             <div class="card-body" style="border-radius: 20px;">
                                 <div class="row">
-                                    <div class="col-md-6">
+                                    <div style="width:40%;">
                                         <div class="card-title" id="position-name-{{ obj.id }}">
                                             {{ obj.position_name }}
                                         </div>
                                     </div>
                                     <script>
-                                    var myBox = document.getElementById('position-name-{{ obj.id }}');
-                                    var text = myBox.innerText;
-                                    var maxLength = 15;
-                                    if (text.length > maxLength) {
-                                        text = text.substring(0, maxLength) + '...';
-                                    }
-                                    myBox.innerText = text;
-
-
-
-
+                                        var myBox = document.getElementById('position-name-{{ obj.id }}');
+                                        var text = myBox.innerText.trim();
+                                        var maxLength = 12;
+                                        if (text.length > maxLength) {
+                                            text = text.substring(0, maxLength) + '...';
+                                        }
+                                        myBox.innerText = text;
                                     </script>
-                                    <div class="col-md-2" style="padding: 0;">
+                                    <div style="width:20%">
                                         <div class="card-content">
                                             <div class="col-md-6 property-box">{{ obj.salary }}</div>
                                             <div class="col-md-6 property-box">{{ obj.get_district_display }}</div>
                                         </div>
                                     </div>
-                                    <div class="col-md-1">
+                                    <div style="width:5%;margin-right: 0;">
                                         <div class="hr-line-light"></div>
                                     </div>
-                                    <div class="col-md-3">
-                                        <div class="card-content">
-                                            发布者: {{ obj.HR }}
-                                        </div>
+                                    <div style="width:30%;">
+                                        HR: {{ obj.HR }}
+                                            {% with id=obj.HR.id|stringformat:'d' %}
+                                            {% with user_avatar_path="images/"|add:id|add:".jpg" %}
+                                            {% with default_avatar_path='images/default.jpeg' %}
+                                            {% if user_avatar_path|static_file_exists%}
+                                            <img src="{% static user_avatar_path %}?rand=<%= Date.now() %>"
+                                                 alt="用户头像" class="rounded-circle"
+                                                 style="width: 30%">
+                                            {% else %}
+                                            <img src="{% static default_avatar_path %}" alt="默认头像"
+                                                 class="rounded-circle" style="width:30%;">
+                                            {% endif %}
+                                            {% endwith %}
+                                            {% endwith %}
+                                            {% endwith %}
                                     </div>
                                 </div>
                             </div>
@@ -333,6 +294,11 @@
         $(document).ready(function(){
             $(document).off('click.bs.dropdown.data-api');
         });
+
+
+
+
+
 
 
 

@@ -11,7 +11,7 @@ class Position(models.Model):
     salary = models.IntegerField(verbose_name="薪资")
     summary = models.TextField(verbose_name="岗位简要", max_length=100)
     detail = MDTextField(verbose_name="详细内容", max_length=3000)
-    HR = models.ForeignKey(verbose_name="联系人", to=User, to_field="id", on_delete=models.CASCADE)
+    HR = models.ForeignKey(verbose_name="联系人", related_name='positions', to=User, to_field="id", on_delete=models.CASCADE)
     district = models.SmallIntegerField(verbose_name="所属地区", choices=district_list, default=0)
     published_choice = (
         (1, "已发布"),

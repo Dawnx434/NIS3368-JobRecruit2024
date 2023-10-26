@@ -14,7 +14,7 @@
         }
 
 
-        .custom-background{
+        .custom-background {
             background-color: #E5E5E5;
         }
 
@@ -22,7 +22,7 @@
             background-color: #17a2b8;
         }
 
-        .custom-button{
+        .custom-button {
             background-color: #17a2b8;
             color: white;
             border: 1px solid #17a2b8;
@@ -53,47 +53,48 @@
         }
 
 
-        .dropdown:hover .dropdown-menu{
-        display: block;
+        .dropdown:hover .dropdown-menu {
+            display: block;
         }
 
-        .dropdown-menu{
+        .dropdown-menu {
             margin-top: 0;
         }
 
-        .content-container{
+        .content-container {
             width: 70%;
         }
 
-        .position-title{
+        .position-title {
             color: #17a2b8;
             padding-bottom: 5px;
             margin-bottom: 15px;
         }
 
-        .float-right{
+        .float-right {
             float: right;
         }
 
         .detail{
             word-wrap:break-word;
             white-space:pre-wrap;
-        }
 
         .position-detail{
             margin-left: 15px;
             margin-right:50px;
             padding: 0px;
-            word-wrap:break-word;
-            white-space:pre-wrap;
+            word-wrap: break-word;
+            white-space: pre-wrap;
         }
 
-        h4{
+        .detail-title{
+            margin-top: 10px;
             padding-top: 25px;
             padding-bottom: 5px;
             color: black;
             border-top: 2px solid #17a2b8;
             font-weight: bold;
+            font-size: 23px;
             width: 100%;
         }
 
@@ -103,6 +104,7 @@
 {% endblock %}
 
 {% block content %}
+
 
 <div class="container content-container bg-light" style="margin-top: 3rem; margin-bottom: 3rem; border-radius: 10px;">
     <div class="row" style="padding-left: 5rem; padding-top:1rem; padding-right: 5rem; padding-bottom: 5rem;">
@@ -115,13 +117,24 @@
             </div>
             <div class="col-md-5">
                 {% if HR.id == user_id %}
-                <a href="/position/modify/{{ position_id }}/" class="btn btn-primary custom-button float-right"
-                   style="text-align: right;">修改职位信息</a>
+                    <a href="/position/modify/{{ position_id }}/" class="btn btn-primary custom-button float-right"
+                       style="text-align: right;">修改职位信息</a>
+                {% else %}
+                    {% if not already_apply %}
+                        <a href="/application/apply/{{ position_id }}/"
+                           class="btn btn-primary custom-button float-right"
+                           style="text-align: right;">申请该职位</a>
+                    {% else %}
+                        <button class="btn btn-secondary custom-button float-right"
+                                style="text-align: right;" disabled>您已申请该职位
+                        </button>
+                    {% endif %}
                 {% endif %}
             </div>
         </div>
         <div class="row">
-            <p><span style="font-weight: bold;"> HR:&nbsp;&nbsp;
+            <p>
+                <span style="font-weight: bold;"> HR:&nbsp;&nbsp;
                         <a href="{% url 'UserInfo:index' user_id %}" class="text-decoration-none">
                             {% with user_id=user_id|stringformat:'d' %}
                                 {% with user_avatar_path="images/"|add:user_id|add:".jpg" %}
@@ -147,11 +160,10 @@
             <p><span style="font-weight: bold;">简介：</span>{{ summary }}</p>
             <p><span style="font-weight: bold;">岗位地点：</span>{{ district }}</p>
             <p style="margin-bottom: 3px;"><span style="font-weight: bold;">薪水：</span>{{ salary }}</p>
-            <h4>详细要求：</h4>
+            <div class="detail-title">详细要求：</div>
+            <p style="word-wrap: break-word; white-space: pre-wrap;">{{ detail }}</p>
         </div>
-        <div class="row position-detail">
-            <p>{{ detail }}</p>
-        </div>
+
 
 
     </div>
@@ -178,6 +190,7 @@
         $(document).ready(function(){
             $(document).off('click.bs.dropdown.data-api');
         });
+
 
 
 </script>

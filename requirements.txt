@@ -1,5 +1,5 @@
 Django
+django_mdeditor
+Markdown
 Pillow
 PyMySQL
-
-Markdown

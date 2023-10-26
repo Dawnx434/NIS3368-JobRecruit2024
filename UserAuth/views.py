@@ -102,11 +102,38 @@ def reset_password(request):
 
     # 能到这里一般不会为空了，但为了确保程序健壮性，依然判空
     if not query_set:
-        return HttpResponse("找不到用户！")
+        return render(request, "UserAuth/alert_page.html", {'msg': '错误的用户信息'})
 
     # 重置密码
     query_set.update(password=form.cleaned_data['password'])
     return render(request, "UserAuth/alert_page.html", context={'msg': "您的密码已被重置！"})
+
+
+def change_identity(request):
+    """更改登录身份"""
+    user_query_set = models.User.objects.filter(id=request.session.get("UserInfo").get("id"))
+    if not user_query_set:
+        return render(request, "UserAuth/alert_page.html", {'msg': '错误的用户信息', 'return_path': '/info/info/'})
+    user_obj = user_query_set.first()
+
+    if user_obj.identity == 2:
+        # 目前是HR身份
+        user_query_set.update(identity=1)  # 切换回用户身份
+        return redirect("/info/account/")
+
+    # 目前不是HR身份
+    if not user_obj.hr_allowed == 3:
+        # 如果不具备HR资格
+        if user_obj.hr_allowed == 1:
+            return render(request, "UserAuth/alert_page.html",
+                      {'msg': '您尚不具备HR身份，请联系管理员获取', 'return_path': '/info/info/'})
+        else:
+            return render(request, "UserAuth/alert_page.html",
+                          {'msg': '您的申请已提交，请等待审核通过', 'return_path': '/info/info/'})
+
+    user_query_set.update(identity=2)
+
+    return redirect("/info/account/")
 
 
 def generate_verification_code(request):
