@@ -46,11 +46,8 @@ INSTALLED_APPS = [
     'UserAuth',
     'UserInfo',
     'PublishPosition',
-<<<<<<< HEAD
     'Forum',
-=======
     'Application',
->>>>>>> 3ab42c2 (Finished: apply for a position & /info/apply/)
 ]
 
 MIDDLEWARE = [
