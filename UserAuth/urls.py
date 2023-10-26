@@ -9,7 +9,7 @@ urlpatterns = [
     path("reset/", views.reset_password),
 
     path("gencode/", views.generate_verification_code),
-    path("sendemail/", views.register_email),
+    path("sendemail/", views.register_email, name='sendemail'),
     path("resetpasswordemail/", views.reset_password_email),
 
     path("state/", views.check_login_state),
