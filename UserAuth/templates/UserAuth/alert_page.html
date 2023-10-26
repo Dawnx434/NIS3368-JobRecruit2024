@@ -1,16 +1,27 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>提示</title>
-    <link rel="stylesheet" href="{% static 'plugins/bootstrap/css/bootstrap.css' %}">
-</head>
-<body>
-<div class="alert alert-danger" role="alert" style="text-align: center">
-    <h1>{{ msg | default:'未知的错误信息' }}</h1>
-    <h3><a href="{{ return_path | default:'/' }}">返回主页</a></h3>
+{% extends 'base.html' %}
+
+{% load static static_tags humanize %}
+
+{% block title %}提示{% endblock %}
+
+{% block stylesheet%}
+<style>
+    a{
+        text-decoration: none;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container content-container" style="padding-top: 50px;">
+    <div class="alert alert-danger" role="alert" style="margin: auto; text-align: center; width: 70%;">
+        <h1 style="margin: 20px;">{{ msg | default:'未知的错误信息' }}</h1>
+        <h3 style="margin-top: 50px; margin-bottom: 40px;"><a href="{{ return_path | default:'/' }}" class="btn btn-primary custom-button " >返回上页</a></h3>
+    </div>
 </div>
+{% endblock %}
+
+
+{% block js %}
 <script src="{% static 'js/jquery-3.6.0.min.js' %}"></script>
-</body>
-</html>
+{% endblock %}

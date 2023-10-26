@@ -3,58 +3,141 @@
 {% load static humanize static_tags %}
 
 {% block stylesheet %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+
 <style>
+
     .topic-card:hover{
         color: #17a2b8 !important;
         font-weight: bold;
     }
+
+    .page-button {
+        background-color: rgba(229, 229, 229, 0.5);
+        color: black;
+        padding-top: 5px;
+        padding-bottom: 5px;
+        padding-left: 7px;
+        padding-right: 7px;
+        border-radius: 3px;
+        font-size: 15px;
+        font-weight: bold;
+        width: 100%;
+        text-align: center;
+        text-decoration: none;
+    }
+
+    .page-button:hover {
+        color: #17a2b8;
+    }
+
+    .current-page{
+        background-color: #17a2b8;
+        color: white;
+        padding-top: 5px;
+        padding-bottom: 5px;
+        padding-left: 9px;
+        padding-right: 9px;
+        border-radius: 3px;
+        font-size: 15px;
+        font-weight: bold;
+        width: 100%;
+        text-align: center;
+        text-decoration: none;
+    }
+
 </style>
 {% endblock %}
 
 
 {% block content %}
-    <div style="border-radius: 10px;" class="mt-4 p-4 bg-light">
-        <div>
-            <div class="mb-4">
-                <a href="{% url 'Forum:new_topic' %}" class="btn btn-primary custom-button"><i class="fas fa-plus me-1"></i>新建动态</a>
-            </div>
-            {% if topics %}
-                {% for topic in topics %}
-                    <div class="p-2 topic-card" style="{% if forloop.first %}border-top: 1px solid #17a2b8;{% else %}border-top: 1px solid #dddddd;{% endif %}{% if forloop.last %}border-bottom: 1px solid #17a2b8;{% endif %}">
-                        <div class="row">
-                            <div class="col-8 d-flex align-items-center">
-                                <a href="{% url 'Forum:topic_posts' topic.pk %}" class="text-decoration-none text-black">
-                                    {{ topic.subject }}
-                                </a>
+<div style="border-radius: 10px; margin-bottom: 50px;" class="mt-4 p-4 bg-light">
+    <div>
+        <div class="mb-4">
+            <a href="{% url 'Forum:new_topic' %}" class="btn btn-primary custom-button"><i class="fas fa-plus me-1"></i>新建动态</a>
+        </div>
+        {% if topics %}
+        {% for topic in topics %}
+        <div class="p-2 topic-card"
+             style="{% if forloop.first %}border-top: 1px solid #17a2b8;{% else %}border-top: 1px solid #dddddd;{% endif %}{% if forloop.last %}border-bottom: 1px solid #17a2b8;{% endif %}">
+            <div class="row">
+                <div class="col-8 d-flex align-items-center">
+                    <a href="{% url 'Forum:topic_posts' topic.pk %}" class="text-decoration-none text-black">
+                        {{ topic.subject }}
+                    </a>
 
-                            </div>
-                            <div class="col-1 d-flex align-items-center">
-                                <a href="{% url 'UserInfo:index' topic.starter.id %}">
-                                    {% with user_id=topic.starter.id|stringformat:'d' %}
-                                        {% with user_avatar_path="images/"|add:user_id|add:".jpg" %}
-                                            {% with default_avatar_path='images/default.jpeg' %}
-                                                {% if user_avatar_path|static_file_exists%}
-                                                    <img src="{% static user_avatar_path %}?rand=<%= Date.now() %>" alt="用户头像" class="rounded-circle" style="width:40px; height:40px;">
-                                                {% else %}
-                                                    <img src="{% static default_avatar_path %}" alt="默认头像" class="rounded-circle" style="width:40px; height:40px;">
-                                                {% endif %}
-                                            {% endwith %}
-                                        {% endwith %}
-                                    {% endwith %}
-                                </a>
-                            </div>
-                            <div class="col-1 d-flex justify-content-center align-items-center text-muted">
-                                {{ topic.views }}
-                            </div>
-                            <div class="col-2 d-flex justify-content-center align-items-center text-muted">
-                                {{ topic.last_updated|naturaltime }}
-                            </div>
-                        </div>
-                    </div>
-                {% endfor %}
-            {% endif %}
+                </div>
+                <div class="col-1 d-flex align-items-center">
+                    <a href="{% url 'UserInfo:index' topic.starter.id %}">
+                        {% with user_id=topic.starter.id|stringformat:'d' %}
+                        {% with user_avatar_path="images/"|add:user_id|add:".jpg" %}
+                        {% with default_avatar_path='images/default.jpeg' %}
+                        {% if user_avatar_path|static_file_exists%}
+                        <img src="{% static user_avatar_path %}?rand=<%= Date.now() %>" alt="用户头像"
+                             class="rounded-circle" style="width:40px; height:40px;">
+                        {% else %}
+                        <img src="{% static default_avatar_path %}" alt="默认头像" class="rounded-circle"
+                             style="width:40px; height:40px;">
+                        {% endif %}
+                        {% endwith %}
+                        {% endwith %}
+                        {% endwith %}
+                    </a>
+                </div>
+                <div class="col-1 d-flex justify-content-center align-items-center text-muted">
+                    {{ topic.views }}
+                </div>
+                <div class="col-2 d-flex justify-content-center align-items-center text-muted">
+                    {{ topic.last_updated|naturaltime }}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+        {% endif %}
+    </div>
+
+    <div class="row col-md-12" style="margin-top: 50px; margin-bottom: 30px;">
+        <div class="pagination" style="display: flex; justify-content: center; align-items: center;">
+            <span class="step-links">
+                {% if topics.has_previous %}
+                    <a href="?page=1&keyword={{ keyword }}&page_size={{ page_size }}"
+                       class="page-button">首页</a>
+                    <a href="?page={{ topics.previous_page_number }}&page_size={{ page_size }}"
+                       class="page-button"><i class="bi-chevron-left"></i></a>
+                {% endif %}
+
+                {% if topics.has_previous and topics.number != 2 %}
+                    <a href="?page={{ topics.previous_page_number |add:'-1'}}&page_size={{ page_size }}"
+                       class="page-button">{{ topics.previous_page_number|add:"-1" }}</a>
+                {% endif %}
+                {% if topics.has_previous %}
+                    <a href="?page={{ topics.previous_page_number }}&page_size={{ page_size }}"
+                       class="page-button">{{ topics.previous_page_number }}</a>
+                {% endif %}
+
+                <span class="current-page">{{ topics.number }}</span>
+
+
+                {% if topics.has_next %}
+                    <a href="?page={{ topics.next_page_number }}&page_size={{ page_size }}"
+                       class="page-button">{{ topics.next_page_number }}</a>
+                {% endif %}
+                {% if topics.has_next and topics.next_page_number != topics.paginator.num_pages %}
+                    <a href="?page={{ topics.next_page_number | add:'1' }}&page_size={{ page_size }}"
+                       class="page-button">{{ topics.next_page_number|add:"1" }}</a>
+                {% endif %}
+
+                {% if topics.has_next %}
+                    <a href="?page={{ topics.next_page_number }}&page_size={{ page_size }}"
+                       class="page-button"><i class="bi bi-chevron-right"></i></a>
+                    <a href="?page={{ topics.paginator.num_pages }}&page_size={{ page_size }}"
+                       class="page-button">末页</a>
+                {% endif %}
+            </span>
         </div>
     </div>
+
+</div>
 
 
 {% endblock %}

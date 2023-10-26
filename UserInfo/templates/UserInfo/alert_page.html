@@ -1,16 +1,16 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>提示</title>
-    <link rel="stylesheet" href="{% static 'plugins/bootstrap/css/bootstrap.css' %}">
-</head>
-<body>
+{% extends 'base.html' %}
+
+{% load static static_tags humanize %}
+
+{% block title %}提示{% endblock %}
+
+{% block content %}
 <div class="alert alert-danger" role="alert" style="text-align: center">
     <h1>{{ msg }}</h1>
     <h3><a href="/">返回主页</a></h3>
 </div>
+{% endblock %}
+
+{% block js %}
 <script src="{% static 'js/jquery-3.6.0.min.js' %}"></script>
-</body>
-</html>
+{% endblock %}

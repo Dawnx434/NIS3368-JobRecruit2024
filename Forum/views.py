@@ -1,6 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse, Http404
 from django.conf import settings
+from django.core.paginator import Paginator, EmptyPage
 
 from UserAuth.models import User
 from .models import Topic, Post
@@ -28,9 +29,19 @@ def home(request):
 
     topics = Topic.objects.all()
 
+    topics_per_page = 20
+    paginator = Paginator(topics, topics_per_page)
+    page_number = request.GET.get('page')
+
+    try:
+        current_page = paginator.get_page(page_number)
+    except EmptyPage:
+        current_page = paginator.page(paginator.num_pages)
+
     context = {
         'matching_files': get_matching_files(request),
-        'topics': topics,
+        'topics': current_page,
+        'page_size': topics_per_page,
     }
     return render(request, 'Forum/home.html', context)
 

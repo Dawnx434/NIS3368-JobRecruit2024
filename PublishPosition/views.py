@@ -60,7 +60,7 @@ def position_list(request):
     except EmptyPage:
         current_page = paginator.page(1)
 
-    page_title = f'"{keyword}" 的搜索结果' if keyword else '最新发布职位'
+    page_title = f'职位 "{keyword}" 的搜索结果' if keyword else '最新发布职位'
     context = {
         'query_set': current_page,
         'matching_files': matching_files[0],
@@ -119,6 +119,7 @@ def view_position_detail(request, nid):
         "HR": position.HR,
         "district": position.get_district_display(),
         "already_apply": False if not position_query_set else True,
+        "publish_state": position.published_state,
     }
 
     return render(request, "PublishPosition/position_detail.html", context)

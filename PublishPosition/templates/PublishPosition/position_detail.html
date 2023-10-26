@@ -133,6 +133,17 @@
             </div>
         </div>
         <div class="row">
+            {% if HR.id == user_id %}
+            <p><span style="font-weight: bold;">发布状态：</span>
+                <span style="font-weight: bold; color: red; ">
+                    {% if publish_state == 1 %}
+                        已发布
+                    {% elif publish_state == 0 %}
+                        未发布
+                    {% endif %}
+                </span>
+            </p>
+            {% endif %}
             <p>
                 <span style="font-weight: bold;"> HR:&nbsp;&nbsp;
                         <a href="{% url 'UserInfo:index' user_id %}" class="text-decoration-none">
@@ -153,8 +164,6 @@
                         </span>
             </span>
             </p>
-
-
         </div>
         <div class="row detail" style="margin-top: 10px;">
             <p><span style="font-weight: bold;">简介：</span>{{ summary }}</p>

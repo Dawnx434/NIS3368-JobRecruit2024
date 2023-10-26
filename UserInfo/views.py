@@ -4,6 +4,7 @@ from UserAuth.models import User
 from PublishPosition.models import Position
 from Application.models import Application
 from django.http import JsonResponse, FileResponse, Http404
+from django.core.paginator import Paginator, EmptyPage
 import os
 import glob
 from django.conf import settings
@@ -24,6 +25,31 @@ def index(request, pk):
         query_set = User.objects.filter(id=pk)
         # 获取用户数据
         obj = query_set.first()
+
+        topic_per_page = 5
+        topic = obj.topics.all()
+        topic_paginator = Paginator(topic, topic_per_page)
+        topic_page_number = request.GET.get('topic_page')
+        show_topic_page = topic_page_number is not None
+        try:
+            topic_current_page = topic_paginator.get_page(topic_page_number)
+        except EmptyPage:
+            topic_current_page = topic_paginator.page(topic_paginator.num_pages)
+
+        position_per_page = 6
+        position = obj.positions.all()
+        position_paginator = Paginator(position, position_per_page)
+        position_page_number = request.GET.get('position_page')
+        show_position_page = position_page_number is not None
+        try:
+            position_current_page = position_paginator.get_page(position_page_number)
+        except EmptyPage:
+            position_current_page = position_paginator.page(position_paginator.num_pages)
+
+        scroll_to_bottom = show_topic_page or show_position_page
+
+        initial_position = request.GET.get('scrollPosition')
+
         user_info = {"id": pk,
                      "username": obj.username,
                      "mobile_phone": obj.mobile_phone,
@@ -35,8 +61,11 @@ def index(request, pk):
                      "excepting_position": obj.excepting_position,
                      "excepting_location": obj.excepting_location,
                      "matching_files": matching_files,
-                     'topics': obj.topics.all(),
-                     'positions': obj.positions.all(),
+                     'topics': topic_current_page,
+                     'positions': position_current_page,
+                     'show_position': show_position_page,
+                     'initial_position': initial_position,
+                     'scroll_to_bottom' : scroll_to_bottom,
                      }
         return render(request, "UserInfo/index.html", context=user_info)
     # else POST
@@ -95,13 +124,10 @@ def apply(request):
     position_list = []
     for obj in position_query_set:
         list_obj = {
-            'id': obj.id,
-            'applicant': obj.applicant.username,
             'position_id': obj.position.id,
             'position_name': obj.position.position_name,
             'application_time': (obj.application_time + datetime.timedelta(hours=8)).strftime(
-                "%Y-%m-%d %H:%M:%S"),
-            'application_state': obj.get_active_state_display(),
+                "%Y-%m-%d %H:%M"),
         }
         position_list.append(list_obj)
 
@@ -280,9 +306,8 @@ def my_published_position(request):
     position_list = []
     for position in position_query_set:
         position_list.append({
-            "id": position.id,
+            "position_id": position.id,
             "position_name": position.position_name,
-            "summary": position.summary if len(position.summary) < 40 else position.summary[0:40] + "...",
             "published_state": position.get_published_state_display()
         })
 
