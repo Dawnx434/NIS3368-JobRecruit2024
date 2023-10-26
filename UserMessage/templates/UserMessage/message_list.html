@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<a href="/message/send">新建私信</a>
+<h1>我收到的私信</h1>
+<table>
+    <thead>
+    <tr>
+        <th>标题</th>
+        <th>来自</th>
+        <th>发送时间</th>
+        <th>状态</th>
+        <th>原始消息</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for obj in message_list_as_recipient %}
+        <tr>
+            <td><a href="/message/view/{{ obj.id }}/">{{ obj.title }}</a></td>
+            <td>{{ obj.from_user_username }}</td>
+            <td>{{ obj.create_time }}</td>
+            <td>{{ obj.read_already }}</td>
+            <td>
+            {# 这里表示该条私信是作为哪条私信的回复而存在的, reply_to指的就是回复的私信的id，无则为None，下同 #}
+                {% if obj.reply_to is not None %}
+                    <a href="/message/view/{{ obj.reply_to }}/">查看原始消息</a>
+                {% else %}
+                    无原始消息
+                {% endif %}
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+<h1>我发送的私信</h1>
+<table>
+    <thead>
+    <tr>
+        <th>标题</th>
+        <th>发往</th>
+        <th>发送时间</th>
+        <th>状态</th>
+        <th>原始消息</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for obj in message_list_as_sender %}
+        <tr>
+            <td><a href="/message/view/{{ obj.id }}/">{{ obj.title }}</a></td>
+            <td>{{ obj.to_user_username }}</td>
+            <td>{{ obj.create_time }}</td>
+            <td>{{ obj.read_already }}</td>
+            <td>
+                {% if obj.reply_to is not None %}
+                    <a href="/message/view/{{ obj.reply_to }}">查看原始消息</a>
+                {% else %}
+                    无原始消息
+                {% endif %}
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+</body>
+</html>
