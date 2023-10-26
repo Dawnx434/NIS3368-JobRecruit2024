@@ -5,6 +5,7 @@ from django.core.paginator import Paginator, EmptyPage
 
 from PublishPosition.models import Position
 from UserAuth.models import User
+from Application.models import Application
 from PublishPosition.utils.forms.MyForm import PublishPositionForm
 
 from PublishPosition.utils.provincelist import province_dictionary
@@ -37,11 +38,11 @@ def position_list(request):
         keyword = '' if not request.GET.get('keyword') else request.GET.get('keyword')
         target_place = None if not request.GET.get('target_place') else int(request.GET.get('target_place'))
     except ValueError as e:
-        return HttpResponse("异常的查询参数")
+        return render(request,"UserAuth/alert_page.html",{"msg": '异常的查询参数', 'return_path': '/position/list/'})
 
     # get list
     if target_place:
-        query_set = Position.objects.filter(published_state=1,position_name__contains=keyword, district=target_place)
+        query_set = Position.objects.filter(published_state=1, position_name__contains=keyword, district=target_place)
     else:
         query_set = Position.objects.filter(published_state=1, position_name__contains=keyword)
 
@@ -59,22 +60,23 @@ def position_list(request):
     except EmptyPage:
         current_page = paginator.page(1)
 
-    page_title = f'"{ keyword }" 的搜索结果' if keyword else '最新发布职位'
+    page_title = f'"{keyword}" 的搜索结果' if keyword else '最新发布职位'
     context = {
         'query_set': current_page,
         'matching_files': matching_files[0],
         'district_dictionary': district_dictionary,
         'page_title': page_title,
+        'keyword': keyword
     }
     return render(request, 'PublishPosition/position_list.html', context)
 
 
 def view_position_detail(request, nid):
     """展示岗位的详细信息"""
-    obj = Position.objects.filter(id=nid, published_state=1)  # 1 表示已发布
+    query_set = Position.objects.filter(id=nid, published_state=1)  # 1 表示已发布
     # 判空
-    if not obj:
-        return HttpResponse("不存在的招聘信息或未开放的招聘信息")
+    if not query_set:
+        return render(request, 'UserAuth/alert_page.html', {"msg": "不存在的或者未开放的岗位", "return_path": "/position/list/"})
 
     # 获取头像
     pattern = re.compile(str(request.session['UserInfo'].get("id")) + r'.*')
@@ -87,7 +89,11 @@ def view_position_detail(request, nid):
     if not matching_files:
         matching_files.append('default.jpeg')
 
-    position = obj.first()
+    position = query_set.first()
+    # 检查当前登录用户是否申请过该职位
+    user_obj = User.objects.filter(id=request.session.get("UserInfo")['id']).first()
+    position_query_set = Application.objects.filter(applicant=user_obj, position=position, active_state=1)
+
     context = {
         "matching_files": matching_files[0],
         "user_id": request.session.get("UserInfo")['id'],
@@ -95,16 +101,16 @@ def view_position_detail(request, nid):
         "position_name": position.position_name,
         "salary": position.salary,
         "summary": position.summary,
-        # XSS alert; need fix
         "detail": mark_safe(markdown.markdown(position.detail,
-                                    extensions=[
-                                        'markdown.extensions.extra',
-                                        'markdown.extensions.codehilite',
-                                        'markdown.extensions.toc',
-                                    ])),
+                                              extensions=[
+                                                  'markdown.extensions.extra',
+                                                  'markdown.extensions.codehilite',
+                                                  'markdown.extensions.toc',
+                                              ])),
         # "detail": position.detail,
         "HR": position.HR,
         "district": position.get_district_display(),
+        "already_apply": False if not position_query_set else True,
     }
 
     return render(request, "PublishPosition/position_detail.html", context)
@@ -117,7 +123,7 @@ def publish_position(request):
     # 检查发布职位者的身份是否为HR
     if user_obj.identity != 2:
         # 当前登录用户非HR身份
-        return HttpResponse("请使用HR身份登录！")
+        return render(request, "UserAuth/alert_page.html", {"msg": "请使用HR身份登录", "return_path": "/info/account/"})
 
     # 获取头像
     pattern = re.compile(str(request.session['UserInfo'].get("id")) + r'.*')
@@ -170,7 +176,7 @@ def publish_position(request):
 def modify_position(request, nid):
     query_set = Position.objects.filter(id=nid)
     if not query_set:
-        return HttpResponse("不存在的岗位信息！")
+        return render(request, "UserAuth/alert_page.html", {"msg": "不存在的岗位信息", "return_path": "/position/list/"})
     # 获取目标岗位对象
     position_obj = query_set.first()
     # 获取当前登录用户信息
@@ -190,10 +196,10 @@ def modify_position(request, nid):
     # 检查发布职位者的身份是否为HR
     if user_obj.identity != 2:
         # 当前登录用户非HR身份
-        return HttpResponse("请使用HR身份登录！")
+        return render(request, "UserAuth/alert_page.html", {"msg": "请使用HR身份登录", "return_path": "/info/account/"})
     # 检查当前用户是否具有编辑权限
     if request.session.get("UserInfo")['id'] != position_obj.HR_id:
-        return HttpResponse("你不具有对当前岗位修改的权限")
+        return render(request, "UserAuth/alert_page.html", {"msg": "您无权修改岗位信息", "return_path": "/position/list/"})
 
     if request.method == 'GET':
         # 获取属性内容['position_name', 'salary', 'summary', 'detail', 'province', 'published_state']
@@ -233,4 +239,4 @@ def modify_position(request, nid):
 
     # 通过字段检查
     query_set.update(**data_dict)
-    return redirect('/position/list/')
+    return redirect('/position/view/{}/'.format(nid))
