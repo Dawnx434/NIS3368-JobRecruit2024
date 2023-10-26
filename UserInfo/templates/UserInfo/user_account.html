@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="{% static 'plugins/bootstrap/css/bootstrap.css' %}">
 </head>
 <body>
+<p>当前用户登陆身份：{{ data_dict.identity }}</p>
 <form method="post" action="/info/account/">
     {% csrf_token %}
     <label for="username">用户名</label>

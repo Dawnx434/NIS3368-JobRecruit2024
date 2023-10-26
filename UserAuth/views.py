@@ -109,6 +109,27 @@ def reset_password(request):
     return render(request, "UserAuth/alert_page.html", context={'msg': "您的密码已被重置！"})
 
 
+
+def change_identity(request):
+    """更改登录身份"""
+    user_query_set = models.User.objects.filter(id=request.session.get("UserInfo").get("id"))
+    if not user_query_set:
+        return HttpResponse("不合法的登录状态")
+    user_obj = user_query_set.first()
+
+    if user_obj.identity == 2:
+        # 目前是HR身份
+        user_query_set.update(identity=1)   # 切换回用户身份
+
+    # 目前不是HR身份
+    if not user_obj.hr_allowed == 3:
+        # 如果不具备HR资格
+        return HttpResponse("尚不具备HR资格")
+
+    user_query_set.update(identity=2)
+
+    return redirect("/info/info/")
+
 def generate_verification_code(request):
     """产生图片验证码"""
     stream = BytesIO()

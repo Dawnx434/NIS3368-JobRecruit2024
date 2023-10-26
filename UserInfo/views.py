@@ -121,6 +121,7 @@ def account(request):
             'username': user_obj.username,
             'mobile_phone': user_obj.mobile_phone,
             'email': user_obj.email,
+            'identity': user_obj.get_identity_display()
         }
         context = {
             'data_dict': data_dict
