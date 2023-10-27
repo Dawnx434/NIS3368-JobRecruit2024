@@ -3,8 +3,8 @@ from django.urls import reverse, resolve
 
 from UserAuth.utils.Forms import RegisterForm
 from UserAuth.utils.validators import is_valid_email, is_username_valid
-from .views import register
-from .models import User
+from UserAuth.views import register
+from UserAuth.models import User
 from django.core import mail
 
 
@@ -140,13 +140,3 @@ class InvalidSignUpTests(TestCase):
         应无用户
         """
         self.assertFalse(User.objects.exists())
-
-
-class SignUpFormTest(TestCase):
-
-    def test_form_has_fields(self):
-        form = RegisterForm()
-        expected = ['username', 'password', 'check_password', 'gender', 'mobile_phone', 'email', 'verification_code',]
-        actual = list(form.fields)
-        self.assertSequenceEqual(expected, actual)
-

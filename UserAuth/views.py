@@ -205,6 +205,7 @@ def reset_password_email(request):
 
     # 非空
     email = query_set.first().email
+    # print(email)
     state_code, code = send_sms_code(target_email=email)
     if not state_code:  # 发送失败
         data = {
