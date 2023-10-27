@@ -31,6 +31,7 @@ urlpatterns = [
     path("position/", include("PublishPosition.urls")),
     path("mdeditor/", include("mdeditor.urls")),
     path("application/", include("Application.urls")),
+    path("message/", include("UserMessage.urls")),
 
     re_path(r'media/(?P<path>.*)', serve, {'document_root': settings.MEDIA_ROOT}),
 ]

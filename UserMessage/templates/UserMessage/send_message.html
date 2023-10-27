@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<form action="/message/send/" method="post">
+    {% csrf_token %}
+    <label for="to_user">收件人用户名</label>
+    <input type="text" id="to_user" name="to_user" value="{{ data_dict.to_user }}">
+    <span style="color: red">{{ error_dict.to_user }}</span>
+
+    <label for="title">私信标题</label>
+    <input type="text" id="title" name="title" value="{{ data_dict.title }}">
+    <span style="color: red">{{ error_dict.title }}</span>
+
+    <label for="content">内容</label>
+    <input type="text" id="content" name="content" value="{{ data_dict.content }}">
+    <span style="color: red">{{ error_dict.content }}</span>
+
+    {# 此框是为了表示这次发送的私信是作为某一个私信的回复，不需要用户填写 #}
+    <input type="hidden" id="reply_to" name="reply_to" value="{{ data_dict.reply_to }}">
+
+    <button type="submit">提交</button>
+</form>
+</body>
+</html>
