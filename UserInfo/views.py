@@ -135,6 +135,7 @@ def apply(request):
         'position_list': position_list,
     }
 
+
     return render(request, 'UserInfo/user_application.html', context)
 
 
