@@ -235,9 +235,11 @@
                 <li class="nav-item ms-2" role="presentation">
                     <a class="nav-link custom-tab {% if not show_position %} active {% endif %}" id="nav-item-1" data-bs-toggle="tab" href="#content-1">动态</a>
                 </li>
+                {% if is_hr %}
                 <li class="nav-item ms-2" role="presentation">
                     <a class="nav-link custom-tab {% if show_position %} active {% endif %}" id="nav-item-2" data-bs-toggle="tab" href="#content-2">发布的职位</a>
                 </li>
+                {% endif %}
             </ul>
 
             <div class="tab-content">
@@ -284,6 +286,8 @@
                             </div>
                         </div>
                         {% endfor %}
+                        {% else %}
+                        您还没有发布状态！快去发布状态吧~
                         {% endif %}
                     </div>
 
@@ -325,47 +329,50 @@
 
                 </div>
                 <!--                CONTENT 2-->
+                {% if is_hr %}
                 <div class="tab-pane {% if show_position %} active {% endif %} bg-light container"
                      style="border-radius: 10px; padding-bottom: 20px; padding-left: 20px; padding-right: 20px;"
                      id="content-2">
 
                     <div class="mt-3 mb-3 row" style="padding-top: 30px; margin-top: 20px;">
                         {% if positions %}
-                        {% for position in positions %}
-                        <div class="col-md-4 card-container">
-                            <a href="/position/view/{{ position.id }}" class="card-link" style="col-md-6">
-                                <div class="card">
-                                    <div class="hr-line"></div>
-                                    <div class="card-body" style="border-radius: 20px;">
-                                        <div class="row">
-                                            <div class="col-md-8">
-                                                <div class="card-title" id="position-name-{{ position.id }}">
-                                                    {{ position.position_name }}
-                                                </div>
-                                                <script>
-                                                    var myBox = document.getElementById('position-name-{{ position.id }}');
-                                                    var text = myBox.innerText.trim();
-                                                    var maxLength = 15;
-                                                    if (text.length > maxLength) {
-                                                        text = text.substring(0, maxLength) + '...';
-                                                    }
-                                                    myBox.innerText = text;
-                                                </script>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <div class="card-content">
-                                                    <div class="property-box" style="width: 100%;">{{ position.salary }}
+                            {% for position in positions %}
+                            <div class="col-md-4 card-container">
+                                <a href="/position/view/{{ position.id }}" class="card-link" style="col-md-6">
+                                    <div class="card">
+                                        <div class="hr-line"></div>
+                                        <div class="card-body" style="border-radius: 20px;">
+                                            <div class="row">
+                                                <div class="col-md-8">
+                                                    <div class="card-title" id="position-name-{{ position.id }}">
+                                                        {{ position.position_name }}
                                                     </div>
-                                                    <div class="property-box" style="width: 100%;">{{ position.get_district_display }}
+                                                    <script>
+                                                        var myBox = document.getElementById('position-name-{{ position.id }}');
+                                                        var text = myBox.innerText.trim();
+                                                        var maxLength = 15;
+                                                        if (text.length > maxLength) {
+                                                            text = text.substring(0, maxLength) + '...';
+                                                        }
+                                                        myBox.innerText = text;
+                                                    </script>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="card-content">
+                                                        <div class="property-box" style="width: 100%;">{{ position.salary }}
+                                                        </div>
+                                                        <div class="property-box" style="width: 100%;">{{ position.get_district_display }}
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                            </a>
-                        </div>
-                        {% endfor %}
+                                </a>
+                            </div>
+                            {% endfor %}
+                        {% else %}
+                            您还没有发布职位！快去发布职位吧~
                         {% endif %}
                     </div>
 
@@ -404,6 +411,7 @@
 
 
                 </div>
+                {% endif %}
             </div>
 
 

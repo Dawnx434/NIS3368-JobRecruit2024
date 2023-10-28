@@ -2,6 +2,7 @@ import datetime
 
 from django.shortcuts import render
 from django.utils import timezone
+from django.core.paginator import Paginator, EmptyPage
 
 from UserAuth.models import User
 from UserMessage.models import Message
@@ -76,7 +77,12 @@ def send_message(request):
         reply_to=reply_to
     )
 
-    return render(request, "UserAuth/alert_page.html", {"msg": "私信发送成功！"})
+    context_result = {
+        'msg': '私信发送成功！',
+        'return_path': '/message/list/',
+        'success': True,
+    }
+    return render(request, "UserAuth/alert_page.html", context_result)
 
 
 def message_list(request):
@@ -85,28 +91,47 @@ def message_list(request):
     # 收到的私信和发出的私信
     message_query_set_as_recipient = Message.objects.filter(to_user=user_obj)
     message_query_set_as_sender = Message.objects.filter(from_user=user_obj)
+    # 分页
+    mails_per_page = 9
+    recipient_paginator = Paginator(message_query_set_as_recipient, mails_per_page)
+    sender_paginator = Paginator(message_query_set_as_sender, mails_per_page)
+    recipient_page_number = request.GET.get('receive_page')
+    sender_page_number = request.GET.get('send_page')
+    show_recipient_page = recipient_page_number is not None
+    show_sender_page = sender_page_number is not None
+    initial_page = not (show_sender_page or show_recipient_page)
+    try:
+        recipient_current_page = recipient_paginator.get_page(recipient_page_number)
+    except EmptyPage:
+        recipient_current_page = recipient_paginator.page(recipient_page_number.num_pages)
+
+    try:
+        sender_current_page = sender_paginator.get_page(sender_page_number)
+    except EmptyPage:
+        sender_current_page = sender_paginator.page(sender_page_number.num_pages)
+
     # 数据格式处理
     message_list_as_recipient = []
     message_list_as_sender = []
-    for obj in message_query_set_as_recipient:
+    for obj in recipient_current_page:
         message_list_as_recipient.append({
             "id": obj.id,
             "title": obj.title,
             "from_user_id": obj.from_user.id,
             "from_user_username": obj.from_user.username,
             "read_already": "未读" if obj.read == 0 else "已读",
-            "create_time": (obj.create_time + datetime.timedelta(hours=8)).strftime("%Y-%m-%d %H:%M:%S"),
+            "create_time": (obj.create_time + datetime.timedelta(hours=8)).strftime("%m-%d %H:%M"),
             "reply_to": obj.reply_to.id if obj.reply_to else None
         })
 
-    for obj in message_query_set_as_sender:
+    for obj in sender_current_page:
         message_list_as_sender.append({
             "id": obj.id,
             "title": obj.title,
             "to_user_id": obj.to_user.id,
             "to_user_username": obj.to_user.username,
             "read_already": "未读" if obj.read == 0 else "已读",
-            "create_time": (obj.create_time + datetime.timedelta(hours=8)).strftime("%Y-%m-%d %H:%M:%S"),
+            "create_time": (obj.create_time + datetime.timedelta(hours=8)).strftime("%m-%d %H:%M"),
             "reply_to": obj.reply_to.id if obj.reply_to else None
         })
 
@@ -114,7 +139,12 @@ def message_list(request):
 
     context = {
         "message_list_as_recipient": message_list_as_recipient,
-        "message_list_as_sender": message_list_as_sender
+        "message_list_as_sender": message_list_as_sender,
+        "recipient_current_page": recipient_current_page,
+        "sender_current_page": sender_current_page,
+        "initial_page": initial_page,
+        "show_recipient_page": show_recipient_page,
+        "show_sender_page": show_sender_page,
     }
     return render(request, "UserMessage/message_list.html", context)
 
@@ -139,7 +169,7 @@ def view_message_detail(request, mid):
         'to_user_id': message_obj.to_user.id,
         'from_user_username': message_obj.from_user.username,
         'to_user_username': message_obj.to_user.username,
-        'create_time': (message_obj.create_time + datetime.timedelta(hours=8)).strftime("%Y-%m-%d %H:%M:%S"),
+        'create_time': (message_obj.create_time + datetime.timedelta(hours=8)).strftime("%m-%d %H:%M"),
         'can_reply': True if user_obj.id == message_obj.to_user.id else False,
         'reply_to': message_obj.reply_to.id if message_obj.reply_to else None
     }

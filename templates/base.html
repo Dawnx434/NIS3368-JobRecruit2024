@@ -30,9 +30,6 @@
                         <li class="nav-item">
                             <a class="nav-link custom-nav-link" style="margin-left: 1rem;" href="{% url 'PublishPosition:publish_list' %}">职位</a>
                         </li>
-{#                        <li class="nav-item">#}
-{#                            <a class="nav-link custom-nav-link" style="margin-left: 1rem;" href="#">面经</a>#}
-{#                        </li>#}
                     </ul>
                     <form class="d-flex" method="get" action="/position/list/">
                         <input class="form-control me-2" type="text" name="keyword" placeholder="搜索职位...">
@@ -56,10 +53,6 @@
                                             {% endwith %}
                                         {% endwith %}
                                     {% endwith %}
-    {#                                <img src="{% static 'images/' %}{{ matching_files }}?rand=<%= Date.now() %>" class="rounded-circle" alt="头像"#}
-    {#                                     style="width:30px; height:30px;">#}
-        {#                            <img src="{% static 'images/' %}{{ request.session.UserInfo.id }}.jpg?rand=<%= Date.now()" alt="头像"#}
-        {#                                 style="width:30px; height:30px;">#}
                                 </a>
                             {% endwith %}
                             <div class="dropdown-menu">

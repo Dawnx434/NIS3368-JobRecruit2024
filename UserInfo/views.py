@@ -20,22 +20,44 @@ from UserAuth.utils import validators
 def index(request, pk):
     pattern = re.compile(str(request.session['UserInfo'].get("id")) + r'.*')
     matching_files = find_image(request)
-    if request.method == "GET":
-        # 查询并返回数据
-        query_set = User.objects.filter(id=pk)
-        # 获取用户数据
-        obj = query_set.first()
 
-        topic_per_page = 5
-        topic = obj.topics.all()
-        topic_paginator = Paginator(topic, topic_per_page)
-        topic_page_number = request.GET.get('topic_page')
-        show_topic_page = topic_page_number is not None
-        try:
-            topic_current_page = topic_paginator.get_page(topic_page_number)
-        except EmptyPage:
-            topic_current_page = topic_paginator.page(topic_paginator.num_pages)
+    # 查询并返回数据
+    query_set = User.objects.filter(id=pk)
+    # 获取用户数据
+    obj = query_set.first()
 
+    topic_per_page = 5
+    topic = obj.topics.all()
+    topic_paginator = Paginator(topic, topic_per_page)
+    topic_page_number = request.GET.get('topic_page')
+    show_topic_page = topic_page_number is not None
+    try:
+        topic_current_page = topic_paginator.get_page(topic_page_number)
+    except EmptyPage:
+        topic_current_page = topic_paginator.page(topic_paginator.num_pages)
+
+    is_hr = obj.identity == 2
+
+    user_info = {
+        "id": pk,
+        "username": obj.username,
+        "mobile_phone": obj.mobile_phone,
+        "gender": obj.get_gender_display(),
+        "email": obj.email,
+        "edu_ground": obj.edu_ground,
+        "school": obj.school,
+        "major": obj.major,
+        "excepting_position": obj.excepting_position,
+        "excepting_location": obj.excepting_location,
+        "matching_files": matching_files,
+        'topics': topic_current_page,
+        'show_position': show_topic_page,
+        'initial_position': request.GET.get('scrollPosition'),
+        'scroll_to_bottom': show_topic_page,
+        'is_hr': is_hr,
+    }
+
+    if is_hr:
         position_per_page = 6
         position = obj.positions.all()
         position_paginator = Paginator(position, position_per_page)
@@ -48,52 +70,10 @@ def index(request, pk):
 
         scroll_to_bottom = show_topic_page or show_position_page
 
-        initial_position = request.GET.get('scrollPosition')
+        user_info['scroll_to_bottom'] = scroll_to_bottom
+        user_info['positions'] = position_current_page
+        user_info['show_position'] = show_position_page
 
-        user_info = {"id": pk,
-                     "username": obj.username,
-                     "mobile_phone": obj.mobile_phone,
-                     "gender": obj.get_gender_display(),
-                     "email": obj.email,
-                     "edu_ground": obj.edu_ground,
-                     "school": obj.school,
-                     "major": obj.major,
-                     "excepting_position": obj.excepting_position,
-                     "excepting_location": obj.excepting_location,
-                     "matching_files": matching_files,
-                     'topics': topic_current_page,
-                     'positions': position_current_page,
-                     'show_position': show_position_page,
-                     'initial_position': initial_position,
-                     'scroll_to_bottom' : scroll_to_bottom,
-                     }
-        return render(request, "UserInfo/index.html", context=user_info)
-    # else POST
-    data = request.POST
-    fields = ['username', 'mobile_phone', 'gender', 'email',
-              'edu_ground', 'school', 'major', 'excepting_position', 'excepting_location']
-    # 获取当前用户数据行
-    query_set = User.objects.filter(id=request.session['UserInfo'].get("id"))
-    # 正常来说根据id查表应该查询出唯一的用户，这里作检查
-    if len(query_set) != 1:
-        return render(request, "UserAuth/alert_page.html", {'msg': "不合法的身份"})
-    # 获取用户数据
-    obj = query_set.first()
-    for field in fields:
-        setattr(obj, field, data.get(field))
-    obj.save()
-    user_info = {"id": request.session['UserInfo'].get("id"),
-                 "username": obj.username,
-                 "mobile_phone": obj.mobile_phone,
-                 "gender": obj.get_gender_display(),
-                 "email": obj.email,
-                 "edu_ground": obj.edu_ground,
-                 "school": obj.school,
-                 "major": obj.major,
-                 "excepting_position": obj.excepting_position,
-                 "excepting_location": obj.excepting_location,
-                 "matching_files": matching_files,
-                 }
     return render(request, "UserInfo/index.html", context=user_info)
 
 
@@ -134,7 +114,6 @@ def apply(request):
     context = {
         'position_list': position_list,
     }
-
 
     return render(request, 'UserInfo/user_application.html', context)
 
