@@ -7,6 +7,8 @@ from django.core.paginator import Paginator, EmptyPage
 from UserAuth.models import User
 from UserMessage.models import Message
 
+from markdown import markdown
+
 
 # Create your views here.
 def send_message(request):
@@ -23,8 +25,11 @@ def send_message(request):
 
         # 有则证明是回复私信
         message_obj = message_query_set.first()
+        origin_title = message_obj.title
+        title = '回复：' + origin_title
         data_dict = {
             "to_user": message_obj.from_user.username,
+            "title": title,
             "reply_to": reply_to
         }
         context = {
@@ -47,6 +52,8 @@ def send_message(request):
         error_dict['to_user'] = "不存在此用户"
         check_passed_flag = False
     # 检查标题长度是否符合要求
+    print(data_dict['title'])
+    print(len(data_dict['title']))
     if not 0 < len(data_dict['title']) <= 100:
         error_dict['title'] = '标题长度需在1至100字符之间'
         check_passed_flag = False
@@ -56,7 +63,7 @@ def send_message(request):
 
     context = {
         "data_dict": data_dict,
-        "error_dict": error_dict
+        "error_dict": error_dict,
     }
     if not check_passed_flag:
         return render(request, "UserMessage/send_message.html", context)
@@ -74,7 +81,7 @@ def send_message(request):
         title=data_dict['title'],
         content=data_dict['content'],
         create_time=timezone.localtime(),
-        reply_to=reply_to
+        reply_to=reply_to,
     )
 
     context_result = {
@@ -161,10 +168,12 @@ def view_message_detail(request, mid):
     if not (user_obj.id == message_obj.from_user.id or user_obj.id == message_obj.to_user.id):
         return render(request, 'UserAuth/alert_page.html', {"msg": "没有查看权限！"})
 
+    content = markdown(message_obj.content)
+
     context = {
         'message_id': message_obj.id,
         'title': message_obj.title,
-        'content': message_obj.content,
+        'content': content,
         'from_user_id': message_obj.from_user.id,
         'to_user_id': message_obj.to_user.id,
         'from_user_username': message_obj.from_user.username,

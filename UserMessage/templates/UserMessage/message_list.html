@@ -25,9 +25,6 @@
         font-weight: bold;
     }
 
-    .reply:hover {
-        color: #17a2b8 !important;
-    }
 
     .nav-item-left{
         width: 90%;
@@ -83,10 +80,10 @@
     }
 
 
-
     .full-width-nav {
         position: fixed;
-        margin-top: 50px;
+        margin-top: 0px;
+        padding-top: 50px;
         top: 0;
         left: 0;
         height: 100%;
@@ -129,8 +126,6 @@
         text-decoration: none;
     }
 
-
-
 </style>
 {% endblock %}
 
@@ -165,11 +160,20 @@
     <div class="p-2 topic-card"
          style="{% if forloop.first %}border-top: 1px solid #17a2b8;{% else %}border-top: 1px solid #dddddd;{% endif %}{% if forloop.last %}border-bottom: 1px solid #17a2b8;{% endif %}">
         <div class="row">
-            <div class="col-6 d-flex align-items-center">
+            <div class="col-6 d-flex align-items-center message-title" id="message-{{ obj.id }}">
                 <a href="/message/view/{{ obj.id }}/" class="text-decoration-none text-black">
                     {{ obj.title }}
                 </a>
             </div>
+            <script>
+                var myBox = document.getElementById('message-{{ obj.id }}');
+                var text = myBox.innerText.trim();
+                var maxLength = 50;
+                if (text.length > maxLength) {
+                    text = text.substring(0, maxLength) + '...';
+                }
+                myBox.innerText = text;
+            </script>
             <div class="col-2 d-flex align-items-center reply">
                 {# 这里表示该条私信是作为哪条私信的回复而存在的, reply_to指的就是回复的私信的id，无则为None，下同 #}
                 {% if obj.reply_to is not None %}

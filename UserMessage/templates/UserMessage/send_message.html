@@ -48,6 +48,7 @@
         </div>
 
         <input type="hidden" id="reply_to" name="reply_to" value="{{ data_dict.reply_to }}">
+        <input type="hidden" id="reply_title" name="reply_title" value="{{ data_dict.title }}">
 
         <button type="submit" class="btn btn-primary custom-button">提交</button>
     </form>
@@ -60,8 +61,5 @@
     var simplemde = new SimpleMDE({
         element: document.getElementById("message_content"),
     });
-
-
-
 </script>
 {% endblock %}

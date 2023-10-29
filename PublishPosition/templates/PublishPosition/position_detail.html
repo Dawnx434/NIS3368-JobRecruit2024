@@ -7,60 +7,6 @@
 
 {% block stylesheet %}
 <style>
-
-        .custom-text-color {
-            color: #17a2b8 !important;
-            font-weight: bold;
-        }
-
-
-        .custom-background {
-            background-color: #E5E5E5;
-        }
-
-        .custom-bg-color {
-            background-color: #17a2b8;
-        }
-
-        .custom-button {
-            background-color: #17a2b8;
-            color: white;
-            border: 1px solid #17a2b8;
-        }
-
-
-        .progress {
-            margin-top: 5px;
-        }
-
-        .dropdown-container {
-            position: relative;
-            left: -50px;
-        }
-
-        .close {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-        }
-
-        .close:hover,
-        .close:focus {
-            color: black;
-            text-decoration: none;
-            cursor: pointer;
-        }
-
-
-        .dropdown:hover .dropdown-menu {
-            display: block;
-        }
-
-        .dropdown-menu {
-            margin-top: 0;
-        }
-
         .content-container {
             width: 70%;
         }
@@ -181,28 +127,5 @@
 {% endblock %}
 
 {% block js %}
-
-<script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
-<script src="https://cdn.staticfile.org/popper.js/1.15.0/umd/popper.min.js"></script>
-<script src="https://cdn.staticfile.org/twitter-bootstrap/5.1.1/js/bootstrap.min.js"></script>
-
-<script>
-        $(document).ready(function(){
-            $(".dropdown").hover(function(){
-                var dropdownMenu = $(this).children(".dropdown-menu");
-                if(dropdownMenu.is(":visible")){
-                    dropdownMenu.parent().toggleClass("open");
-                }
-            });
-        });
-
-        $(document).ready(function(){
-            $(document).off('click.bs.dropdown.data-api');
-        });
-
-
-
-</script>
-
 {% endblock %}
 
