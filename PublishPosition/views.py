@@ -259,7 +259,7 @@ def modify_position(request, nid):
     # 通过字段检查
     query_set.update(**data_dict)
     # 确认返回页面
-    if data_dict['published_state'] == 1:
+    if int(data_dict['published_state']) == 1:
         # 如果仍然可见
         return redirect('/position/view/{}/'.format(nid))
     else:
