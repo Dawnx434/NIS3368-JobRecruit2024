@@ -1,0 +1,117 @@
+{% extends 'base.html' %}
+
+{% load static static_tags humanize %}
+
+{% block title %}发消息{% endblock %}
+
+{% block stylesheet %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simplemde/dist/simplemde.min.css">
+<style>
+    .content-container {
+        margin: auto;
+        width: 70%;
+        background-color: white;
+        border-radius: 10px;
+        margin-top: 50px;
+        margin-bottom: 50px;
+        padding: 50px;
+    }
+
+    .custom-button{
+        background-color: #17a2b8 !important;
+    }
+
+    .history:hover {
+        font-weight: bold;
+    }
+
+
+
+
+
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="content-container">
+    <div class="row" style="word-wrap: break-word;">
+        <h1>{{ title }}</h1>
+    </div>
+
+    <div class="row" style="margin-top: 20px; margin-bottom: 10px;">
+        <div class="col-md-4">
+            发件人：{{ from_user_username }}
+            <a href="{% url 'UserInfo:index' from_user_id %}">
+                {% with user_id=from_user_id|stringformat:'d' %}
+                {% with user_avatar_path="images/"|add:user_id|add:".jpg" %}
+                {% with default_avatar_path='images/default.jpeg' %}
+                {% if user_avatar_path|static_file_exists%}
+                <img src="{% static user_avatar_path %}?rand=<%= Date.now() %>" alt="用户头像"
+                     class="rounded-circle" style="width:40px; height:40px;">
+                {% else %}
+                <img src="{% static default_avatar_path %}" alt="默认头像" class="rounded-circle"
+                     style="width:40px; height:40px;">
+                {% endif %}
+                {% endwith %}
+                {% endwith %}
+                {% endwith %}
+            </a>
+        </div>
+        <div class="col-md-4">
+            收件人：{{ to_user_username }}
+            <a href="{% url 'UserInfo:index' to_user_id %}">
+                {% with user_id=to_user_id|stringformat:'d' %}
+                {% with user_avatar_path="images/"|add:user_id|add:".jpg" %}
+                {% with default_avatar_path='images/default.jpeg' %}
+                {% if user_avatar_path|static_file_exists%}
+                <img src="{% static user_avatar_path %}?rand=<%= Date.now() %>" alt="用户头像"
+                     class="rounded-circle" style="width:40px; height:40px;">
+                {% else %}
+                <img src="{% static default_avatar_path %}" alt="默认头像" class="rounded-circle"
+                     style="width:40px; height:40px;">
+                {% endif %}
+                {% endwith %}
+                {% endwith %}
+                {% endwith %}
+            </a>
+        </div>
+        <div class="col-md-4 text-muted d-flex align-items-center">
+            {{ create_time }}
+        </div>
+    </div>
+
+    {% if reply_to %}
+    <div class="history">
+        <p style="color: grey"><a href="/message/view/{{ reply_to }}" style="text-decoration: none; color: grey;"><i
+                class="bi bi-reply-fill"></i>查看消息历史</a></p>
+    </div>
+    {% endif %}
+
+    <div class="row col-md-12">
+        <div class="col-md-8">
+            <h3 style="font-weight: bold; margin-top: 30px;">内容：</h3>
+        </div>
+        <div class="col-md-4" style="position:relative;">
+            {% if can_reply %}
+            <a href="/message/send/?reply={{ message_id }}" class="btn btn-primary custom-bottom"
+               style="position:absolute;bottom:0px;background-color: #17a2b8;border: solid 0px #17a2b8; width: 150px;">回复</a>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="row col-md-12" id="content"
+         style="padding-left: 40px; padding-right: 40px; padding-top: 20px; padding-bottom: 30px; word-wrap: break-word;">
+        {{ content|safe }}
+    </div>
+
+</div>
+{% endblock %}
+
+
+{% block js %}
+{% endblock %}
+
+
+
+

@@ -1,12 +1,9 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-    <link rel="stylesheet" href="{% static 'plugins/bootstrap/css/bootstrap.css' %}">
-</head>
-<body>
+{% extends 'base.html' %}
+
+{% load static static_tags humanize %}
+
+
+{% block content %}
 <p>当前用户登陆身份：{{ data_dict.identity }}</p>
 <a href="/auth/changeidentity/" class="btn btn-primary">切换身份</a>
 <form method="post" action="/info/account/">
@@ -39,6 +36,9 @@
 
     <button type="submit">提交</button>
 </form>
+{% endblock %}
+
+{% block js %}
 <script src="{% static 'js/jquery-3.6.0.min.js' %}"></script>
 <script type="text/javascript">
     const interval = 30;
@@ -99,5 +99,4 @@
 
     });
 </script>
-</body>
-</html>
+{% endblock%}

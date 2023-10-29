@@ -125,8 +125,8 @@ display: block;
 }
 
 .nav-link.custom-tab.active {
-  color: #17a2b8; /* 选中选项的字体颜色 */
-  font-size: 1.2rem; /* 选中选项的字体大小 */
+  color: #17a2b8;
+  font-size: 1.2rem;
 }
 
 .nav-link.custom-tab:hover {
@@ -137,7 +137,7 @@ display: block;
   content: "";
   display: block;
   height: 2px; /* 短线段的高度 */
-  width: 80%; /* 短线段的宽度 */
+  width: 100%; /* 短线段的宽度 */
   background-color: #17a2b8; /* 短线段的颜色 */
   margin-top: 2px; /* 调整短线段与选项之间的间距 */
 }

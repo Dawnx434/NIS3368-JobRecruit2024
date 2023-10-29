@@ -7,60 +7,6 @@
 
 {% block stylesheet %}
 <style>
-
-        .custom-text-color {
-            color: #17a2b8 !important;
-            font-weight: bold;
-        }
-
-
-        .custom-background {
-            background-color: #E5E5E5;
-        }
-
-        .custom-bg-color {
-            background-color: #17a2b8;
-        }
-
-        .custom-button {
-            background-color: #17a2b8;
-            color: white;
-            border: 1px solid #17a2b8;
-        }
-
-
-        .progress {
-            margin-top: 5px;
-        }
-
-        .dropdown-container {
-            position: relative;
-            left: -50px;
-        }
-
-        .close {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-        }
-
-        .close:hover,
-        .close:focus {
-            color: black;
-            text-decoration: none;
-            cursor: pointer;
-        }
-
-
-        .dropdown:hover .dropdown-menu {
-            display: block;
-        }
-
-        .dropdown-menu {
-            margin-top: 0;
-        }
-
         .content-container {
             width: 70%;
         }
@@ -133,10 +79,21 @@
             </div>
         </div>
         <div class="row">
+            {% if HR.id == user_id %}
+            <p><span style="font-weight: bold;">发布状态：</span>
+                <span style="font-weight: bold; color: red; ">
+                    {% if publish_state == 1 %}
+                        已发布
+                    {% elif publish_state == 0 %}
+                        未发布
+                    {% endif %}
+                </span>
+            </p>
+            {% endif %}
             <p>
                 <span style="font-weight: bold;"> HR:&nbsp;&nbsp;
-                        <a href="{% url 'UserInfo:index' user_id %}" class="text-decoration-none">
-                            {% with user_id=user_id|stringformat:'d' %}
+                        <a href="{% url 'UserInfo:index' HR_user_id %}" class="text-decoration-none">
+                            {% with user_id=HR_user_id|stringformat:'d' %}
                                 {% with user_avatar_path="images/"|add:user_id|add:".jpg" %}
                                     {% with default_avatar_path='images/default.jpeg' %}
                                         {% if user_avatar_path|static_file_exists%}
@@ -153,8 +110,6 @@
                         </span>
             </span>
             </p>
-
-
         </div>
         <div class="row detail" style="margin-top: 10px;">
             <p><span style="font-weight: bold;">简介：</span>{{ summary }}</p>
@@ -172,28 +127,5 @@
 {% endblock %}
 
 {% block js %}
-
-<script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
-<script src="https://cdn.staticfile.org/popper.js/1.15.0/umd/popper.min.js"></script>
-<script src="https://cdn.staticfile.org/twitter-bootstrap/5.1.1/js/bootstrap.min.js"></script>
-
-<script>
-        $(document).ready(function(){
-            $(".dropdown").hover(function(){
-                var dropdownMenu = $(this).children(".dropdown-menu");
-                if(dropdownMenu.is(":visible")){
-                    dropdownMenu.parent().toggleClass("open");
-                }
-            });
-        });
-
-        $(document).ready(function(){
-            $(document).off('click.bs.dropdown.data-api');
-        });
-
-
-
-</script>
-
 {% endblock %}
 

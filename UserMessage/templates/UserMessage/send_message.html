@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% load static static_tags humanize %}
+
+{% block title %}发送消息{% endblock %}
+
+{% block stylesheet %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simplemde/dist/simplemde.min.css">
+
+<style>
+    .content-container {
+        margin: auto;
+        width: 100%;
+        background-color: white;
+        border-radius: 10px;
+        margin-top: 50px;
+        margin-bottom: 50px;
+        padding: 50px;
+    }
+
+
+
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="content-container">
+    <h2 style="font-weight: bold; padding-bottom:5px; margin-bottom: 20px; border-bottom: solid 2px #17a2b8">发送新私信</h2>
+    <form action="/message/send/" method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="to_user" class="form-label">收件人用户名</label>
+            <input type="text" id="to_user" name="to_user" class='form-control' value="{{ data_dict.to_user }}" required>
+            <span style="color: red">{{ error_dict.to_user }}</span>
+        </div>
+
+        <div class="mb-3">
+            <label for="title" class="form-label">私信标题</label>
+            <input type="text" id="title" name="title" class='form-control' value="{{ data_dict.title }}" required>
+            <span style="color: red">{{ error_dict.title }}</span>
+        </div>
+
+        <div class="mb-3">
+            <label for="content">内容</label>
+            <textarea id="message_content" name="content">{{ data_dict.content }}</textarea>
+            <span style="color: red">{{ error_dict.content }}</span>
+        </div>
+
+        <input type="hidden" id="reply_to" name="reply_to" value="{{ data_dict.reply_to }}">
+        <input type="hidden" id="reply_title" name="reply_title" value="{{ data_dict.title }}">
+
+        <button type="submit" class="btn btn-primary custom-button">提交</button>
+    </form>
+</div>
+{% endblock %}
+
+{% block js %}
+<script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
+<script>
+    var simplemde = new SimpleMDE({
+        element: document.getElementById("message_content"),
+    });
+</script>
+{% endblock %}

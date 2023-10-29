@@ -1,0 +1,369 @@
+{% extends 'base.html' %}
+
+{% load static static_tags humanize %}
+
+{% block title %}发消息{% endblock %}
+
+{% block stylesheet %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+<style>
+
+    .mails{
+        margin: auto;
+        background-color: white;
+        border-radius: 10px;
+        padding: 40px;
+        padding-top: 30px;
+        padding-bottom: 20px;
+        margin-top: 15px;
+        margin-bottom: 10px;
+        width = 80%;
+        margin-left: 15%;
+    }
+
+    .topic-card:hover {
+        font-weight: bold;
+    }
+
+
+    .nav-item-left{
+        width: 90%;
+        margin-left: 5%;
+    }
+
+    .left-nav{
+        background-color: #17a2b8;
+        color: white;
+    }
+
+
+    .custom-nav .nav-link {
+        height: 60px;
+        line-height: 20px;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .custom-nav .nav-link:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+        color: white;
+        border-radius: 5px;
+        font-weight: bold;
+    }
+
+    .custom-nav .nav-link.active {
+        background-color: rgba(255, 255, 255, 0.3);
+        color: white;
+        border-radius: 5px;
+        transition: none;
+        font-weight: bold;
+    }
+
+    .divider {
+        border-top: 1px solid white;
+        margin-top: 8px;
+        margin-bottom: 8px;
+    }
+
+    .upload-button{
+        background-color: #17a2b8;
+        color: white;
+        border: 1px solid white;
+        height: 55px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+
+    .full-width-nav {
+        position: fixed;
+        margin-top: 0px;
+        padding-top: 50px;
+        top: 0;
+        left: 0;
+        height: 100%;
+        background-color: #17a2b8;
+        color: white;
+        z-index: 0;
+    }
+
+    .page-button {
+        background-color: rgba(229, 229, 229, 0.5);
+        color: black;
+        padding-top: 5px;
+        padding-bottom: 5px;
+        padding-left: 7px;
+        padding-right: 7px;
+        border-radius: 3px;
+        font-size: 15px;
+        font-weight: bold;
+        width: 100%;
+        text-align: center;
+        text-decoration: none;
+    }
+
+    .page-button:hover {
+        color: #17a2b8;
+    }
+
+    .current-page{
+        background-color: #17a2b8;
+        color: white;
+        padding-top: 5px;
+        padding-bottom: 5px;
+        padding-left: 9px;
+        padding-right: 9px;
+        border-radius: 3px;
+        font-size: 15px;
+        font-weight: bold;
+        width: 100%;
+        text-align: center;
+        text-decoration: none;
+    }
+
+</style>
+{% endblock %}
+
+{% block content %}
+
+<nav class="d-md-block sidebar left-nav full-width-nav" style="width: 15%">
+    <div class="position-sticky">
+        <a href="/message/send/" class="btn btn-primary w-100 mb-2 upload-button"
+           style="font-weight: bold; margin-top: 40px; width: 90% !important; margin-left: 5%;">
+            <i class="bi bi-envelope" style="font-size: 1.5rem;"></i>&nbsp;&nbsp;发送新私信</a>
+        <hr class="divider">
+        <ul class="nav flex-column custom-nav">
+            <li class="nav-item nav-item-left">
+                <a class="nav-link text-white {% if initial_page or show_recipient_page %}active{% endif %}" onclick="show_inbox()" id="receive-link">
+                    收件箱
+                </a>
+            </li>
+            <hr class="divider">
+            <li class="nav-item nav-item-left">
+                <a class="nav-link text-white {% if show_sender_page %}active{% endif %}" onclick="show_receive()" id="send-link">
+                    我发送的私信
+                </a>
+            </li>
+            <hr class="divider">
+        </ul>
+    </div>
+</nav>
+
+
+<div id="receive" class="mails" style="{% if initial_page or show_recipient_page %} active {% elif show_sender_page %} display: none; {% endif %}">
+    {% for obj in message_list_as_recipient %}
+    <div class="p-2 topic-card"
+         style="{% if forloop.first %}border-top: 1px solid #17a2b8;{% else %}border-top: 1px solid #dddddd;{% endif %}{% if forloop.last %}border-bottom: 1px solid #17a2b8;{% endif %}">
+        <div class="row">
+            <div class="col-6 d-flex align-items-center message-title" id="message-{{ obj.id }}">
+                <a href="/message/view/{{ obj.id }}/" class="text-decoration-none text-black">
+                    {{ obj.title }}
+                </a>
+            </div>
+            <script>
+                var myBox = document.getElementById('message-{{ obj.id }}');
+                var text = myBox.innerText.trim();
+                var maxLength = 50;
+                if (text.length > maxLength) {
+                    text = text.substring(0, maxLength) + '...';
+                }
+                myBox.innerText = text;
+            </script>
+            <div class="col-2 d-flex align-items-center reply">
+                {# 这里表示该条私信是作为哪条私信的回复而存在的, reply_to指的就是回复的私信的id，无则为None，下同 #}
+                {% if obj.reply_to is not None %}
+                <a href="/message/view/{{ obj.reply_to }}/" class="text-muted" style="text-decoration:none;"><i
+                        class="bi bi-reply-fill"></i>查看原始消息</a>
+                {% endif %}
+            </div>
+            <div class="col-1 d-flex align-items-center">
+                {% with user_id=obj.from_user_id|stringformat:'d' %}
+                {% with user_avatar_path="images/"|add:user_id|add:".jpg" %}
+                {% with default_avatar_path='images/default.jpeg' %}
+                {% if user_avatar_path|static_file_exists%}
+                <img src="{% static user_avatar_path %}?rand=<%= Date.now() %>" alt="用户头像"
+                     class="rounded-circle" style="width:40px; height:40px;">
+                {% else %}
+                <img src="{% static default_avatar_path %}" alt="默认头像" class="rounded-circle"
+                     style="width:40px; height:40px;">
+                {% endif %}
+                {% endwith %}
+                {% endwith %}
+                {% endwith %}
+            </div>
+            <div class="col-1 d-flex justify-content-center align-items-center text-muted">
+                {{ obj.read_already }}
+            </div>
+            <div class="col-2 d-flex justify-content-center align-items-center text-muted">
+                {{ obj.create_time }}
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+
+    <div class="row col-md-12" style="margin-top: 20px;">
+        <div class="pagination" style="display: flex; justify-content: center; align-items: center;">
+
+            <span class="step-links">
+                {% if recipient_current_page.has_previous %}
+                    <a href="?receive_page=1" class="page-button">首页</a>
+                    <a href="?receive_page={{ recipient_current_page.previous_page_number }}" class="page-button"><i
+                            class="bi-chevron-left"></i></a>
+                {% endif %}
+
+                {% if recipient_current_page.has_previous and recipient_current_page.number != 2 %}
+                    <a href="?receive_page={{ recipient_current_page.previous_page_number |add:'-1'}}"
+                       class="page-button">{{ recipient_current_page.previous_page_number|add:"-1" }}</a>
+                {% endif %}
+                {% if recipient_current_page.has_previous %}
+                    <a href="?receive_page={{ recipient_current_page.previous_page_number }}" class="page-button">{{ recipient_current_page.previous_page_number }}</a>
+                {% endif %}
+
+                <span class="current-page">{{ recipient_current_page.number }}</span>
+
+                {% if recipient_current_page.has_next %}
+                    <a href="?receive_page={{ recipient_current_page.next_page_number }}" class="page-button">{{ recipient_current_page.next_page_number }}</a>
+                {% endif %}
+                {% if recipient_current_page.has_next and recipient_current_page.next_page_number != recipient_current_page.paginator.num_pages %}
+                    <a href="?receive_page={{ recipient_current_page.next_page_number | add:'1' }}"
+                       class="page-button">{{ recipient_current_page.next_page_number|add:"1" }}</a>
+                {% endif %}
+
+                {% if recipient_current_page.has_next %}
+                    <a href="?receive_page={{ recipient_current_page.next_page_number }}" class="page-button"><i
+                            class="bi bi-chevron-right"></i></a>
+                    <a href="?receive_page={{ recipient_current_page.paginator.num_pages }}"
+                       class="page-button">末页</a>
+                {% endif %}
+            </span>
+        </div>
+    </div>
+
+</div>
+
+<div id="already_send" class="mails" style="{% if initial_page or show_recipient_page %} display: none; {% elif show_sender_page %} active {% endif %}">
+    {% for obj in message_list_as_sender %}
+    <div class="p-2 topic-card"
+         style="{% if forloop.first %}border-top: 1px solid #17a2b8;{% else %}border-top: 1px solid #dddddd;{% endif %}{% if forloop.last %}border-bottom: 1px solid #17a2b8;{% endif %}">
+        <div class="row">
+            <div class="col-6 d-flex align-items-center">
+                <a href="/message/view/{{ obj.id }}/" class="text-decoration-none text-black">
+                    {{ obj.title }}
+                </a>
+            </div>
+            <div class="col-2 d-flex align-items-center reply">
+                {# 这里表示该条私信是作为哪条私信的回复而存在的, reply_to指的就是回复的私信的id，无则为None，下同 #}
+                {% if obj.reply_to is not None %}
+                <a href="/message/view/{{ obj.reply_to }}/" class="text-muted" style="text-decoration:none;"><i
+                        class="bi bi-reply-fill"></i>查看原始消息</a>
+                {% endif %}
+            </div>
+            <div class="col-1 d-flex align-items-center">
+                {% with user_id=obj.to_user_id|stringformat:'d' %}
+                {% with user_avatar_path="images/"|add:user_id|add:".jpg" %}
+                {% with default_avatar_path='images/default.jpeg' %}
+                {% if user_avatar_path|static_file_exists%}
+                <img src="{% static user_avatar_path %}?rand=<%= Date.now() %>" alt="用户头像"
+                     class="rounded-circle" style="width:40px; height:40px;">
+                {% else %}
+                <img src="{% static default_avatar_path %}" alt="默认头像" class="rounded-circle"
+                     style="width:40px; height:40px;">
+                {% endif %}
+                {% endwith %}
+                {% endwith %}
+                {% endwith %}
+            </div>
+            <div class="col-1 d-flex justify-content-center align-items-center text-muted">
+                {{ obj.read_already }}
+            </div>
+            <div class="col-2 d-flex justify-content-center align-items-center text-muted">
+                {{ obj.create_time }}
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+
+    <div class="row col-md-12" style="margin-top: 20px;">
+        <div class="pagination" style="display: flex; justify-content: center; align-items: center;">
+
+            <span class="step-links">
+                {% if sender_current_page.has_previous %}
+                    <a href="?send_page=1" class="page-button">首页</a>
+                    <a href="?send_page={{ sender_current_page.previous_page_number }}" class="page-button"><i class="bi-chevron-left"></i></a>
+                {% endif %}
+
+                {% if sender_current_page.has_previous and sender_current_page.number != 2 %}
+                    <a href="?send_page={{ sender_current_page.previous_page_number |add:'-1'}}" class="page-button">{{ sender_current_page.previous_page_number|add:"-1" }}</a>
+                {% endif %}
+                {% if sender_current_page.has_previous %}
+                    <a href="?send_page={{ sender_current_page.previous_page_number }}" class="page-button">{{ sender_current_page.previous_page_number }}</a>
+                {% endif %}
+
+                <span class="current-page">{{ sender_current_page.number }}</span>
+
+                {% if sender_current_page.has_next %}
+                    <a href="?send_page={{ sender_current_page.next_page_number }}" class="page-button">{{ sender_current_page.next_page_number }}</a>
+                {% endif %}
+                {% if sender_current_page.has_next and sender_current_page.next_page_number != sender_current_page.paginator.num_pages %}
+                    <a href="?send_page={{ sender_current_page.next_page_number | add:'1' }}" class="page-button">{{ sender_current_page.next_page_number|add:"1" }}</a>
+                {% endif %}
+
+                {% if sender_current_page.has_next %}
+                    <a href="?send_page={{ sender_current_page.next_page_number }}" class="page-button"><i class="bi bi-chevron-right"></i></a>
+                    <a href="?send_page={{ sender_current_page.paginator.num_pages }}" class="page-button">末页</a>
+                {% endif %}
+            </span>
+        </div>
+    </div>
+
+</div>
+
+
+{% endblock %}
+
+{% block js %}
+<script>
+
+    function show_inbox() {
+        var receive = document.getElementById("receive");
+        var already_send = document.getElementById("already_send");
+
+        receive.style.display = "block";
+        already_send.style.display = "none";
+
+        var receiveLink = document.getElementById("receive-link");
+        var sendLink = document.getElementById("send-link");
+
+        receiveLink.classList.add('active');
+        sendLink.classList.remove('active');
+
+    }
+
+    function show_receive() {
+        var receive = document.getElementById("receive");
+        var already_send = document.getElementById("already_send");
+
+        already_send.style.display = "block";
+        receive.style.display = "none";
+
+        var receiveLink = document.getElementById("receive-link");
+        var sendLink = document.getElementById("send-link");
+
+        receiveLink.classList.remove('active');
+        sendLink.classList.add('active');
+    }
+
+
+
+
+
+</script>
+{% endblock %}
+
+
+

@@ -1,115 +1,15 @@
 {% extends 'base.html' %}
 
+{% load static static_tags humanize %}
+
 {% block title %}发布职位{% endblock %}
 
 {% block stylesheet %}
-    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/5.1.1/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-    <!-- 引入Bootstrap的CSS文件 -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-
-    <!-- 引入SimpleMDE的CSS文件 -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simplemde/dist/simplemde.min.css">
-
-    <!-- 引入Bootstrap的JavaScript文件 -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-    <!-- 引入SimpleMDE的JavaScript文件 -->
-    <script src="https://cdn.jsdelivr.net/npm/simplemde/dist/simplemde.min.js"></script>
-    <style>
-
-        .custom-text-color {
-            color: #17a2b8 !important;
-            font-weight: bold;
-        }
-
-        .custom-background {
-            background-color: #E5E5E5;
-        }
-
-        .custom-button {
-            background-color: #17a2b8;
-            color: white;
-            border: 1px solid #17a2b8;
-        }
-
-        .custom-text-color {
-            color: #17a2b8 !important;
-        }
-
-        .left {
-            background-color: #17a2b8 !important;
-            color: white;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-            border-top-left-radius: 10px;
-            border-bottom-left-radius: 10px;
-        }
-
-        .right {
-            background-color: white;
-            padding: 20px;
-            border-top-right-radius: 10px;
-            border-bottom-right-radius: 10px;
-        }
-
-        .column {
-            display: flex;
-            justify-content: space-between;
-            flex-wrap: wrap;
-        }
-
-        .column p {
-            width: 48%;
-        }
-
-        .lbox {
-            margin: 20px;
-            padding: 10px;
-        }
-
-        .lbox.row {
-            padding: 8px 0px;
-        }
-
-        .progress {
-            margin-top: 5px;
-        }
-
-        .rbox {
-            margin: 30px;
-        }
-
-        .rbox h4 {
-            padding-bottom: 5px;
-            color: #17a2b8;
-            border-bottom: 1px solid #17a2b8;
-            font-weight: bold;
-        }
-
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simplemde/dist/simplemde.min.css">
+<style>
         .content-container {
             padding-top: 40px;
-
-        }
-
-        .circle-image {
-            border-radius: 50%;
-            overflow: hidden;
-        }
-
-        .circle-image img {
-            width: 100%;
-            height: 100%;
-            display: block;
-        }
-
-        .dropdown-container {
-            position: relative;
-            left: -50px;
         }
 
         /* modal */
@@ -212,8 +112,9 @@
             margin-bottom: 15px;
         }
 
-    </style>
 
+
+</style>
 {% endblock %}
 
 {% block content %}
@@ -225,25 +126,30 @@
                 {% csrf_token %}
                 <div class="mb-3">
                     <label for="position_name" class="form-label">岗位名称</label>
-                    <input type="text" id="position_name" name="position_name" class='form-control' aria-describedby="position_name_Help" value="{{ data_dict.position_name }}" required>
-                    <span id="position_name_Help" class="form-text" style="color: red">{{ error_dict.position_name }}</span>
+                    <input type="text" id="position_name" name="position_name" class='form-control'
+                           aria-describedby="position_name_Help" value="{{ data_dict.position_name }}" required>
+                    <span id="position_name_Help" class="form-text"
+                          style="color: red">{{ error_dict.position_name }}</span>
                 </div>
 
                 <div class="mb-3">
                     <label for="salary" class="form-label">薪资</label>
-                    <input type="number" id="salary" name="salary" class="form-control" aria-describedby="salary_Help"  value="{{ data_dict.salary }}" required>
+                    <input type="number" id="salary" name="salary" class="form-control" aria-describedby="salary_Help"
+                           value="{{ data_dict.salary }}" required>
                     <span id="salary_Help" class="form-text" style="color: red">{{ error_dict.salary }}</span>
                 </div>
 
                 <div class="mb-3">
                     <label for="summary" class="form-label">岗位简介</label>
-                    <input type="text" id="summary" name="summary" class="form-control" aria-describedby="summary-Help" value="{{ data_dict.summary }}" required>
+                    <input type="text" id="summary" name="summary" class="form-control" aria-describedby="summary-Help"
+                           value="{{ data_dict.summary }}" required>
                     <span id="summary-Help" class="form-text" style="color: red">{{ error_dict.summary }}</span>
                 </div>
 
                 <div class="mb-3">
                     <label for="detail" class="form-label">岗位详细内容</label>
-                    <textarea rows="10" id="detail" name="detail" class="form-control" aria-describedby="detail_Help" value="{{ data_dict.detail }}" required></textarea>
+                    <textarea rows="10" id="detail" name="detail" class="form-control" aria-describedby="detail_Help"
+                              value="{{ data_dict.detail }}" required></textarea>
                     <span id="detail_Help" class="form-text" style="color: red">{{ error_dict.detail }}</span>
                 </div>
 
@@ -252,8 +158,9 @@
                     <label for="district" class="+form-label">所属地区</label>
                     <select name="district" id="district" class="form-select">
                         {% for key,value in district_dictionary.items %}
-                            <option value="{{ key }}"
-                                    {% if key ==  data_dict.district %}selected{% endif %}>{{ value }}</option>
+                        <option value="{{ key }}"
+                                {% if key == data_dict.district %}selected{% endif %}>{{ value }}
+                        </option>
                         {% endfor %}
                     </select>
                 </div>
@@ -276,12 +183,17 @@
 {% endblock %}
 
 {% block js %}
-    <script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/simplemde/dist/simplemde.min.js"></script>
+
+<script>
         var simplemde = new SimpleMDE({element: document.getElementById("detail")});
         simplemde.value("{{ data_dict.detail }}");
-    </script>
 
-    <script>
+
+</script>
+
+<script>
         $(function () {
             initEditorMd();
         });
@@ -296,5 +208,8 @@
             })
         }
 
-    </script>
+
+
+</script>
+
 {% endblock %}

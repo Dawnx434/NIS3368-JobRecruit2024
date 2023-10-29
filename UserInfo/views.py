@@ -4,6 +4,7 @@ from UserAuth.models import User
 from PublishPosition.models import Position
 from Application.models import Application
 from django.http import JsonResponse, FileResponse, Http404
+from django.core.paginator import Paginator, EmptyPage
 import os
 import glob
 from django.conf import settings
@@ -19,52 +20,60 @@ from UserAuth.utils import validators
 def index(request, pk):
     pattern = re.compile(str(request.session['UserInfo'].get("id")) + r'.*')
     matching_files = find_image(request)
-    if request.method == "GET":
-        # 查询并返回数据
-        query_set = User.objects.filter(id=pk)
-        # 获取用户数据
-        obj = query_set.first()
-        user_info = {"id": pk,
-                     "username": obj.username,
-                     "mobile_phone": obj.mobile_phone,
-                     "gender": obj.get_gender_display(),
-                     "email": obj.email,
-                     "edu_ground": obj.edu_ground,
-                     "school": obj.school,
-                     "major": obj.major,
-                     "excepting_position": obj.excepting_position,
-                     "excepting_location": obj.excepting_location,
-                     "matching_files": matching_files,
-                     'topics': obj.topics.all(),
-                     'positions': obj.positions.all(),
-                     }
-        return render(request, "UserInfo/index.html", context=user_info)
-    # else POST
-    data = request.POST
-    fields = ['username', 'mobile_phone', 'gender', 'email',
-              'edu_ground', 'school', 'major', 'excepting_position', 'excepting_location']
-    # 获取当前用户数据行
-    query_set = User.objects.filter(id=request.session['UserInfo'].get("id"))
-    # 正常来说根据id查表应该查询出唯一的用户，这里作检查
-    if len(query_set) != 1:
-        return render(request,"UserAuth/alert_page.html", {'msg': "不合法的身份"})
+
+    # 查询并返回数据
+    query_set = User.objects.filter(id=pk)
     # 获取用户数据
     obj = query_set.first()
-    for field in fields:
-        setattr(obj, field, data.get(field))
-    obj.save()
-    user_info = {"id": request.session['UserInfo'].get("id"),
-                 "username": obj.username,
-                 "mobile_phone": obj.mobile_phone,
-                 "gender": obj.get_gender_display(),
-                 "email": obj.email,
-                 "edu_ground": obj.edu_ground,
-                 "school": obj.school,
-                 "major": obj.major,
-                 "excepting_position": obj.excepting_position,
-                 "excepting_location": obj.excepting_location,
-                 "matching_files": matching_files,
-                 }
+
+    topic_per_page = 5
+    topic = obj.topics.all()
+    topic_paginator = Paginator(topic, topic_per_page)
+    topic_page_number = request.GET.get('topic_page')
+    show_topic_page = topic_page_number is not None
+    try:
+        topic_current_page = topic_paginator.get_page(topic_page_number)
+    except EmptyPage:
+        topic_current_page = topic_paginator.page(topic_paginator.num_pages)
+
+    is_hr = obj.hr_allowed == 3 # 具有HR资格就要显示其发布的岗位
+
+    user_info = {
+        "id": pk,
+        "username": obj.username,
+        "mobile_phone": obj.mobile_phone,
+        "gender": obj.get_gender_display(),
+        "email": obj.email,
+        "edu_ground": obj.edu_ground,
+        "school": obj.school,
+        "major": obj.major,
+        "excepting_position": obj.excepting_position,
+        "excepting_location": obj.excepting_location,
+        "matching_files": matching_files,
+        'topics': topic_current_page,
+        'show_position': show_topic_page,
+        'initial_position': request.GET.get('scrollPosition'),
+        'scroll_to_bottom': show_topic_page,
+        'is_hr': is_hr,
+    }
+
+    if is_hr:
+        position_per_page = 6
+        position = obj.positions.filter(published_state=1)
+        position_paginator = Paginator(position, position_per_page)
+        position_page_number = request.GET.get('position_page')
+        show_position_page = position_page_number is not None
+        try:
+            position_current_page = position_paginator.get_page(position_page_number)
+        except EmptyPage:
+            position_current_page = position_paginator.page(position_paginator.num_pages)
+
+        scroll_to_bottom = show_topic_page or show_position_page
+
+        user_info['scroll_to_bottom'] = scroll_to_bottom
+        user_info['positions'] = position_current_page
+        user_info['show_position'] = show_position_page
+
     return render(request, "UserInfo/index.html", context=user_info)
 
 
@@ -95,13 +104,10 @@ def apply(request):
     position_list = []
     for obj in position_query_set:
         list_obj = {
-            'id': obj.id,
-            'applicant': obj.applicant.username,
             'position_id': obj.position.id,
             'position_name': obj.position.position_name,
             'application_time': (obj.application_time + datetime.timedelta(hours=8)).strftime(
-                "%Y-%m-%d %H:%M:%S"),
-            'application_state': obj.get_active_state_display(),
+                "%Y-%m-%d %H:%M"),
         }
         position_list.append(list_obj)
 
@@ -266,6 +272,30 @@ def modify(request):
         'userinfo': user_info
     }
     return render(request, "UserInfo/userinfo_modify.html", context)
+
+
+def my_published_position(request):
+    """返回我发布的职位"""
+    user_query_set = User.objects.filter(id=request.session.get("UserInfo").get("id"))
+    if not user_query_set:
+        return render(request, "UserAuth/alert_page.html", {"msg": "不合法的身份"})
+    user_obj = user_query_set.first()
+    if user_obj.identity != 2:
+        return render(request, "UserAuth/alert_page.html", {"msg": "请先至账号安全处切换至HR身份！"})
+    position_query_set = Position.objects.filter(HR=user_obj)
+    position_list = []
+    for position in position_query_set:
+        position_list.append({
+            "position_id": position.id,
+            "position_name": position.position_name,
+            "published_state": position.get_published_state_display()
+        })
+
+    context = {
+        "position_list": position_list
+    }
+
+    return render(request, "UserInfo/my_published_position.html", context)
 
 
 def info(request):
