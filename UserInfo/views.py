@@ -36,7 +36,7 @@ def index(request, pk):
     except EmptyPage:
         topic_current_page = topic_paginator.page(topic_paginator.num_pages)
 
-    is_hr = obj.identity == 2
+    is_hr = obj.hr_allowed == 3 # 具有HR资格就要显示其发布的岗位
 
     user_info = {
         "id": pk,
@@ -59,7 +59,7 @@ def index(request, pk):
 
     if is_hr:
         position_per_page = 6
-        position = obj.positions.all()
+        position = obj.positions.filter(published_state=1)
         position_paginator = Paginator(position, position_per_page)
         position_page_number = request.GET.get('position_page')
         show_position_page = position_page_number is not None

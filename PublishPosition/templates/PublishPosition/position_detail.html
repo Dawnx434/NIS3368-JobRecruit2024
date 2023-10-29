@@ -92,8 +92,8 @@
             {% endif %}
             <p>
                 <span style="font-weight: bold;"> HR:&nbsp;&nbsp;
-                        <a href="{% url 'UserInfo:index' user_id %}" class="text-decoration-none">
-                            {% with user_id=user_id|stringformat:'d' %}
+                        <a href="{% url 'UserInfo:index' HR_user_id %}" class="text-decoration-none">
+                            {% with user_id=HR_user_id|stringformat:'d' %}
                                 {% with user_avatar_path="images/"|add:user_id|add:".jpg" %}
                                     {% with default_avatar_path='images/default.jpeg' %}
                                         {% if user_avatar_path|static_file_exists%}
