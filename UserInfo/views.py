@@ -99,7 +99,7 @@ def apply(request):
     # 获取用户信息
     user_obj = User.objects.filter(id=request.session.get('UserInfo').get("id")).first()
     # 筛选用户申请记录
-    position_query_set = Application.objects.filter(applicant=user_obj)
+    position_query_set = Application.objects.filter(applicant=user_obj, active_state=1)
     # 转化为列表供前端渲染
     position_list = []
     for obj in position_query_set:

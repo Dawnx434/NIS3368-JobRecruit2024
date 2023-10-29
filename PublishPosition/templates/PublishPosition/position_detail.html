@@ -71,9 +71,9 @@
                            class="btn btn-primary custom-button float-right"
                            style="text-align: right;">申请该职位</a>
                     {% else %}
-                        <button class="btn btn-secondary custom-button float-right"
-                                style="text-align: right;" disabled>您已申请该职位
-                        </button>
+                        <a href="/application/cancel/{{ position_id }}/" class="btn btn-danger  float-right"
+                                style="text-align: right;" disabled>取消申请
+                        </a>
                     {% endif %}
                 {% endif %}
             </div>

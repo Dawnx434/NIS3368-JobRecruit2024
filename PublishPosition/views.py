@@ -78,10 +78,10 @@ def view_position_detail(request, nid):
     if not query_set:
         return render(request, 'UserAuth/alert_page.html',
                       {"msg": "不存在的或者未开放的岗位", "return_path": "/position/list/"})
-    # 获取职位对象
+    # 获取对象
     position = query_set.first()
     user_obj = User.objects.filter(id=request.session.get("UserInfo").get("id")).first()
-
+    application_query_set = Application.objects.filter(applicant=user_obj, position=position, active_state=1)
     # 获取用户头像
     pattern = re.compile(str(request.session['UserInfo'].get("id")) + r'.*')
     file_names = os.listdir(settings.PROFILE_ROOT)
@@ -99,19 +99,14 @@ def view_position_detail(request, nid):
         if HR_pattern.match(file_name):
             HR_matching_files.append(file_name)
     # 没有上传就用默认的
-    if not matching_files:
+    if not HR_matching_files:
         HR_matching_files.append('default.jpeg')
 
     # 未发布状态下，只有创建者且处于HR身份下可查看
     if position.published_state == 0:
-        if not (user_obj.id == position.HR.id and user_obj.identity == 2):
+        if not ((user_obj.id == position.HR.id and user_obj.identity == 2) or application_query_set.exists()):
             return render(request, 'UserAuth/alert_page.html',
                           {"msg": "不存在的或者未开放的岗位", "return_path": "/position/list/"})
-
-    # 检查当前登录用户是否申请过该职位
-    user_obj = User.objects.filter(id=request.session.get("UserInfo")['id']).first()
-
-    position_query_set = Application.objects.filter(applicant=user_obj, position=position, active_state=1)
 
     context = {
         "matching_files": matching_files[0],
@@ -131,7 +126,7 @@ def view_position_detail(request, nid):
         # "detail": position.detail,
         "HR": position.HR,
         "district": position.get_district_display(),
-        "already_apply": False if not position_query_set else True,
+        "already_apply": False if not application_query_set else True,
         "publish_state": position.published_state,
     }
 
