@@ -162,18 +162,19 @@
         <div class="row">
             <div class="col-6 d-flex align-items-center message-title" id="message-{{ obj.id }}">
                 <a href="/message/view/{{ obj.id }}/" class="text-decoration-none text-black">
-                    {{ obj.title }}
+                    {{ obj.simplified_title }}
                 </a>
             </div>
-            <script>
-                var myBox = document.getElementById('message-{{ obj.id }}');
-                var text = myBox.innerText.trim();
-                var maxLength = 50;
-                if (text.length > maxLength) {
-                    text = text.substring(0, maxLength) + '...';
-                }
-                myBox.innerText = text;
-            </script>
+            {# 这里的长度截断放到后端去判断 #}
+{#            <script>#}
+{#                var myBox = document.getElementById('message-{{ obj.id }}');#}
+{#                var text = myBox.innerText.trim();#}
+{#                var maxLength = 50;#}
+{#                if (text.length > maxLength) {#}
+{#                    text = text.substring(0, maxLength) + '...';#}
+{#                }#}
+{#                myBox.innerText = text;#}
+{#            </script>#}
             <div class="col-2 d-flex align-items-center reply">
                 {# 这里表示该条私信是作为哪条私信的回复而存在的, reply_to指的就是回复的私信的id，无则为None，下同 #}
                 {% if obj.reply_to is not None %}
@@ -253,7 +254,7 @@
         <div class="row">
             <div class="col-6 d-flex align-items-center">
                 <a href="/message/view/{{ obj.id }}/" class="text-decoration-none text-black">
-                    {{ obj.title }}
+                    {{ obj.simplified_title }}
                 </a>
             </div>
             <div class="col-2 d-flex align-items-center reply">

@@ -85,11 +85,11 @@ def resume(request):
     file_names = os.listdir(save_path)
     file_position = [os.path.join(save_path, filename) for filename in file_names]
     image = find_image(request)
-    lenth = len(file_names)
+    length = len(file_names)
     context = {"resumes": file_names,
                "id": id,
                'file_position': file_position,
-               'length': lenth,
+               'length': length,
                'image': image}
     return render(request, "UserInfo/resume.html", context=context)
 

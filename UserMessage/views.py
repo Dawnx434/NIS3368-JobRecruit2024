@@ -124,6 +124,7 @@ def message_list(request):
         message_list_as_recipient.append({
             "id": obj.id,
             "title": obj.title,
+            "simplified_title": obj.title if len(obj.title) < 40 else obj.title[:40] + "...",
             "from_user_id": obj.from_user.id,
             "from_user_username": obj.from_user.username,
             "read_already": "未读" if obj.read == 0 else "已读",
@@ -135,6 +136,7 @@ def message_list(request):
         message_list_as_sender.append({
             "id": obj.id,
             "title": obj.title,
+            "simplified_title": obj.title if len(obj.title) < 40 else obj.title[:40] + "...",
             "to_user_id": obj.to_user.id,
             "to_user_username": obj.to_user.username,
             "read_already": "未读" if obj.read == 0 else "已读",
