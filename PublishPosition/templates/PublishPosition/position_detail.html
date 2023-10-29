@@ -94,7 +94,7 @@
                         <span style="color: red">暂无用户申请</span>
                     {% else %}
                         {% for obj in user_has_applied_list %}
-                            <a href="/info/index/{{ obj.user_id }}/">{{ obj.username }}</a>
+                            <a href="/info/index/{{ obj.user_id }}">{{ obj.username }}</a>
                         {% endfor %}
                     {% endif %}
                 {% endif %}
