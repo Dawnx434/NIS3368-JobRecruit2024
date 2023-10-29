@@ -144,11 +144,10 @@ def message_list(request):
             "reply_to": obj.reply_to.id if obj.reply_to else None
         })
 
-    print(message_list_as_sender)
 
     context = {
-        "message_list_as_recipient": message_list_as_recipient,
-        "message_list_as_sender": message_list_as_sender,
+        "message_list_as_recipient": sorted(message_list_as_recipient, key=lambda x: x['id'], reverse=True),
+        "message_list_as_sender": sorted(message_list_as_sender, key=lambda x: x['id'], reverse=True),
         "recipient_current_page": recipient_current_page,
         "sender_current_page": sender_current_page,
         "initial_page": initial_page,
