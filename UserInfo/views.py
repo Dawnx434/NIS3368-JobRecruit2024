@@ -27,7 +27,7 @@ def index(request, pk):
     obj = query_set.first()
 
     topic_per_page = 5
-    topic = obj.topics.all()
+    topic = obj.topics.order_by('last_updated')
     topic_paginator = Paginator(topic, topic_per_page)
     topic_page_number = request.GET.get('topic_page')
     show_topic_page = topic_page_number is not None
@@ -183,7 +183,6 @@ def account(request):
     }
     if post_data['password']:
         save_data['password'] = post_data['password']
-
     print(save_data)
     User.objects.filter(id=request.session.get("UserInfo").get("id")).update(**save_data)
     return redirect("/info/info/")
@@ -330,9 +329,12 @@ def info(request):
         return HttpResponse("不合法的身份")
     # 获取用户数据
     obj = query_set.first()
+
     for field in fields:
+        # print('field: ', data.get(field))
         setattr(obj, field, data.get(field))
     obj.save()
+    # print('obj.school: ', obj.school)
     user_info = {"id": request.session['UserInfo'].get("id"),
                  "username": obj.username,
                  "mobile_phone": obj.mobile_phone,

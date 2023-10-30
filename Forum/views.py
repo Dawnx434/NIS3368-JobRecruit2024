@@ -27,7 +27,7 @@ def get_matching_files(request):
 # Create your views here.
 def home(request):
 
-    topics = Topic.objects.all()
+    topics = Topic.objects.order_by('last_updated')
 
     topics_per_page = 20
     paginator = Paginator(topics, topics_per_page)

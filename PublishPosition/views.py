@@ -46,6 +46,7 @@ def position_list(request):
     else:
         query_set = Position.objects.filter(published_state=1, position_name__contains=keyword)
 
+    query_set = query_set.order_by('salary')
     # filter according to query params
     paginator = Paginator(query_set, pagesize)
     # query_set = query_set[(page - 1) * pagesize: page * pagesize ]

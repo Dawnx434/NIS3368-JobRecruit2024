@@ -12,7 +12,7 @@ publish/    发布职位
 app_name = "PublishPosition"
 urlpatterns = [
     path("list/", views.position_list, name='publish_list'),
-    path("view/<int:nid>/", views.view_position_detail),
+    path("view/<int:nid>/", views.view_position_detail, name='detail'),
     path("publish/", views.publish_position, name='publish'),
-    path("modify/<int:nid>/", views.modify_position),
+    path("modify/<int:nid>/", views.modify_position, name='modify_position'),
 ]
