@@ -194,18 +194,16 @@
                                     <div style="width:30%;">
                                         HR: {{ obj.HR }}
                                             {% with id=obj.HR.id|stringformat:'d' %}
-                                            {% with user_avatar_path="images/"|add:id|add:".jpg" %}
-                                            {% with default_avatar_path='images/default.jpeg' %}
-                                            {% if user_avatar_path|static_file_exists%}
-                                            <img src="{% static user_avatar_path %}?rand=<%= Date.now() %>"
-                                                 alt="用户头像" class="rounded-circle"
-                                                 style="width: 30%">
-                                            {% else %}
-                                            <img src="{% static default_avatar_path %}" alt="默认头像"
-                                                 class="rounded-circle" style="width:30%;">
-                                            {% endif %}
-                                            {% endwith %}
-                                            {% endwith %}
+                                                {% with user_avatar_path="images/"|add:id %}
+                                                {% query_image_extension user_avatar_path as user_avatar_full_path %}
+                                                {% with default_avatar_path='images/default.jpeg' %}
+                                                    {% if user_avatar_full_path|static_file_exists %}
+                                                        <img src="{% static user_avatar_full_path %}?rand=<%= Date.now() %>" alt="用户头像" class="rounded-circle" style="width: 40px; height: 40px">
+                                                    {% else %}
+                                                        <img src="{% static default_avatar_path %}" alt="默认头像" class="rounded-circle" style="width: 40px; height: 40px">
+                                                    {% endif %}
+                                                {% endwith %}
+                                                {% endwith %}
                                             {% endwith %}
                                     </div>
                                 </div>

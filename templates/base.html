@@ -43,10 +43,11 @@
                             {% with id=request.session.UserInfo.id %}
                                 <a class="nav-link dropdown-toggle" href="{% url 'UserInfo:index' id %}" id="navbardrop" data-toggle="dropdown">
                                     {% with user_id=id|stringformat:'d' %}
-                                        {% with user_avatar_path="images/"|add:user_id|add:".jpg" %}
+                                        {% with user_avatar_path="images/"|add:user_id %}
+                                            {% query_image_extension user_avatar_path as user_avatar_full_path %}
                                             {% with default_avatar_path='images/default.jpeg' %}
-                                                {% if user_avatar_path|static_file_exists%}
-                                                    <img src="{% static user_avatar_path %}?rand=<%= Date.now() %>" alt="用户头像" class="rounded-circle" style="width:40px; height:40px;">
+                                                {% if user_avatar_full_path|static_file_exists %}
+                                                    <img src="{% static user_avatar_full_path %}?rand=<%= Date.now() %>" alt="用户头像" class="rounded-circle" style="width:40px; height:40px;">
                                                 {% else %}
                                                     <img src="{% static default_avatar_path %}" alt="默认头像" class="rounded-circle" style="width:40px; height:40px;">
                                                 {% endif %}
