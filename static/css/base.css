@@ -145,3 +145,8 @@ display: block;
 .nav-link.custom-tab.active::after {
   content: ""; /* 选中的选项不显示短线段 */
 }
+
+.footer {
+    background-color: black;
+    color: #fff;
+}
