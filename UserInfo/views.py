@@ -396,9 +396,12 @@ def resume_download(request):
 
     file_path = os.path.join(settings.RESUME_ROOT, resume_obj.file_path)
     # 打开文件
-    with open(file_path, 'rb') as f:
-        # 读取文件内容
-        file_data = f.read()
+    try:
+        with open(file_path, 'rb') as f:
+            # 读取文件内容
+            file_data = f.read()
+    except FileNotFoundError as e:
+        return render(request, "UserAuth/alert_page.html", {'msg':"文件已不存在，可能已被用户删除。"})
     response = HttpResponse(file_data, content_type='application/pdf')
     # 对文件名进行URL编码
     encoded_resume_id = urllib.parse.quote(resume_id)
