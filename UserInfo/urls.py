@@ -4,7 +4,7 @@ from UserAuth import views as auth_model
 
 app_name = "UserInfo"
 urlpatterns = [
-    path("index/<int:pk>", views.index, name='index'),
+    path("index/<int:pk>/", views.index, name='index'),
     path("resume/", views.resume, name="resume"),
     path("application/", views.apply, name='application'),
     path("myposition/", views.my_published_position, name='my_position'),
