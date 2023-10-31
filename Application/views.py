@@ -8,14 +8,19 @@ from django.conf import settings
 from PublishPosition.models import Position
 from UserAuth.models import User
 from Application.models import Application
+from UserInfo.models import Resume
 
 
 # Create your views here.
 def apply(request, pid):
+    if request.method != "POST":
+        return HttpResponse("不支持的请求类型")
+
     """申请职位视图"""
     # 获取职位和用户对象
     position_query_set = Position.objects.filter(id=pid)
     user_query_set = User.objects.filter(id=request.session.get("UserInfo").get("id"))
+    resume_obj = Resume.objects.filter(id=request.POST.get("resume_id")).first()
     # 检查空值
     if not position_query_set:
         return render(request, 'UserAuth/alert_page.html', {"msg": "无效的岗位信息", "return_path": "/position/list/"})
@@ -23,20 +28,24 @@ def apply(request, pid):
         return render(request, 'UserAuth/alert_page.html', {"msg": "无效的用户身份", "return_path": "/position/list/"})
     # 选择对象
     position_obj = position_query_set.first()
-    user_obj = user_query_set.first()
+    current_user_obj = user_query_set.first()
+    # 检查用户选择的简历是不是自己的
+    if resume_obj.belong_to.id != current_user_obj.id:
+        return render(request, "UserAuth/alert_page.html", {'msg': "无权操作！"})
     # 检查岗位是否开放
     if not position_obj.published_state == 1:
         return render(request, 'UserAuth/alert_page.html', {"msg": "未开放的岗位", "return_path": "/position/list/"})
     # 检查是否未申请过
-    application_query_set = Application.objects.filter(applicant=user_obj, position=position_obj)
+    application_query_set = Application.objects.filter(applicant=current_user_obj, position=position_obj)
     # 没有记录
     if not application_query_set:
         # 则写入新记录
         Application.objects.create(**{
-            'applicant': user_obj,
+            'applicant': current_user_obj,
             'position': position_obj,
             'application_time': timezone.localtime(),
-            'create_time': timezone.localtime()
+            'create_time': timezone.localtime(),
+            'resume': resume_obj,
         })
         return render(request, 'UserAuth/alert_page.html',
                       {"msg": "申请成功！", "return_path": "/position/view/{}/".format(pid), "success": True})
@@ -48,7 +57,10 @@ def apply(request, pid):
         application_query_set.update(**{
             'application_time': timezone.localtime(),
             'active_state': 1,
+            'resume': resume_obj,
         })
+        return render(request, 'UserAuth/alert_page.html',
+                  {"msg": "申请成功！", "return_path": "/position/view/{}/".format(pid)})
 
     # 已生效则无需更改
     return render(request, 'UserAuth/alert_page.html',

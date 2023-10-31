@@ -6,6 +6,7 @@ from django.core.paginator import Paginator, EmptyPage
 from PublishPosition.models import Position
 from UserAuth.models import User
 from Application.models import Application
+from UserInfo.models import Resume
 from PublishPosition.utils.forms.MyForm import PublishPositionForm
 
 from PublishPosition.utils.provincelist import province_dictionary
@@ -113,10 +114,19 @@ def view_position_detail(request, nid):
 
     # 未发布状态下，只有创建者且处于HR身份下可查看
     if position.published_state == 0:
-        if not ((current_user_obj.id == position.HR.id and current_user_obj.identity == 2) or application_query_set.exists()):
+        if not ((
+                        current_user_obj.id == position.HR.id and current_user_obj.identity == 2) or application_query_set.exists()):
             return render(request, 'UserAuth/alert_page.html',
                           {"msg": "未开放的岗位", "return_path": "/position/list/"})
 
+    # 用户可用的简历
+    resume_query_set = Resume.objects.filter(belong_to=current_user_obj)
+    resumes = []
+    for resume_obj in resume_query_set:
+        resumes.append({
+            "id": resume_obj.id,
+            "name": resume_obj.name
+        })
     context = {
         "matching_files": matching_files[0],
         "HR_matching_files": HR_matching_files[0],
@@ -138,6 +148,7 @@ def view_position_detail(request, nid):
         "already_apply": False if not application_query_set else True,
         "publish_state": position.published_state,
         "user_has_applied_list": user_has_applied_list,
+        "resumes": resumes
     }
 
     return render(request, "PublishPosition/position_detail.html", context)
