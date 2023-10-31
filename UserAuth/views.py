@@ -106,7 +106,7 @@ def reset_password(request):
 
     # 重置密码
     query_set.update(password=form.cleaned_data['password'])
-    return render(request, "UserAuth/alert_page.html", context={'msg': "您的密码已被重置！"})
+    return render(request, "UserAuth/alert_page.html", context={'msg': "您的密码已被重置！", 'success': True})
 
 
 def change_identity(request):
@@ -129,7 +129,7 @@ def change_identity(request):
                       {'msg': '您尚不具备HR身份，请联系管理员获取', 'return_path': '/info/info/'})
         else:
             return render(request, "UserAuth/alert_page.html",
-                          {'msg': '您的申请已提交，请等待审核通过', 'return_path': '/info/info/'})
+                          {'msg': '您的申请已提交，请等待审核通过', 'return_path': '/info/info/', 'success': True})
 
     user_query_set.update(identity=2)
 

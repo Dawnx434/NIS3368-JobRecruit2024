@@ -165,18 +165,7 @@
                     {{ obj.simplified_title }}
                 </a>
             </div>
-            {# 这里的长度截断放到后端去判断 #}
-{#            <script>#}
-{#                var myBox = document.getElementById('message-{{ obj.id }}');#}
-{#                var text = myBox.innerText.trim();#}
-{#                var maxLength = 50;#}
-{#                if (text.length > maxLength) {#}
-{#                    text = text.substring(0, maxLength) + '...';#}
-{#                }#}
-{#                myBox.innerText = text;#}
-{#            </script>#}
             <div class="col-2 d-flex align-items-center reply">
-                {# 这里表示该条私信是作为哪条私信的回复而存在的, reply_to指的就是回复的私信的id，无则为None，下同 #}
                 {% if obj.reply_to is not None %}
                 <a href="/message/view/{{ obj.reply_to }}/" class="text-muted" style="text-decoration:none;"><i
                         class="bi bi-reply-fill"></i>查看原始消息</a>
@@ -184,17 +173,16 @@
             </div>
             <div class="col-1 d-flex align-items-center">
                 {% with user_id=obj.from_user_id|stringformat:'d' %}
-                {% with user_avatar_path="images/"|add:user_id|add:".jpg" %}
-                {% with default_avatar_path='images/default.jpeg' %}
-                {% if user_avatar_path|static_file_exists%}
-                <img src="{% static user_avatar_path %}?rand=<%= Date.now() %>" alt="用户头像"
-                     class="rounded-circle" style="width:40px; height:40px;">
-                {% else %}
-                <img src="{% static default_avatar_path %}" alt="默认头像" class="rounded-circle"
-                     style="width:40px; height:40px;">
-                {% endif %}
-                {% endwith %}
-                {% endwith %}
+                    {% with user_avatar_path="images/"|add:user_id %}
+                        {% query_image_extension user_avatar_path as user_avatar_full_path %}
+                        {% with default_avatar_path='images/default.jpeg' %}
+                            {% if user_avatar_full_path|static_file_exists %}
+                                <img src="{% static user_avatar_full_path %}?rand=<%= Date.now() %>" alt="用户头像" class="rounded-circle" style="width:40px; height:40px;">
+                            {% else %}
+                                <img src="{% static default_avatar_path %}" alt="默认头像" class="rounded-circle" style="width:40px; height:40px;">
+                            {% endif %}
+                        {% endwith %}
+                    {% endwith %}
                 {% endwith %}
             </div>
             <div class="col-1 d-flex justify-content-center align-items-center text-muted">

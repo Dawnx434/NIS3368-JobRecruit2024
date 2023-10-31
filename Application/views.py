@@ -39,7 +39,7 @@ def apply(request, pid):
             'create_time': timezone.localtime()
         })
         return render(request, 'UserAuth/alert_page.html',
-                      {"msg": "申请成功！", "return_path": "/position/view/{}/".format(pid)})
+                      {"msg": "申请成功！", "return_path": "/position/view/{}/".format(pid), "success": True})
 
     # 如果有记录
     application_obj = application_query_set.first()
