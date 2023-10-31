@@ -6,10 +6,10 @@
 
 
 {% block stylesheet %}
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-<style>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
 
-        .left-nav{
+        .left-nav {
             background-color: #17a2b8;
             color: white;
         }
@@ -43,7 +43,7 @@
             margin-bottom: 8px;
         }
 
-        .upload-button{
+        .upload-button {
             background-color: #17a2b8;
             color: white;
             border: 1px solid white;
@@ -52,7 +52,6 @@
             align-items: center;
             justify-content: center;
         }
-
 
 
         .full-width-nav {
@@ -140,197 +139,205 @@
             z-index: 0;
         }
 
-        .nav-item-left{
+        .nav-item-left {
             width: 100%;
             text-overflow: ellipsis;
-            white-space:nowrap;
-            overflow:hidden;
+            white-space: nowrap;
+            overflow: hidden;
         }
 
 
-</style>
-{% endblock%}
+    </style>
+{% endblock %}
 
 
 {% block content %}
-<div class="container-fluid">
-    <div class="row">
-        <nav class="d-md-block sidebar left-nav full-width-nav" style="width: 20%;">
-            <div class="position-sticky">
-                <a class="btn btn-primary w-100 mb-2 upload-button"
-                   style="font-weight: bold; margin-top: 40px;" id="uploadResumeBtn" onclick="openModal()"><i
-                        style="font-size: 1.5rem;"
-                        class="bi bi-cloud-upload"></i>&nbsp;&nbsp;上传新简历</a>
+    <div class="container-fluid">
+        <div class="row">
+            <nav class="d-md-block sidebar left-nav full-width-nav" style="width: 20%;">
+                <div class="position-sticky">
+                    <a class="btn btn-primary w-100 mb-2 upload-button"
+                       style="font-weight: bold; margin-top: 40px;" id="uploadResumeBtn" onclick="openModal()"><i
+                            style="font-size: 1.5rem;"
+                            class="bi bi-cloud-upload"></i>&nbsp;&nbsp;上传新简历</a>
 
-                <div id="myModal" class="modal">
-                    <div class="modal-content">
-                        <span class="close" onclick="closeModal()" id="closeModalBtn">&times;</span>
-                        <h2 style="text-align: center;">请选择您要上传的简历文件</h2>
-                        <p style="text-align: center; color: #17a2b8; font-weight: bold;">文件格式必须以.pdf为后缀</p>
-                        <form method="post" action="{% url 'UserInfo:resume_upload' %}" enctype="multipart/form-data"
-                              class="d-flex justify-content-center align-items-center flex-wrap">
-                            {% csrf_token %}
-                            <label class="btn btn-primary custom-button" style="margin:20px;">
-                                选择简历文件
-                                <input type="file" name="upload" accept=".pdf" id="fileInput" style="display: none;">
-                            </label>
-                            <button type="submit" class="btn btn-primary custom-button" style="margin:20px;">确认上传
-                            </button>
-                        </form>
+                    <div id="myModal" class="modal">
+                        <div class="modal-content">
+                            <span class="close" onclick="closeModal()" id="closeModalBtn">&times;</span>
+                            <h2 style="text-align: center;">请选择您要上传的简历文件</h2>
+                            <p style="text-align: center; color: #17a2b8; font-weight: bold;">
+                                文件格式必须以.pdf为后缀</p>
+                            <form method="post" action="{% url 'UserInfo:resume_upload' %}"
+                                  enctype="multipart/form-data"
+                                  class="d-flex justify-content-center align-items-center flex-wrap">
+                                {% csrf_token %}
+                                <div class="form-group">
+                                    <label for="resume_name" class="custom-text-color">简历名称</label>
+                                    <input type="text" id="resume_name" name="resume_name"
+                                    class="form-control">
+                                </div>
+                                <div class="form-group">
+                                    <label class="btn btn-primary custom-button" style="margin:20px;">
+                                        选择简历文件
+                                        <input type="file" name="upload" accept=".pdf" id="fileInput"
+                                               style="display: none;">
+                                    </label>
+                                </div>
+                                <button type="submit" class="btn btn-primary custom-button" style="margin:20px;">确认上传
+                                </button>
+                            </form>
 
-                        <div class="row">
-                            <div id="resumeModal" class="col-md-12">
-                                <p id="uploadedResume" style="text-align: center; font-weight: bold;"></p>
+                            <div class="row">
+                                <div id="resumeModal" class="col-md-12">
+                                    <p id="uploadedResume" style="text-align: center; font-weight: bold;"></p>
+                                </div>
+                                <div style="padding: 40px; text-align: center;">
+                                    <div id="noResumeText">您还没有上传简历</div>
+                                </div>
+                                <div id="uploadMessage" style="display: none;"></div>
                             </div>
-                            <div style="padding: 40px; text-align: center;">
-                                <div id="noResumeText">您还没有上传简历</div>
-                            </div>
-                            <div id="uploadMessage" style="display: none;"></div>
                         </div>
                     </div>
-                </div>
-                <div id="modalBackdrop" class="modal-backdrop"></div>
+                    <div id="modalBackdrop" class="modal-backdrop"></div>
 
 
-                <hr class="divider">
-                <ul class="nav flex-column custom-nav">
-                    {% for resume in resumes %}
-                    <li class="nav-item nav-item-left">
-                        <a class="nav-link text-white" href="#resume{{ forloop.counter }}" data-toggle="collapse"
-                           id="resume_clicked{{ forloop.counter }}"
-                           onclick="toggleNavColor('resume_clicked{{ forloop.counter }}')">
-                            {{ resume }}
-                        </a>
-                    </li>
-                    <script>
-                        var myBox = document.getElementById('resume_clicked{{ forloop.counter }}');
-                        var text = myBox.innerText;
-                        var maxLength = 15;
-                        if (text.length > maxLength) {
-                            text = text.substring(0, maxLength) + '...';
-                        }
-                        myBox.innerText = text;
-                    </script>
                     <hr class="divider">
-                    {% endfor %}
-                </ul>
-            </div>
-        </nav>
+                    <ul class="nav flex-column custom-nav">
+                        {% for resume in resumes %}
+                            <li class="nav-item nav-item-left">
+                                <a class="nav-link text-white" href="#resume{{ forloop.counter }}"
+                                   data-toggle="collapse"
+                                   id="resume_clicked{{ forloop.counter }}"
+                                   onclick="toggleNavColor('resume_clicked{{ forloop.counter }}')">
+                                    {{ resume.name }}
+                                </a>
+                            </li>
+                            <script>
+                                var myBox = document.getElementById('resume_clicked{{ forloop.counter }}');
+                                var text = myBox.innerText;
+                                var maxLength = 15;
+                                if (text.length > maxLength) {
+                                    text = text.substring(0, maxLength) + '...';
+                                }
+                                myBox.innerText = text;
+                            </script>
+                            <hr class="divider">
+                        {% endfor %}
+                    </ul>
+                </div>
+            </nav>
 
 
-        <main class="px-md-4" style="width: 90%; padding-top:10px; margin-left:15%">
-            {% for resume in resumes %}
-            <div id="resume{{ forloop.counter }}" class="collapse resume-content">
-                <embed src="../resume_download?resume_id={{ resume }}" type="application/pdf" width="100%" height="600">
-            </div>
-            {% endfor %}
-        </main>
+            <main class="px-md-4" style="width: 90%; padding-top:10px; margin-left:15%">
+                {% for resume in resumes %}
+                    <div id="resume{{ forloop.counter }}" class="collapse resume-content">
+                        <embed src="../resume_download?resume_id={{ resume.id }}" type="application/pdf" width="100%"
+                               height="600">
+                    </div>
+                {% endfor %}
+            </main>
 
 
+        </div>
     </div>
-</div>
 {% endblock %}
 
 {% block footer %}
 {% endblock %}
 
 {% block js %}
-<script>
+    <script>
 
 
-    document.getElementById("uploadResumeBtn").addEventListener("click", openModal);
-    document.getElementById("fileInput").addEventListener("change", handleFileSelect);
+        document.getElementById("uploadResumeBtn").addEventListener("click", openModal);
+        document.getElementById("fileInput").addEventListener("change", handleFileSelect);
 
 
+        function openModal() {
+            console.log('Upload button clicked!');
 
-    function openModal() {
-        console.log('Upload button clicked!');
+            var modal = document.getElementById("myModal");
+            var modalBackdrop = document.getElementById("modalBackdrop");
 
-        var modal = document.getElementById("myModal");
-        var modalBackdrop = document.getElementById("modalBackdrop");
+            if (modal && modalBackdrop) {
+                modal.style.display = "block";
+                modalBackdrop.style.display = "block";
+                resumeModal.style.display = "none";
+                noResumeText.style.display = "block";
 
-        if (modal && modalBackdrop) {
-            modal.style.display = "block";
-            modalBackdrop.style.display = "block";
-            resumeModal.style.display = "none";
-            noResumeText.style.display = "block";
-
-            var closeBtn = document.getElementById("closeModalBtn");
-            closeBtn.addEventListener("click", closeModal);
-        } else {
-            console.error("modal or modalBackdrop element not found.");
+                var closeBtn = document.getElementById("closeModalBtn");
+                closeBtn.addEventListener("click", closeModal);
+            } else {
+                console.error("modal or modalBackdrop element not found.");
+            }
         }
-    }
 
-    function closeModal() {
-        var modal = document.getElementById("myModal");
-        var modalBackdrop = document.getElementById("modalBackdrop");
-        modal.style.display = "none";
-        modalBackdrop.style.display = "none";
-        resumeModal.style.display = "none";
-        noResumeText.style.display = "none";
-    }
-
-
-    function handleFileSelect(event) {
-
-        const fileInput = event.target;
-        const selectedFile = fileInput.files[0];
-        const uploadedResume = document.getElementById("uploadedResume");
-        const noResumeText = document.getElementById("noResumeText");
+        function closeModal() {
+            var modal = document.getElementById("myModal");
+            var modalBackdrop = document.getElementById("modalBackdrop");
+            modal.style.display = "none";
+            modalBackdrop.style.display = "none";
+            resumeModal.style.display = "none";
+            noResumeText.style.display = "none";
+        }
 
 
-        if (selectedFile) {
-            const reader = new FileReader();
+        function handleFileSelect(event) {
 
-            reader.onload = function(event) {
-                resumeModal.style.display = "block";
-                noResumeText.style.display = "none";
-                uploadedResume.textContent = "已选择文件：" + selectedFile.name;
+            const fileInput = event.target;
+            const selectedFile = fileInput.files[0];
+            const uploadedResume = document.getElementById("uploadedResume");
+            const noResumeText = document.getElementById("noResumeText");
+
+
+            if (selectedFile) {
+                const reader = new FileReader();
+
+                reader.onload = function (event) {
+                    resumeModal.style.display = "block";
+                    noResumeText.style.display = "none";
+                    uploadedResume.textContent = "已选择文件：" + selectedFile.name;
+                    document.getElementById("resumeModal").style.display = "block";
+                };
+
+                reader.readAsDataURL(selectedFile);
+            } else {
+                resumeModal.style.display = "none";
+                noResumeText.style.display = "block";
+                selectedResumeFilename.textContent = "";
                 document.getElementById("resumeModal").style.display = "block";
-            };
-
-            reader.readAsDataURL(selectedFile);
-        } else {
-            resumeModal.style.display = "none";
-            noResumeText.style.display = "block";
-            selectedResumeFilename.textContent = "";
-            document.getElementById("resumeModal").style.display = "block";
-        }
-    }
-
-
-
-    function toggleNavColor(targetId) {
-
-        var targetNavItem = document.getElementById(targetId);
-        var isCurrentlyActive = targetNavItem.classList.contains('active');
-        var navItems = document.querySelectorAll('.nav-link');
-
-        var currentActiveResume = document.querySelector('.resume-content.show');
-        var resumeContentId = targetId.replace('resume_clicked', 'resume');
-        var resumeContent = document.getElementById(resumeContentId);
-
-        if (currentActiveResume) {
-            currentActiveResume.classList.remove('show');
+            }
         }
 
-        navItems.forEach(function (item) {
-            item.classList.remove('active');
-        });
 
-        if (!isCurrentlyActive) {
-            console.log('Clicked: NOT ACTIVE' + targetId);
+        function toggleNavColor(targetId) {
 
-            targetNavItem.classList.add('active');
-            resumeContent.classList.add('show');
+            var targetNavItem = document.getElementById(targetId);
+            var isCurrentlyActive = targetNavItem.classList.contains('active');
+            var navItems = document.querySelectorAll('.nav-link');
+
+            var currentActiveResume = document.querySelector('.resume-content.show');
+            var resumeContentId = targetId.replace('resume_clicked', 'resume');
+            var resumeContent = document.getElementById(resumeContentId);
+
+            if (currentActiveResume) {
+                currentActiveResume.classList.remove('show');
+            }
+
+            navItems.forEach(function (item) {
+                item.classList.remove('active');
+            });
+
+            if (!isCurrentlyActive) {
+                console.log('Clicked: NOT ACTIVE' + targetId);
+
+                targetNavItem.classList.add('active');
+                resumeContent.classList.add('show');
+            }
         }
-    }
 
 
-
-
-</script>
+    </script>
 {% endblock %}
 
 

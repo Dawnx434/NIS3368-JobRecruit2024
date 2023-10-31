@@ -1,19 +1,20 @@
 import datetime
-from django.shortcuts import render, redirect, HttpResponse
-from UserAuth.models import User
-from PublishPosition.models import Position
-from Application.models import Application
-from django.http import JsonResponse, FileResponse, Http404
-from django.core.paginator import Paginator, EmptyPage
 import os
-import glob
-from django.conf import settings
 import re
-import random
+
+from django.shortcuts import render, redirect, HttpResponse
+from django.http import JsonResponse
+from django.core.paginator import Paginator, EmptyPage
+from django.conf import settings
 import urllib.parse
 from django.views.decorators.csrf import csrf_exempt
+
 from UserAuth.utils.generateCode import send_sms_code
 from UserAuth.utils import validators
+from UserAuth.models import User
+from Application.models import Application
+from PublishPosition.models import Position
+from UserInfo.models import Resume
 
 
 # Create your views here.
@@ -36,7 +37,7 @@ def index(request, pk):
     except EmptyPage:
         topic_current_page = topic_paginator.page(topic_paginator.num_pages)
 
-    is_hr = obj.hr_allowed == 3 # 具有HR资格就要显示其发布的岗位
+    is_hr = obj.hr_allowed == 3  # 具有HR资格就要显示其发布的岗位
 
     user_info = {
         "id": pk,
@@ -78,19 +79,16 @@ def index(request, pk):
 
 
 def resume(request):
-    id = str(request.session['UserInfo'].get("id"))
-    save_path = os.path.join(settings.RESUME_ROOT + id)
-    if not os.path.exists(save_path):
-        os.mkdir(save_path)
-    file_names = os.listdir(save_path)
-    file_position = [os.path.join(save_path, filename) for filename in file_names]
-    image = find_image(request)
-    length = len(file_names)
-    context = {"resumes": file_names,
-               "id": id,
-               'file_position': file_position,
-               'length': length,
-               'image': image}
+    # 查询当前用户的所有简历
+    current_user_obj = User.objects.filter(id=request.session.get("UserInfo").get("id")).first()
+    resume_query_set = Resume.objects.filter(belong_to=current_user_obj)
+    resume_list = []
+    for resume_obj in resume_query_set:
+        resume_list.append({
+            "id": resume_obj.id,
+            "name": resume_obj.name
+        })
+    context = {"resumes": resume_list}
     return render(request, "UserInfo/resume.html", context=context)
 
 
@@ -351,25 +349,30 @@ def info(request):
 
 
 def resume_upload(request):
+    current_user_obj = User.objects.filter(id=request.session['UserInfo'].get("id")).first()
     if request.method == 'POST':
+        resume_name = request.POST.get("resume_name")
         upload_resume = request.FILES.get('upload')
         if not upload_resume:
             context = {'msg': '您没有上传您的简历文件', 'success': False}
             return render(request, "UserInfo/upload_resume_result.html", context=context)
-        save_path = os.path.join(settings.RESUME_ROOT + str(request.session['UserInfo'].get("id")))
-        if not os.path.exists(save_path):
-            os.mkdir(save_path)
-        matching_files = os.listdir(save_path)
-        lengh = len(matching_files)
-        save_path = os.path.join(save_path, upload_resume.name)
-        file_extension = os.path.splitext(upload_resume.name)[1]
+        save_directory = os.path.join(settings.RESUME_ROOT + str(current_user_obj.id))
+        # 不存在文件夹，则创建
+        if not os.path.exists(save_directory):
+            os.mkdir(save_directory)
+
+        save_path = os.path.join(save_directory, upload_resume.name)
         # 这里对文件后缀名进行检验、设置白名单
+        file_extension = os.path.splitext(upload_resume.name)[1]
         white_list = {'.pdf'}
         if file_extension not in white_list:
             context = {'msg': '你上传的文件格式不对,请上传pdf格式的简历', 'success': False}
             return render(request, "UserInfo/upload_resume_result.html", context=context)
-        save_path = os.path.join(save_path)
-        # 保存文件
+
+        # 保存文件和数据库对应关系
+        save_file_path = "{}/{}".format(str(current_user_obj.id), upload_resume.name)
+        Resume.objects.create(name=resume_name, file_path=save_file_path, belong_to=current_user_obj)
+
         with open(save_path, 'wb') as file:
             for chunk in upload_resume.chunks():
                 file.write(chunk)
@@ -379,10 +382,17 @@ def resume_upload(request):
 
 def resume_download(request):
     resume_id = request.GET.get('resume_id')
-    download_path = os.path.join(settings.RESUME_ROOT, str(request.session['UserInfo'].get("id")))
-    download_path = os.path.join(download_path, resume_id)
+    # 获取用户对象
+    current_user_obj = User.objects.filter(id=request.session.get("UserInfo").get("id")).first()
+    # 找到resume对象
+    try:
+        resume_obj = Resume.objects.filter(id=resume_id).first()
+    except BaseException as e:
+        return HttpResponse("找不到对象！")
+
+    file_path = os.path.join(settings.RESUME_ROOT, resume_obj.file_path)
     # 打开文件
-    with open(download_path, 'rb') as f:
+    with open(file_path, 'rb') as f:
         # 读取文件内容
         file_data = f.read()
     response = HttpResponse(file_data, content_type='application/pdf')
