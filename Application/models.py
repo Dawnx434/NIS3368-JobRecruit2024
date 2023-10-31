@@ -3,6 +3,7 @@ from django.db import models
 
 from UserAuth.models import User
 from PublishPosition.models import Position
+from UserInfo.models import Resume
 
 
 # Create your models here.
@@ -16,6 +17,7 @@ class Application(models.Model):
         (0, '已取消')
     )
     active_state = models.SmallIntegerField(verbose_name="申请状态", choices=active_state_choices, default=1)
+    resume = models.ForeignKey(verbose_name="上传的简历", to=Resume, to_field='id', on_delete=models.CASCADE, null=True, blank=True)
 
     def __str__(self):
         return "{}于{}申请了{}".format(self.applicant,

@@ -390,6 +390,10 @@ def resume_download(request):
     except BaseException as e:
         return HttpResponse("找不到对象！")
 
+    # 检查用户是否是简历的上传者
+    if current_user_obj.id != resume_obj.belong_to.id:
+        return render(request, "UserAuth/alert_page.html", {"msg": "无权查看的页面！"})
+
     file_path = os.path.join(settings.RESUME_ROOT, resume_obj.file_path)
     # 打开文件
     with open(file_path, 'rb') as f:
@@ -401,6 +405,28 @@ def resume_download(request):
     # 设置响应的文件名，并指定字符编码
     response['Content-Disposition'] = 'inline; filename*=UTF-8\'\'{}'.format(encoded_resume_id)
     return response
+
+
+def remove_resume(request, rid):
+    """删除简历"""
+    # 获取对象
+    current_user_obj = User.objects.filter(id=request.session.get("UserInfo").get("id")).first()
+    resume_obj = Resume.objects.filter(id=rid).first()
+    # 判空
+    if not (current_user_obj and resume_obj):
+        return render(request, "UserAuth/alert_page.html", {"msg": "无效的参数", "return_path": "/info/resume/"})
+
+    # 判断resume归属
+    if current_user_obj.id != resume_obj.belong_to.id:
+        return render(request, "UserAuth/alert_page.html", {"msg": "你无权操作！", "return_path": "/info/resume/"})
+
+    # 执行删除
+    file_name = resume_obj.name
+    file_path = os.path.join(settings.RESUME_ROOT, resume_obj.file_path)
+    os.remove(file_path)
+    Resume.objects.filter(id=rid).delete()
+
+    return render(request, "UserAuth/alert_page.html", {'msg': "已删除简历{}".format(file_name),'return_path': '/info/resume/'})
 
 
 def show_index(request):

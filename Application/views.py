@@ -1,5 +1,9 @@
+import os
+import urllib
+
 from django.shortcuts import render, HttpResponse
 from django.utils import timezone
+from django.conf import settings
 
 from PublishPosition.models import Position
 from UserAuth.models import User
@@ -82,4 +86,34 @@ def cancel(request, pid):
     }
     application_query_set.update(**data_dict)
     return render(request, 'UserAuth/alert_page.html',
-                      {"msg": "取消申请成功！", "return_path": "/position/view/{}/".format(pid)})
+                  {"msg": "取消申请成功！", "return_path": "/position/view/{}/".format(pid)})
+
+
+def hr_view_resume(request, uid, pid):
+    """HR查看用户上传的简历"""
+    try:
+        current_user_obj = User.objects.filter(id=request.session.get("UserInfo").get("id")).first()
+        applicant_user_obj = User.objects.filter(id=uid).first()
+        apply_position_obj = Position.objects.filter(id=pid).first()
+        application_obj = Application.objects.filter(applicant=applicant_user_obj, position=apply_position_obj,
+                                                     active_state=1).first()
+    except BaseException as e:
+        return render(request, 'UserAuth/alert_page.html', {"msg": "错误的参数。", "return_path": "/position/list/"})
+
+    # 检查是否是申请职位的HR
+    if not current_user_obj.id == apply_position_obj.HR.id:
+        return render(request, 'UserAuth/alert_page.html', {'msg': "无权查看的内容！"})
+
+    # 某用户申请某岗位的简历对象
+    resume_obj = application_obj.resume
+    file_path = os.path.join(settings.RESUME_ROOT, resume_obj.file_path)
+    # 打开文件
+    with open(file_path, 'rb') as f:
+        # 读取文件内容
+        file_data = f.read()
+    response = HttpResponse(file_data, content_type='application/pdf')
+    # 对文件名进行URL编码
+    encoded_resume_id = urllib.parse.quote(resume_obj.name)
+    # 设置响应的文件名，并指定字符编码
+    response['Content-Disposition'] = 'inline; filename*=UTF-8\'\'{}'.format(encoded_resume_id)
+    return response
