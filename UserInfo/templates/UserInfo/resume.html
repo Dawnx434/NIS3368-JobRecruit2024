@@ -172,9 +172,9 @@
                                   class="d-flex justify-content-center align-items-center flex-wrap">
                                 {% csrf_token %}
                                 <div class="form-group">
-                                    <label for="resume_name" class="custom-text-color">简历名称</label>
+{#                                    <label for="resume_name" class="custom-text-color">简历名称</label>#}
                                     <input type="text" id="resume_name" name="resume_name"
-                                    class="form-control">
+                                    class="form-control" placeholder="简历名称" required>
                                 </div>
                                 <div class="form-group">
                                     <label class="btn btn-primary custom-button" style="margin:20px;">
@@ -204,13 +204,15 @@
                     <hr class="divider">
                     <ul class="nav flex-column custom-nav">
                         {% for resume in resumes %}
-                            <li class="nav-item nav-item-left">
-                                <a class="nav-link text-white" href="#resume{{ forloop.counter }}"
+                            <li class="nav-item nav-item-left" style="display: flex; align-items: center;">
+                                <a class="nav-link text-white" style="margin-left: auto; margin-right: auto;" href="#resume{{ forloop.counter }}"
                                    data-toggle="collapse"
                                    id="resume_clicked{{ forloop.counter }}"
                                    onclick="toggleNavColor('resume_clicked{{ forloop.counter }}')">
                                     {{ resume.name }}
                                 </a>
+
+                                <a href="{% url 'UserInfo:resume_remove' resume.id %}" class="btn btn-warning custom-button" style="margin-left: auto">删除</a>
                             </li>
                             <script>
                                 var myBox = document.getElementById('resume_clicked{{ forloop.counter }}');

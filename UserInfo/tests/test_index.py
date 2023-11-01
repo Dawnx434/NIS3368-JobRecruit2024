@@ -28,7 +28,7 @@ class InfoIndexTest(TestCase):
         self.assertEqual(self.response.status_code, 200)
 
     def test_index_url_resolve_index_view(self):
-        view = resolve('/info/index/1')
+        view = resolve('/info/index/1/')
         self.assertEqual(view.func, index)
 
     def test_contain_home_url(self):

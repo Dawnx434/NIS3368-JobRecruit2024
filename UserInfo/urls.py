@@ -15,7 +15,7 @@ urlpatterns = [
     path("upload/", views.image_upload, name='image_upload'),
     path("resume_upload/", views.resume_upload, name="resume_upload"),
     path("resume_download/", views.resume_download),
-    path('resume_remove/<int:rid>/', views.remove_resume),
+    path('resume_remove/<int:rid>/', views.remove_resume, name="resume_remove"),
     path('show_index/', views.show_index),
     path('sendemail/', views.sendemail),
 ]
