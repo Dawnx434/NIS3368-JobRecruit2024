@@ -1,0 +1,197 @@
+{% extends 'base.html' %}
+
+{% load static humanize static_tags %}
+
+
+{% block title %}职位列表{% endblock %}
+
+{% block stylesheet %}
+    <style>
+        .content-container {
+            width: 70%;
+        }
+
+        .position-title {
+            color: #17a2b8;
+            padding-bottom: 5px;
+            margin-bottom: 15px;
+        }
+
+        .float-right {
+            float: right;
+        }
+
+        .detail {
+            word-wrap: break-word;
+            white-space: pre-wrap;
+        }
+
+        .position-detail {
+            margin-left: 15px;
+            margin-right: 50px;
+            padding: 0px;
+            word-wrap: break-word;
+            white-space: pre-wrap;
+        }
+
+        .detail-title {
+            margin-top: 10px;
+            padding-top: 25px;
+            padding-bottom: 5px;
+            color: black;
+            border-top: 2px solid #17a2b8;
+            font-weight: bold;
+            font-size: 23px;
+            width: 100%;
+        }
+
+        .select-button-container {
+            display: inline-block;
+        }
+
+    </style>
+
+{% endblock %}
+
+{% block content %}
+
+
+    <div class="container content-container bg-light"
+         style="margin-top: 3rem; margin-bottom: 3rem; border-radius: 10px;">
+        <div class="row" style="padding-left: 5rem; padding-top:1rem; padding-right: 5rem; padding-bottom: 5rem;">
+
+            <div class="row">
+                <div class="col-md-7">
+                    <div class="position-title">
+                        <h1 class="custom-text-color">{{ position_name }}</h1>
+                    </div>
+                </div>
+
+                <div class="col-md-5">
+                    {% if HR.id == user_id %}
+                        <a href="/position/modify/{{ position_id }}/" class="btn btn-primary custom-button float-right"
+                           style="text-align: right;">修改职位信息</a>
+                    {% else %}
+                        {# 以下是用户看到的按钮 #}
+                        {% if not already_apply %}
+                            {# 如果尚未申请该职位，则渲染表单，允许用户选择简历并申请 #}
+                            {% if resumes %}
+                                <form action="/application/apply/{{ position_id }}/" class="d-flex justify-content-end align-items-center" method="post">
+                                    {% csrf_token %}
+                                    {# 这里渲染了下拉框，允许用户选择自己已经上传了的简历来申请该职位 #}
+                                    <div class="select-button-container">
+                                        <select class="form-select mb-2" name="resume_id" id="resume_id">
+                                            {% for resume in resumes %}
+                                                <option value="{{ resume.id }}">{{ resume.name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                        {# 这里是申请按钮 #}
+                                        <button type="submit" class="btn btn-primary custom-button float-right"
+                                                style="text-align: right;">申请该职位
+                                        </button>
+                                    </div>
+
+                                </form>
+                                {# 有个特殊情况，如果没有简历，则不能申请，而是要求用户先去上传简历 #}
+                            {% else %}
+                                <button type="button" class="btn btn-secondary custom-button float-right disabled"
+                                        style="text-align: right;">无可用的简历
+                                </button>
+                            {% endif %}
+
+
+                        {% else %}
+                            <a href="/application/cancel/{{ position_id }}/" class="btn btn-danger  float-right"
+                               style="text-align: right;" disabled>取消申请
+                            </a>
+                        {% endif %}
+                    {% endif %}
+                </div>
+            </div>
+            <div class="row">
+                {% if HR_user_id == user_id %}
+                    <p><span style="font-weight: bold;">发布状态：</span>
+                        <span style="font-weight: bold; color: red; ">
+
+                    {% if publish_state == 1 %}
+                        已发布
+                    {% elif publish_state == 0 %}
+                        未发布
+                    {% endif %}</span>
+
+                    </p>
+                    <p><span style="font-weight: bold;">已申请用户：</span>
+                    {% if not user_has_applied_list %}
+                        <span style="color: red">暂无用户申请</span>
+                    {% else %}
+                        {% for obj in user_has_applied_list %}
+                            <div class="dropdown">
+                                <a href="/info/index/{{ obj.user_id }}" class="ms-1 text-muted dropdown-toggle" data-toggle="dropdown"
+                                   style="text-decoration: none">
+                                    {% with user_id=obj.user_id|stringformat:'d' %}
+                                        {% with user_avatar_path="images/"|add:user_id %}
+                                            {% query_image_extension user_avatar_path as user_avatar_full_path %}
+                                            {% with default_avatar_path='images/default.jpeg' %}
+                                                {% if user_avatar_full_path|static_file_exists %}
+                                                    <img src="{% static user_avatar_full_path %}?rand=<%= Date.now() %>"
+                                                         alt="用户头像"
+                                                         class="rounded-circle" style="width:40px; height:40px;">
+                                                {% else %}
+                                                    <img src="{% static default_avatar_path %}" alt="默认头像"
+                                                         class="rounded-circle"
+                                                         style="width:40px; height:40px;">
+                                                {% endif %}
+                                            {% endwith %}
+                                        {% endwith %}
+                                    {% endwith %}
+                                    {{ obj.username }}
+                                </a>
+                                <div class="dropdown-menu">
+                                    <a href="/application/resume/view/{{ obj.user_id }}/{{ position_id }}/" class="dropdown-item">查看简历</a>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endif %}
+                <p>
+
+                <span style="font-weight: bold;"> HR:&nbsp;&nbsp;
+                        <a href="{% url 'UserInfo:index' HR_user_id %}" style="text-decoration: none;">
+                            {% with user_id=HR_user_id|stringformat:'d' %}
+                                {% with user_avatar_path="images/"|add:user_id %}
+                                    {% query_image_extension user_avatar_path as user_avatar_full_path %}
+                                    {% with default_avatar_path='images/default.jpeg' %}
+                                        {% if user_avatar_full_path|static_file_exists %}
+                                            <img src="{% static user_avatar_full_path %}?rand=<%= Date.now() %>"
+                                                 alt="用户头像" class="rounded-circle" style="width:50px; height:50px;">
+                                        {% else %}
+                                            <img src="{% static default_avatar_path %}" alt="默认头像"
+                                                 class="rounded-circle" style="width:50px; height:50px;">
+                                        {% endif %}
+                                    {% endwith %}
+                                {% endwith %}
+                            {% endwith %}
+                        </a>
+                        <span class="ms-1 text-muted">
+                            {{ HR }}
+                        </span>
+            </span>
+                </p>
+            </div>
+            <div class="row detail" style="margin-top: 10px;">
+                <p><span style="font-weight: bold;">简介：</span>{{ summary }}</p>
+                <p><span style="font-weight: bold;">岗位地点：</span>{{ district }}</p>
+                <p style="margin-bottom: 3px;"><span style="font-weight: bold;">薪水：</span>{{ salary }}</p>
+                <div class="detail-title">详细要求：</div>
+                <p style="word-wrap: break-word; white-space: pre-wrap;">{{ detail }}</p>
+            </div>
+
+
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block js %}
+{% endblock %}
+

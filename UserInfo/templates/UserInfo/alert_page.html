@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% load static static_tags humanize %}
+
+{% block title %}提示{% endblock %}
+
+{% block content %}
+<div class="alert alert-danger" role="alert" style="text-align: center">
+    <h1>{{ msg }}</h1>
+    <h3><a href="/">返回主页</a></h3>
+</div>
+{% endblock %}
+
+{% block footer %}
+{% endblock %}
+
+{% block js %}
+<script src="{% static 'js/jquery-3.6.0.min.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% load static static_tags humanize %}
+
+{% block title %}提示{% endblock %}
+
+{% block stylesheet%}
+<style>
+    a{
+        text-decoration: none;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container content-container" style="padding-top: 50px; margin-bottom: 180px;">
+    {% if success|default:False %}
+    <div class="alert alert-success" role="alert" style="margin: auto; text-align: center; width: 70%;">
+    {% else %}
+    <div class="alert alert-danger" role="alert" style="margin: auto; text-align: center; width: 70%;">
+    {% endif %}
+        <h1 style="margin: 20px;">{{ msg | default:'未知的错误信息' }}</h1>
+        <h3 style="margin-top: 50px; margin-bottom: 40px;"><a href="{{ return_path | default:'/' }}" class="btn btn-primary custom-button">返回上页</a></h3>
+    </div>
+</div>
+{% endblock %}
+
+
+{% block js %}
+<script src="{% static 'js/jquery-3.6.0.min.js' %}"></script>
+{% endblock %}

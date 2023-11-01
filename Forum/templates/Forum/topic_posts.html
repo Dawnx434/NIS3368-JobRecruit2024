@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% load static humanize static_tags %}
+
+{% block content %}
+    <div style="border-radius: 10px;" class="mt-4 p-4 bg-light">
+
+        <h1 style="border-bottom: 2px solid #17a2b8;" class="pb-2">
+            {{ topic.subject }}
+        </h1>
+        {% for post in topic.posts.all %}
+            <div style="{% if forloop.first %}border-bottom: 2px solid #17a2b8;{% else %}border-bottom: 1px solid #dddddd;{% endif %}">
+                <div class="row mb-2 mt-2">
+                    <div class="d-inline-block">
+                        <a href="{% url 'UserInfo:index' post.created_by.id %}" class="text-decoration-none">
+                            {% with user_id=post.created_by.id|stringformat:'d' %}
+                                {% with user_avatar_path="images/"|add:user_id %}
+                                    {% query_image_extension user_avatar_path as user_avatar_full_path %}
+                                    {% with default_avatar_path='images/default.jpeg' %}
+                                        {% if user_avatar_full_path|static_file_exists %}
+                                            <img src="{% static user_avatar_full_path %}?rand=<%= Date.now() %>" alt="用户头像" class="rounded-circle" style="width:50px; height:50px;">
+                                        {% else %}
+                                            <img src="{% static default_avatar_path %}" alt="默认头像" class="rounded-circle" style="width:50px; height:50px;">
+                                        {% endif %}
+                                    {% endwith %}
+                                {% endwith %}
+                            {% endwith %}
+                        </a>
+                        <span class="ms-1 text-muted">
+                            {{ post.created_by.username }}
+                        </span>
+                    </div>
+                </div>
+                <div class="row" style="margin-left: 47px;">
+                    {{ post.get_message_as_markdown }}
+                </div>
+
+                {% if forloop.first %}
+                    <div class="d-flex justify-content-end mb-2">
+                        <a href="{% url 'Forum:reply' topic.pk %}" class="btn btn-primary custom-button"><i class="fas fa-reply me-1"></i>回复</a>
+                    </div>
+                {% endif %}
+            </div>
+
+        {% endfor %}
+
+        <div class="mt-4">
+            <a href="{% url 'Forum:reply' topic.pk %}" class="btn btn-primary custom-button"><i class="fas fa-reply me-1"></i>回复</a>
+        </div>
+    </div>
+
+{% endblock %}
