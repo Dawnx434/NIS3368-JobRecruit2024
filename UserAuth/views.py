@@ -11,6 +11,7 @@ from UserAuth import models
 
 from UserAuth.utils.generateCode import check_code, send_sms_code
 from UserAuth.utils.validators import is_valid_email
+from UserAuth.utils.encrypt import md5_encrypt
 
 # Create your views here.
 """视图页面开始"""
@@ -36,6 +37,7 @@ def register(request):
 
     # store userinfo
     form.instance.identity = 1  # default: User
+    form.instance.password = md5_encrypt(form.instance.password)
     form.save()
 
     # generate cookie

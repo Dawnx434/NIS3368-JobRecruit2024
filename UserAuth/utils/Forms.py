@@ -6,6 +6,7 @@ from UserAuth import models
 from UserAuth.utils.bootstrapform import BootStrapForm
 
 from UserAuth.utils.validators import is_username_valid
+from UserAuth.utils.encrypt import md5_encrypt
 
 
 class RegisterForm(BootStrapForm, forms.ModelForm):
@@ -65,7 +66,7 @@ class RegisterForm(BootStrapForm, forms.ModelForm):
         return self.cleaned_data['check_password']
 
     def clean_verification_code(self):
-        code_in_session = self.request.session['register_verification_code']
+        code_in_session = self.request.session.get('register_verification_code')
         if not code_in_session:
             raise ValidationError("验证码已过期")
         if not self.cleaned_data['verification_code'] == code_in_session:
@@ -94,7 +95,7 @@ class LoginForm(BootStrapForm, forms.ModelForm):
 
     def clean_password(self):
         row_obj = models.User.objects.filter(username=self.cleaned_data.get('username')).first()
-        if row_obj and row_obj.password == self.cleaned_data['password']:
+        if row_obj and row_obj.password == md5_encrypt(self.cleaned_data['password']):
             return self.cleaned_data['password']
         else:
             raise ValidationError("用户名或密码错误")
