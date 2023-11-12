@@ -14,7 +14,7 @@ cookies = [
 
     {
         'name': 'sessionid',
-        'value': '0dct4m43v69bonil6u4nqp54kkfauuti',
+        'value': '',
 
     },
 ]
