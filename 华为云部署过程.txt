@@ -1,0 +1,74 @@
+主机配置前：
+1. 弹性ip，安全组选择Sys_Webserver
+
+主机启动后：
+1. 新建普通用户（尽量不要用root登录）
+新建用户名略复杂点，别太容易被猜到myhsjtu2023，/bin/bash是命令行类型
+sudo useradd -r -m -s /bin/bash newusername
+
+2. 设置新用户的登录密码(复杂点，编辑器里记录好，再设置，别搞错）
+sudo passwd newusername
+*******
+
+3. 是否需要获取root权限？
+sudo chmod +w /etc/sudoers
+sudo vim /etc/sudoers
+sudo chmod -w /etc/sudoers
+
+4. 后续使用myhsjtu2023登录系统
+
+5. 云主机上创建密钥（方便后续使用git）
+先查看有没有密钥文件：
+cat ~/.ssh/id_rsa.pub
+如果没有，生成密钥：
+ssh-keygen -t rsa -C "$your_email"   
+passphrase可自己定，其他回车即可
+
+
+6. 克隆库
+git clone https://codehub.devcloud.cn-north-4.huaweicloud.com/qzw00001/JobRecruit2023V1.git
+
+7. 查看python版本，版本号不够的，升级
+python3 --version
+
+8. 安装依赖
+注意安装依赖时的警告，将必要的路径加入到PATH环境变量里去
+相关命令：
+echo $PATH //查看PATH
+export PATH=$PATH:/new/path 
+
+9. 添加settings.py中的email设置
+可学习使用vi或者vim直接可在bash命令行中编辑文件
+
+10. 调用manage.py配置网站
+python manage.py makemigrations
+python manage.py migrate
+用python或者python3（有时候版本3的python命令后面有一个3）
+
+11. 启动网站
+为了不退出命令行，也让程序运行不中断，可用如下的命令：
+python manage.py runserver 0.0.0.0:8000 & 
+命令后独立出现的&，会让该程序进入后台运行方式
+网站启动在哪一个端口，可在runserver命令中临时指定，也可以在manage.py代码中设置好（目前没设置）
+
+12. 用浏览器访问云服务器ip地址上的8000口
+http:100.200.100.200:8000
+如果遇到DisallowedHost的问题，请搜索Django DisallowedHost来寻求解决方案
+同时注意settings.py中的DEBUG标签。
+
+13. 如果打开的网页很丑，这说明网站的布局等格式文件未能正常载入。
+如果settings.py中DEBUG设置为True，布局和格式应该是正确的。
+设置为False，意味着网站进入正式部署。官方的解释中开发调试状态和正式部署有不同的策略：
+https://docs.djangoproject.com/zh-hans/4.2/howto/static-files/  
+更好更安全地部署，可根据官方说明了解详情：https://docs.djangoproject.com/zh-hans/4.2/howto/static-files/deployment/
+
+14. 查看所有运行在后台的进程：
+ps -x  
+列出来的应该有runserver的一行，注意它的PID
+如果进程特多，可以用过滤方式查找特定进程
+ps aux | grep runserver 
+如果想让该进程退出：
+kill pid 
+kill不掉的，加大力度：
+	kill -9 pid
+	pkill python3 
