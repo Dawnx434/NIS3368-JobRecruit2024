@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 import time
 from selenium.webdriver.support.ui import Select, WebDriverWait
 from selenium import webdriver
@@ -36,4 +38,6 @@ for i in range(7):
     button = driver.find_element(By.XPATH, '/html/body/div/div/form/button')
     # 这里加载一会以免被覆盖
     time.sleep(1)
-    button.click()
+    # 强制通过 JavaScript 执行按钮点击
+    driver.execute_script("arguments[0].click();", button)
+    # button.click()
