@@ -14,7 +14,7 @@ cookies = [
 
     {
         'name': 'sessionid',
-        'value': '',
+        'value': 'csrftoken=jIegRPlcXcRuurd0n1ryQFvFpTuEQJPF',
 
     },
 ]

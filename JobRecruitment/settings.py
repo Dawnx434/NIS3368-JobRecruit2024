@@ -154,3 +154,11 @@ try:
     from .local_settings import *
 except ImportError:  # 捕获导入异常
     pass
+
+EMAIL_HOST = "smtp.sjtu.edu.cn"
+EMAIL_PORT = 25
+EMAIL_HOST_USER = "zhaozh22@sjtu.edu.cn"     # JAccount账号，不带邮箱后缀
+EMAIL_HOST_PASSWORD = ""     # JAccount密码
+EMAIL_USE_TLS = True
+EMAIL_FROM = "example@sjtu.edu.cn"  # JAccount邮箱地址
+EMAIL_TITLE = '邮箱激活'
