@@ -1,0 +1,9 @@
+<h2>Send a Message</h2>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Send</button>
+</form>
+
+<!-- 使用命名空间引用 inbox URL -->
+<a href="{% url 'PrivateMessage:inbox' %}">Back to Inbox</a>

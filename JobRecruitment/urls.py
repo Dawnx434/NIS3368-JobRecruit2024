@@ -32,6 +32,7 @@ urlpatterns = [
     path("mdeditor/", include("mdeditor.urls")),
     path("application/", include("Application.urls")),
     path("message/", include("UserMessage.urls")),
+    path("privatemessage/", include("PrivateMessage.urls")),  # 为 PrivateMessage 设定新的路径
 
     re_path(r'media/(?P<path>.*)', serve, {'document_root': settings.MEDIA_ROOT}),
 ]
