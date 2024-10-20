@@ -34,9 +34,18 @@ def position_list(request):
     # 获取查询参数
     try:
         page = int(request.GET.get('page', 1))
-        pagesize = int(request.GET.get('page_size', 10))
+        # pagesize = int(request.GET.get('page_size', 10))
+        # 检查 pagesize 是否为 None 或 空字符串
+        pagesize = request.GET.get('page_size', '10')  # 返回的是字符串 '10'
+        if not pagesize.isdigit():  # 如果 pagesize 是空字符串或无效数字
+            pagesize = 10
+        else:
+            pagesize = int(pagesize)
         keyword = request.GET.get('keyword', '')
         target_place = request.GET.get('target_place', None)  # 这里保持为 None，后续处理
+        # 处理 target_place 等于 'None' 的情况
+        if target_place == 'None':
+            target_place = None
     except ValueError:
         return render(request, "UserAuth/alert_page.html", {"msg": '异常的查询参数', 'return_path': '/position/list/'})
 
@@ -69,7 +78,7 @@ def search_positions(keyword, target_place):
     filters = {'published_state': 1}
     if keyword:
         filters['position_name__contains'] = keyword
-    if target_place:
+    if target_place is not None:  # 这里确保 target_place 不为 None
         filters['district'] = target_place
 
     return Position.objects.filter(**filters)
@@ -136,6 +145,8 @@ def view_position_detail(request, nid):
         "HR_user_id": position.HR.id,
         "position_id": position.id,
         "position_name": position.position_name,
+        "salary_min": position.salary_min,
+        "salary_max": position.salary_max,
         "salary": position.salary,
         "summary": position.summary,
         "detail": mark_safe(markdown.markdown(position.detail,
@@ -187,7 +198,7 @@ def publish_position(request):
     # else POST
     data_dict = {}
     error_dict = {}
-    for field in ['position_name', 'salary', 'summary', 'detail', 'district', 'published_state']:
+    for field in ['position_name', 'salary_min', 'salary_max', 'summary', 'detail', 'district', 'published_state']:
         data_dict[field] = request.POST.get(field)
 
     # print(data_dict['detail'])
@@ -247,6 +258,8 @@ def modify_position(request, nid):
         # 保存修改
         position_obj.position_name = request.POST.get('position_name')
         position_obj.salary = request.POST.get('salary')
+        position_obj.salary = request.POST.get('salary_min')
+        position_obj.salary = request.POST.get('salary_max')
         position_obj.summary = request.POST.get('summary')
         position_obj.detail = request.POST.get('detail')
         position_obj.district = request.POST.get('district')
