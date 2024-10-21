@@ -1,5 +1,18 @@
 ## JobRecruitment
 
+
+
+### 10.21 wjy更新
+新增网站首页和个人首页进入私信板块内容。
+修复了私信板块选择超级用户而非普通用户的bug。
+（私信首页和发送还暂时还有bug）
+
+### 10.20 wjy更新
+新增私信板块PrivateMessage，可通过http://127.0.0.1:8000/privatemessage/inbox访问。
+
+
+
+
 ### 快速启动
 
 #### `local_settings.py`配置
