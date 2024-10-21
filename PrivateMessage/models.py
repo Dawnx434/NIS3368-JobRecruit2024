@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import User
+from UserAuth.models import User  # 导入自定义 User 模型
 
 class Message(models.Model):
     sender = models.ForeignKey(User, related_name='sent_messages', on_delete=models.CASCADE)

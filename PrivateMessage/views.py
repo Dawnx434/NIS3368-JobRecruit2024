@@ -3,11 +3,14 @@ from django.contrib.auth.decorators import login_required
 from .models import Message
 from .forms import MessageForm
 from django.core.paginator import Paginator, EmptyPage
+from django.utils.functional import SimpleLazyObject
 
 import re
 import os
 from django.conf import settings
 from UserAuth.models import User
+from django.http import HttpResponse
+from django.db.models import Q
 
 # 获取用户头像的帮助函数
 def get_matching_files(request):
@@ -24,7 +27,7 @@ def get_matching_files(request):
 
 
 # 收件箱视图
-@login_required
+# @login_required
 def inbox(request):
     # 获取当前用户的ID
     user_id = request.session['UserInfo'].get('id')
@@ -53,43 +56,66 @@ def inbox(request):
 
 
 # 发送消息视图
-@login_required
+# @login_required
 def send_message(request):
     if request.method == 'POST':
         form = MessageForm(request.POST)
         if form.is_valid():
-            sender = User.objects.get(pk=request.session['UserInfo'].get('id'))  # 当前登录用户作为发件人
-            recipient_id = request.POST.get('recipient')  # 从表单获取收件人ID
-            recipient = User.objects.get(pk=recipient_id)  # 获取收件人
+
+            # for user in all_users:
+            #     print(f"用户ID: {user.id}, 用户名: {user.username}")
+
+            if isinstance(request.user, SimpleLazyObject):
+                # sender = User.objects.get(pk=request.user.id)
+                # print(request.session['UserInfo'].get('id'))
+                sender = User.objects.get(pk=request.session['UserInfo'].get('id'))
+            else:
+                sender = request.user
+            recipient_id = request.POST.get('recipient')
+            recipient = User.objects.get(pk=recipient_id)
+
+            # 获取收件人的ID
+            recipient_id = request.POST.get('recipient')
+
+            # 打印发件人和收件人的ID，确保它们是有效的
+            print(f"发件人ID: {sender.id}, 收件人ID: {recipient_id}")
+
+            try:
+                recipient = User.objects.get(pk=recipient_id)  # 获取收件人
+                print(f"收件人信息: {recipient}")
+            except User.DoesNotExist:
+                return HttpResponse("收件人不存在")
 
             message = form.save(commit=False)
-            message.sender = sender  # 设置发件人
-            message.recipient = recipient  # 设置收件人
+            message.sender = sender
+            message.recipient = recipient
             message.save()
 
-            return redirect('PrivateMessage:inbox')  # 成功发送后返回收件箱
+            return redirect('PrivateMessage:inbox')
     else:
         form = MessageForm()
 
-    users = User.objects.all()  # 获取所有用户供选择
+    users = User.objects.all()
 
     context = {
         'form': form,
-        'users': users,  # 将用户列表传递给模板
-        'matching_files': get_matching_files(request),  # 用户头像
+        'users': users,
+        'matching_files': get_matching_files(request),
     }
     return render(request, 'PrivateMessage/send_message.html', context)
 
 
 # 查看消息详情视图
-@login_required
+# @login_required
+
 def view_message(request, message_id):
     # 获取当前用户的ID
     user_id = request.session['UserInfo'].get('id')
     current_user = User.objects.get(id=user_id)
 
-    # 确保用户只能查看属于自己的消息
-    message = get_object_or_404(Message, id=message_id, recipient=current_user)
+    # 使用 Q 对象确保用户可以查看自己作为发件人或收件人的消息
+    message = get_object_or_404(Message, Q(id=message_id) & (Q(recipient=current_user) | Q(sender=current_user)))
+
     message.is_read = True  # 将消息标记为已读
     message.save()
 
@@ -100,7 +126,7 @@ def view_message(request, message_id):
     return render(request, 'PrivateMessage/view_message.html', context)
 
 
-@login_required
+# @login_required
 def reply_message(request, message_id):
     # 获取当前用户的ID
     user_id = request.session['UserInfo'].get('id')
