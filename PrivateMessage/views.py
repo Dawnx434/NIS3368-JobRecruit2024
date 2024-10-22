@@ -4,6 +4,7 @@ from .models import Message
 from .forms import MessageForm
 from django.core.paginator import Paginator, EmptyPage
 from django.utils.functional import SimpleLazyObject
+from django.urls import reverse
 
 import re
 import os
@@ -61,37 +62,18 @@ def send_message(request):
     if request.method == 'POST':
         form = MessageForm(request.POST)
         if form.is_valid():
-
-            # for user in all_users:
-            #     print(f"用户ID: {user.id}, 用户名: {user.username}")
-
-            if isinstance(request.user, SimpleLazyObject):
-                # sender = User.objects.get(pk=request.user.id)
-                # print(request.session['UserInfo'].get('id'))
-                sender = User.objects.get(pk=request.session['UserInfo'].get('id'))
-            else:
-                sender = request.user
+            sender = User.objects.get(pk=request.session['UserInfo'].get('id'))
             recipient_id = request.POST.get('recipient')
             recipient = User.objects.get(pk=recipient_id)
-
-            # 获取收件人的ID
-            recipient_id = request.POST.get('recipient')
-
-            # 打印发件人和收件人的ID，确保它们是有效的
-            print(f"发件人ID: {sender.id}, 收件人ID: {recipient_id}")
-
-            try:
-                recipient = User.objects.get(pk=recipient_id)  # 获取收件人
-                print(f"收件人信息: {recipient}")
-            except User.DoesNotExist:
-                return HttpResponse("收件人不存在")
 
             message = form.save(commit=False)
             message.sender = sender
             message.recipient = recipient
             message.save()
 
-            return redirect('PrivateMessage:inbox')
+            # 发送消息后重定向回当前对话
+            return redirect(reverse('PrivateMessage:conversation', args=[recipient.id]))
+            # return render(request, 'PrivateMessage/conversation.html')
     else:
         form = MessageForm()
 
@@ -100,7 +82,6 @@ def send_message(request):
     context = {
         'form': form,
         'users': users,
-        'matching_files': get_matching_files(request),
     }
     return render(request, 'PrivateMessage/send_message.html', context)
 
@@ -153,3 +134,43 @@ def reply_message(request, message_id):
         'original_message': original_message,  # 显示原消息内容
     }
     return render(request, 'PrivateMessage/reply_message.html', context)
+
+# @login_required
+from .forms import MessageForm
+from django.shortcuts import redirect
+
+# @login_required
+def conversation_view(request, selected_user_id=None):
+    user_id = request.session['UserInfo'].get('id')
+    current_user = User.objects.get(id=user_id)
+
+    # 获取与当前用户有过互动的联系人（作为发件人或收件人）
+    contact_users = User.objects.filter(
+        Q(sent_messages__recipient=current_user) | Q(received_messages__sender=current_user)
+    ).distinct()  # 使用 distinct() 确保去重
+
+    messages = []
+    selected_user = None
+    form = None
+
+    if selected_user_id:
+        selected_user = User.objects.get(id=selected_user_id)
+        messages = Message.objects.filter(
+            (Q(sender=current_user) & Q(recipient=selected_user)) |
+            (Q(sender=selected_user) & Q(recipient=current_user))
+        ).order_by('timestamp')
+
+        form = MessageForm(request.POST or None)
+        if form.is_valid():
+            message = form.save(commit=False)
+            message.sender = current_user
+            message.recipient = selected_user
+            message.save()
+            return redirect('PrivateMessage:conversation_with_user', selected_user_id=selected_user.id)
+
+    return render(request, 'PrivateMessage/conversation.html', {
+        'contact_users': contact_users,
+        'messages': messages,
+        'selected_user': selected_user,
+        'form': form,
+    })

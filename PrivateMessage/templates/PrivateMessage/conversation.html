@@ -1,0 +1,90 @@
+<html>
+<head>
+    <style>
+        .chat-box {
+            max-height: 400px;
+            overflow-y: auto;
+            padding: 10px;
+            border: 1px solid #ccc;
+            background-color: #f9f9f9;
+            margin-bottom: 10px;
+        }
+        .message {
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 10px;
+            max-width: 70%;
+            word-wrap: break-word;
+            display: block;
+            clear: both;
+        }
+        .sent {
+            background-color: #007bff; /* 发送内容为蓝色 */
+            color: white;
+            text-align: right;
+            float: right; /* 右对齐 */
+        }
+        .received {
+            background-color: #ffffff; /* 接收内容为白色 */
+            color: black;
+            text-align: left;
+            float: left; /* 左对齐 */
+        }
+        .clearfix::after {
+            content: "";
+            clear: both;
+            display: table;
+        }
+    </style>
+    <script>
+        // 页面加载后自动滚动到聊天框的底部
+        document.addEventListener("DOMContentLoaded", function() {
+            var chatBox = document.querySelector('.chat-box');
+            chatBox.scrollTop = chatBox.scrollHeight;
+        });
+    </script>
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <!-- 左边联系人列表 -->
+            <div class="col-md-3">
+                <ul class="list-group">
+                    {% for contact in contact_users %}
+                    <li class="list-group-item {% if contact.id == selected_user.id %}active{% endif %}">
+                        <a href="{% url 'PrivateMessage:conversation' selected_user_id=contact.id %}">
+                            {{ contact.username }}
+                        </a>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <!-- 右边对话框 -->
+            <div class="col-md-9">
+                {% if selected_user %}
+                <h4>Conversation with {{ selected_user.username }}</h4>
+                <div class="chat-box clearfix">
+                    {% for message in messages %}
+                    <div class="message {% if message.sender == request.user %}sent{% else %}received{% endif %}">
+                        <p>{{ message.content }}</p>
+                        <small>{{ message.timestamp }}</small>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <!-- 添加发送消息表单 -->
+                <form method="post" action="{% url 'PrivateMessage:send_message' %}">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <input type="hidden" name="recipient" value="{{ selected_user.id }}">
+                    <button type="submit" class="btn btn-primary">Send Message</button>
+                </form>
+                {% else %}
+                <p>Please select a user to start the conversation.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</body>
+</html>
