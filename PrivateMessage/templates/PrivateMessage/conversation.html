@@ -1,40 +1,141 @@
 <html>
 <head>
     <style>
-        .chat-box {
-            max-height: 400px;
+        .chat-container {
+            display: flex;
+            height: 100vh;
+            background-color: #f1f1f1;
+        }
+
+        /* 左侧联系人列表样式 */
+        .contact-list {
+            width: 25%; /* 左侧占25%的宽度 */
+            background-color: #ffffff;
+            border-right: 1px solid #ccc;
+            padding: 20px;
             overflow-y: auto;
+        }
+
+        /* 每个联系人项样式 */
+        .contact-item {
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            position: relative;  /* 确保未读消息计数能够定位在右边 */
+        }
+
+        .contact-item:hover {
+            background-color: #f0f0f0;
+        }
+
+        /* 当前选中的联系人高亮 */
+        .contact-item.active {
+            background-color: #007bff;
+            color: white;
+        }
+
+        /* 未读消息数目样式 */
+        .unread-count {
+            position: absolute;
+            right: 10px;
+            top: 10px;
+            background-color: red;
+            color: white;
+            padding: 3px 7px;
+            border-radius: 50%;
+            font-size: 14px;
+            font-weight: bold;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .unread-dot {
+        display: inline-block;
+        width: 8px;  /* 红点的直径 */
+        height: 8px;
+        background-color: red;  /* 红点颜色 */
+        border-radius: 50%;  /* 圆形 */
+        margin-left: 5px;  /* 如果需要与其他内容保持一定间距 */
+        }
+
+        /* 右侧对话框容器 */
+        .chat-box-container {
+            width: 75%; /* 右侧占75%的宽度 */
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* 聊天消息框样式 */
+        .chat-box {
+            flex-grow: 1;
+            background-color: #f9f9f9;
             padding: 10px;
             border: 1px solid #ccc;
-            background-color: #f9f9f9;
-            margin-bottom: 10px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+            max-height: 80vh;
         }
+
+        /* 消息样式 */
         .message {
             margin-bottom: 10px;
             padding: 10px;
             border-radius: 10px;
             max-width: 70%;
             word-wrap: break-word;
-            display: block;
             clear: both;
         }
+
+        /* 发送的消息（右对齐，蓝色背景） */
         .sent {
-            background-color: #007bff; /* 发送内容为蓝色 */
+            background-color: #007bff;
             color: white;
             text-align: right;
-            float: right; /* 右对齐 */
+            float: right;
+            border-top-right-radius: 0px;
         }
+
+        /* 接收的消息（左对齐，灰色背景） */
         .received {
-            background-color: #ffffff; /* 接收内容为白色 */
+            background-color: #e1e1e1;
             color: black;
             text-align: left;
-            float: left; /* 左对齐 */
+            float: left;
+            border-top-left-radius: 0px;
         }
-        .clearfix::after {
-            content: "";
-            clear: both;
-            display: table;
+
+        /* 消息输入框容器 */
+        .message-input {
+            display: flex;
+            align-items: center;
         }
+
+        .message-input textarea {
+            width: 85%;
+            height: 50px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 10px;
+            margin-right: 10px;
+        }
+
+        .message-input button {
+            width: 15%;
+            height: 50px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .message-input button:hover {
+            background-color: #0056b3;
+        }
+
     </style>
     <script>
         // 页面加载后自动滚动到聊天框的底部
@@ -45,45 +146,49 @@
     </script>
 </head>
 <body>
-    <div class="container">
-        <div class="row">
-            <!-- 左边联系人列表 -->
-            <div class="col-md-3">
-                <ul class="list-group">
-                    {% for contact in contact_users %}
-                    <li class="list-group-item {% if contact.id == selected_user.id %}active{% endif %}">
-                        <a href="{% url 'PrivateMessage:conversation' selected_user_id=contact.id %}">
-                            {{ contact.username }}
-                        </a>
-                    </li>
-                    {% endfor %}
-                </ul>
+    <div class="chat-container">
+        <!-- 左侧联系人列表 -->
+        <div class="contact-list">
+            <ul class="list-group">
+                {% for contact in contact_users %}
+                <li class="list-group-item contact-item {% if contact.id == selected_user.id %}active{% endif %}">
+                    <!-- 显示联系人姓名 -->
+                    <a href="{% url 'PrivateMessage:conversation_with_user' current_user.id contact.id %}">
+                        {{ contact.username }}
+                    </a>
+                    <!-- 显示未读消息数量在联系人框的最右边 -->
+                    {% if contact.unread_count > 0 %}
+                    <span class="unread-dot"></span>
+                    {% endif %}
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <!-- 右侧对话框 -->
+        <div class="chat-box-container">
+            {% if selected_user %}
+            <h4>Conversation with {{ selected_user.username }}</h4>
+            <div class="chat-box clearfix">
+                {% for message in messages %}
+                <div class="message {% if message.sender.id == current_user.id %}sent{% else %}received{% endif %}">
+                    <p>{{ message.content }}</p>
+                    <small>{{ message.timestamp }}</small>
+                </div>
+                {% endfor %}
             </div>
 
-            <!-- 右边对话框 -->
-            <div class="col-md-9">
-                {% if selected_user %}
-                <h4>Conversation with {{ selected_user.username }}</h4>
-                <div class="chat-box clearfix">
-                    {% for message in messages %}
-                    <div class="message {% if message.sender == request.user %}sent{% else %}received{% endif %}">
-                        <p>{{ message.content }}</p>
-                        <small>{{ message.timestamp }}</small>
-                    </div>
-                    {% endfor %}
-                </div>
-
-                <!-- 添加发送消息表单 -->
-                <form method="post" action="{% url 'PrivateMessage:send_message' %}">
+            <!-- 发送消息表单 -->
+            <div class="message-input">
+                <form method="post" action="{% url 'PrivateMessage:conversation_with_user' current_user.id selected_user.id %}">
                     {% csrf_token %}
                     {{ form.as_p }}
-                    <input type="hidden" name="recipient" value="{{ selected_user.id }}">
-                    <button type="submit" class="btn btn-primary">Send Message</button>
+                    <button type="submit" class="btn btn-primary">Send</button>
                 </form>
-                {% else %}
-                <p>Please select a user to start the conversation.</p>
-                {% endif %}
             </div>
+            {% else %}
+            <p>Please select a user to start the conversation.</p>
+            {% endif %}
         </div>
     </div>
 </body>

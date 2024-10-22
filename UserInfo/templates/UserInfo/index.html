@@ -217,10 +217,10 @@
                     <p><span class="custom-text-color">学校:</span> {{ school }}</p>
                     <p><span class="custom-text-color">专业:</span> {{ major }}</p>
                 </div>
-                    <!-- 在首页添加跳转到私信页面的按钮 -->
-                <a href="{% url 'PrivateMessage:conversation' %}" class="btn btn-info custom-button" style="margin-left: 10px;">
-                    <i class="bi bi-envelope-fill me-1"></i> 私信
-                </a>
+            <!-- 在首页添加跳转到私信页面的按钮 -->
+            <a href="{% url 'PrivateMessage:conversation_with_user' request.session.UserInfo.id id %}" class="btn btn-info custom-button" style="margin-left: 10px;">
+                <i class="bi bi-envelope-fill me-1"></i> 私信
+            </a>
             </div>
             <div class="rbox col-md-10">
                 <h4>求职意向</h4>
