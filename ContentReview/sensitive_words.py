@@ -1,0 +1,3 @@
+SENSITIVE_WORDS = [
+    "cnm"
+]
