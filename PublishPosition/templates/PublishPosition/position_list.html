@@ -7,6 +7,25 @@
 
 {% block stylesheet %}
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+<!-- Bootstrap CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+{% if messages %}
+    <div class="container mt-3">
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
+
 <style>
 
         .card-container {
@@ -160,6 +179,80 @@
 
         <div class="list-content">
             <h1>{{ page_title }}</h1>
+            <div class="row mt-4">
+                <div class="col-md-12">
+                    <button class="btn btn-success mb-3" id="apply-all-btn">一键投递所有岗位</button>
+                </div>
+            </div>
+            
+            
+            <!-- 模态框 HTML -->
+<div class="modal fade" id="confirmApplyAllModal" tabindex="-1" role="dialog" aria-labelledby="confirmApplyAllModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmApplyAllModalLabel">确认投递岗位</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>您将投递以下岗位：</p>
+                <ul id="position-list">
+                    <!-- 将要显示的岗位列表 -->
+                </ul>
+                <p>请选择使用的简历：</p>
+                <select class="form-select mb-2" name="resume_id" id="resume_id_modal">
+                    {% for resume in resumes %}
+                        <option value="{{ resume.id }}">{{ resume.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary" id="confirm-apply-all">确认投递</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+            <!-- 隐藏表单用于提交 -->
+            <form id="applyAllForm" method="POST" action="{% url 'apply_all' %}" style="display:none;">
+                {% csrf_token %}
+                <input type="hidden" name="position_ids" id="position_ids_input">
+                <input type="hidden" name="resume_id" id="resume_id_input">
+            </form>
+            
+            <script>
+                document.getElementById('apply-all-btn').addEventListener('click', function() {
+                    var positionIds = {{ position_ids|safe }};
+                    var positionNames = {{position_names|safe}};
+                    var positionList = document.getElementById('position-list');
+                    positionList.innerHTML = '';
+            
+                    // 显示所有要投递的岗位
+                    positionNames.forEach(function(name) {
+                        var listItem = document.createElement('li');
+                        listItem.textContent = '岗位 名称: ' + name;  // 你可以根据需要展示更多信息
+                        positionList.appendChild(listItem);
+                    });
+            
+                    // 打开模态框
+                    $('#confirmApplyAllModal').modal('show');
+                });
+            
+                document.getElementById('confirm-apply-all').addEventListener('click', function() {
+                    var positionIds = {{ position_ids|safe }};
+                    var resumeId = document.getElementById('resume_id_modal').value;
+            
+                    document.getElementById('position_ids_input').value = positionIds.join(',');
+                    document.getElementById('resume_id_input').value = resumeId;
+            
+                    // 提交表单
+                    document.getElementById('applyAllForm').submit();
+                });
+            </script>
+            
             <div class="row">
                 {% for obj in query_set %}
                 <div class="card-container" style="width:50%;">
@@ -284,4 +377,11 @@
         });
 
 </script>
+
+
+
+
+
 {% endblock %}
+
+
