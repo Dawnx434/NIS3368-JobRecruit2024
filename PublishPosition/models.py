@@ -20,7 +20,7 @@ class Position(models.Model):
     summary = models.TextField(verbose_name="岗位简要", max_length=100)
     detail = MDTextField(verbose_name="详细内容", max_length=3000)
     HR = models.ForeignKey(verbose_name="联系人", related_name='positions', to=User, to_field="id", on_delete=models.CASCADE)
-    district = models.SmallIntegerField(verbose_name="所属地区", choices=district_list, default=0)
+    district = models.SmallIntegerField(verbose_name="所属地区", choices=district_list, default=None)
     job_type = models.CharField(verbose_name="岗位类型", max_length=20, default="")  # 新增字段：岗位类型
     education_requirements = models.CharField(verbose_name="学历要求", max_length=20, default="")  # 新增字段：学历要求
     published_choice = (

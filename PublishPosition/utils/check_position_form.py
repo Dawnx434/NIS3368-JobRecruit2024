@@ -16,12 +16,23 @@ def check_publish_position_form(data_dict):
         check_passed_flag = False
     # check salary
     try:
-        data_dict['salary'] = int(data_dict['salary'])
-        if data_dict['salary'] < 0:
-            error_dict['salary'] = "薪水不得少于零"
+        data_dict['salary_min'] = int(data_dict['salary_min'])
+        if data_dict['salary_min'] < 0:
+            error_dict['salary_min'] = "薪水不得少于零"
             check_passed_flag = False
     except ValueError as e:
-        error_dict['salary'] = '薪水需要是整数'
+        error_dict['salary_min'] = '薪水需要是整数'
+        check_passed_flag = False
+    try:
+        data_dict['salary_max'] = int(data_dict['salary_max'])
+        if data_dict['salary_max'] < 0:
+            error_dict['salary_max'] = "薪水不得少于零"
+            check_passed_flag = False
+        if data_dict['salary_max'] < data_dict['salary_min']:
+            error_dict['salary_max'] = "最高薪水不得小于最低薪水"
+            check_passed_flag = False
+    except ValueError as e:
+        error_dict['salary_max'] = '薪水需要是整数'
         check_passed_flag = False
     # check summary
     if not (0 < len(data_dict['summary']) < 100):
