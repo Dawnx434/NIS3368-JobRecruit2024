@@ -191,5 +191,51 @@
             {% endif %}
         </div>
     </div>
+
+
+    <!-- 添加的AJAX轮询脚本，放置在页面的底部 -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <script>
+        // 页面加载后自动滚动到聊天框的底部
+        // 页面加载后自动滚动到聊天框的底部
+            document.addEventListener("DOMContentLoaded", function() {
+                var chatBox = document.querySelector('.chat-box');
+                chatBox.scrollTop = chatBox.scrollHeight;
+
+                // 启动轮询，每5秒钟调用一次 fetchNewMessages 函数
+                setInterval(fetchNewMessages, 5000);
+            });
+
+            // 定义获取最新消息的函数
+            function fetchNewMessages() {
+                var currentUserId = "{{ current_user.id }}";
+                var selectedUserId = "{{ selected_user.id }}";
+
+                $.ajax({
+                    url: '{% url "PrivateMessage:fetch_new_messages" current_user.id selected_user.id %}',  // 后端API URL
+                    method: 'GET',
+                    success: function(response) {
+                        var chatBox = $('.chat-box');
+                        chatBox.html('');  // 清空现有的消息
+                        response.messages.forEach(function(message) {
+                            var messageClass = message.sender_id == currentUserId ? 'sent' : 'received';
+                            var messageHtml = '<div class="message ' + messageClass + '">'
+                                              + '<p>' + message.content + '</p>'
+                                              + '<small>' + message.timestamp + '</small></div>';
+                            chatBox.append(messageHtml);  // 插入新消息
+                        });
+                        // 自动滚动到聊天框底部
+                        chatBox.scrollTop(chatBox.prop("scrollHeight"));
+                    },
+                    error: function(xhr, status, error) {
+                        console.log('Error fetching new messages:', error);
+                    }
+                });
+            }
+
+        // 每5秒钟调用一次fetchNewMessages函数
+        setInterval(fetchNewMessages, 1000);
+    </script>
 </body>
 </html>

@@ -12,6 +12,7 @@ from django.conf import settings
 from UserAuth.models import User
 from django.http import HttpResponse
 from django.db.models import Q, Count, Max
+from django.http import JsonResponse
 
 # 获取用户头像的帮助函数
 def get_matching_files(request):
@@ -187,3 +188,26 @@ def conversation_view(request, current_user_id, selected_user_id):
         'current_user': current_user,  # 当前登录用户
         'form': form,  # 消息表单
     })
+
+def fetch_new_messages(request, current_user_id, selected_user_id):
+    current_user = get_object_or_404(User, id=current_user_id)
+    selected_user = get_object_or_404(User, id=selected_user_id)
+
+    # 获取当前用户和选中的用户之间的所有消息
+    messages = Message.objects.filter(
+        (Q(sender=current_user) & Q(recipient=selected_user)) |
+        (Q(sender=selected_user) & Q(recipient=current_user))
+    ).order_by('timestamp')
+
+    # 将消息序列化为JSON格式
+    message_data = [
+        {
+            'sender_id': message.sender.id,
+            'content': message.content,
+            'timestamp': message.timestamp.strftime('%Y-%m-%d %H:%M:%S')
+        }
+        for message in messages
+    ]
+
+    # 返回JSON响应
+    return JsonResponse({'messages': message_data})
