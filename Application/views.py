@@ -11,6 +11,38 @@ from Application.models import Application
 from UserInfo.models import Resume
 
 
+from django.shortcuts import redirect
+from django.contrib import messages
+
+def apply_all(request):
+    if request.method == 'POST':
+        # 获取隐藏表单中提交的 position_ids 字符串
+        position_ids_str = request.POST.get('position_ids')
+        if position_ids_str:
+            # 将逗号分隔的字符串转换为整数列表
+            position_ids = [int(pid) for pid in position_ids_str.split(',') if pid.isdigit()]
+
+            positions = Position.objects.filter(id__in=position_ids)
+            position_names = positions.values_list('position_name', flat=True)
+            
+            # 处理职位申请逻辑，例如：
+            for pid in position_ids:
+                # 例如：apply_to_position(pid)
+                apply(request, pid)
+            
+            # 通过 Django 的 messages 传递信息
+            messages.success(request, f"已成功申请以下岗位: {', '.join(position_names)}")
+        else:
+            messages.warning(request, "没有选择任何岗位")
+        
+        # 重定向到职位列表页面
+        return redirect('/position/list/')  # 这里的 'position_list' 是路由名称，根据你的实际情况调整
+    else:
+        messages.error(request, "无效的请求方法")
+        return redirect('list/')
+
+
+
 # Create your views here.
 def apply(request, pid):
     if request.method != "POST":
