@@ -10,6 +10,9 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 import os
+
+os.path.join(os.path.dirname(__file__), '../templates').replace('\\', '/')
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -46,6 +49,7 @@ INSTALLED_APPS = [
     'Forum',
     'Application',
     'UserMessage',
+    'PrivateMessage',
 ]
 
 MIDDLEWARE = [
@@ -151,6 +155,22 @@ try:
     from .local_settings import *
 except ImportError:  # 捕获导入异常
     pass
+
+EMAIL_HOST = "smtp.sjtu.edu.cn"
+EMAIL_PORT = 25
+EMAIL_HOST_USER = ""  # JAccount账号，不带邮箱后缀
+EMAIL_HOST_PASSWORD = ""  # JAccount密码
+EMAIL_USE_TLS = True
+EMAIL_FROM = "example@sjtu.edu.cn"  # JAccount邮箱地址
+EMAIL_TITLE = '邮箱激活'
+
+EMAIL_HOST = "smtp.sjtu.edu.cn"
+EMAIL_PORT = 25
+EMAIL_HOST_USER = ""  # JAccount账号，不带邮箱后缀
+EMAIL_HOST_PASSWORD = ""  # JAccount密码
+EMAIL_USE_TLS = True
+EMAIL_FROM = "example@sjtu.edu.cn"  # JAccount邮箱地址
+EMAIL_TITLE = '邮箱激活'
 
 EMAIL_HOST = "smtp.sjtu.edu.cn"
 EMAIL_PORT = 25

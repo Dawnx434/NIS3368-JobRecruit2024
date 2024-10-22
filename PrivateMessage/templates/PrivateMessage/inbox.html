@@ -1,0 +1,35 @@
+<!-- inbox.html -->
+
+<h2>Inbox</h2>
+
+<!-- 添加发送新消息按钮 -->
+<a href="{% url 'PrivateMessage:send_message' %}" class="btn btn-primary">Send a new message</a>
+
+<!-- 显示接收到的消息 -->
+<ul>
+    {% for message in received_messages %}
+    <li>
+        From: {{ message.sender.username }}<br>
+        Message: {{ message.content }}<br>
+        Sent at: {{ message.timestamp }}<br>
+        <a href="{% url 'PrivateMessage:view_message' message_id=message.id %}">View message</a>
+    </li>
+    {% empty %}
+    <li>No messages.</li>
+    {% endfor %}
+</ul>
+
+<!-- 显示已发送的消息 -->
+<h3>Sent Messages</h3>
+<ul>
+    {% for message in sent_messages %}
+    <li>
+        To: {{ message.recipient.username }}<br>
+        Message: {{ message.content }}<br>
+        Sent at: {{ message.timestamp }}<br>
+        <a href="{% url 'PrivateMessage:view_message' message_id=message.id %}">View message</a>
+    </li>
+    {% empty %}
+    <li>No messages sent.</li>
+    {% endfor %}
+</ul>

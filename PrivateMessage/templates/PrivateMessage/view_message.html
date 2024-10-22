@@ -1,0 +1,6 @@
+<h2>Message from {{ message.sender.username }}</h2>
+<p>{{ message.content }}</p>
+<p><strong>Sent at:</strong> {{ message.timestamp }}</p>
+
+<!-- 使用命名空间引用 inbox URL -->
+<a href="{% url 'PrivateMessage:inbox' %}">Back to Inbox</a>
