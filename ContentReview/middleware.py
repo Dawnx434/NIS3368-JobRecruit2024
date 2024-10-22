@@ -1,12 +1,14 @@
 # ContentReview/middleware.py
 import re
 from .sensitive_words import SENSITIVE_WORDS
-
+from .sensitive_words import load_sensitive_words
 
 # ContentReview/middleware.py
 class SensitiveWordsMiddleware:
     def __init__(self, get_response):
         self.get_response = get_response
+        # 在中间件初始化时加载敏感词
+        self.sensitive_words = load_sensitive_words('ContentReview/sensitive_words.txt')
 
     def __call__(self, request):
         if request.method == "POST":
