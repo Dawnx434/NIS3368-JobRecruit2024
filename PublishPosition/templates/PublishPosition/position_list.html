@@ -2,7 +2,6 @@
 {% load static %}
 {% load static humanize static_tags %}
 
-
 {% block title %}职位列表{% endblock %}
 
 {% block stylesheet %}
@@ -27,158 +26,140 @@
 {% endif %}
 
 <style>
-
-        .card-container {
-            margin-top: 20px;
-            padding-right: 20px;
-            padding-left: 20px;
-        }
-
-        .card-body {
-            background-color: white;
-        }
-
-        .card-container a {
-            text-decoration: none;
-            color: black;
-        }
-
-        .card-header {
-            font-weight: bold;
-            font-size: 30px;
-        }
-
-        .card:hover{
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-            transform: translateY(-3px);
-            transition: transform 0.4s;
-            color: #17a2b8;
-        }
-
-        .card-content{
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: left;
-            height: 100%;
-        }
-
-        .card-title {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            height: 100%;
-            color: #17a2b8;
-            font-weight: bold;
-            font-size: 25px;
-            word-wrap: break-word;
-        }
-
-        .hr-line {
-            position: absolute;
-            left: 0;
-            top: 0;
-            width: 3px;
-            height: 100%;
-            background-color: #17a2b8;
-        }
-
-        .hr-line-light {
-            position: relative;
-            left: 0;
-            top: 0;
-            width: 1px;
-            height: 100%;
-            background-color: #17a2b8;
-        }
-
-        .property-box {
-            background-color: rgba(229, 229, 229, 0.6);
-            padding: 1px;
-            margin-top: 3px;
-            border-radius: 1px;
-            font-size: 13px;
-            width: 100%;
-            text-align: center;
-        }
-
-        .card{
-            border-top-left-radius: 0;
-            border-bottom-left-radius: 0;
-            border-top-right-radius: 10px;
-            border-bottom-right-radius: 10px;
-        }
-
-        .list-content{
-            background-color: white;
-            border-radius: 10px;
-            padding-top: 30px;
-            padding-bottom: 50px;
-            padding-left: 50px;
-            padding-right: 50px;
-            margin: auto;
-            margin-top: 0px;
-            margin-bottom: 30px;
-            width: 100%;
-        }
-
-        .content-container{
-            margin: auto;
-            display: flex;
-        }
-
-        h1{
-            font-weight: bold;
-            font-size: 30px;
-            padding-left: 20px;
-        }
-
-        .page-button {
-            background-color: rgba(229, 229, 229, 0.5);
-            color: black;
-            padding-top: 5px;
-            padding-bottom: 5px;
-            padding-left: 7px;
-            padding-right: 7px;
-            border-radius: 3px;
-            font-size: 15px;
-            font-weight: bold;
-            width: 100%;
-            text-align: center;
-            text-decoration: none;
-        }
-
-        .page-button:hover {
-            color: #17a2b8;
-        }
-
-        .current-page{
-            background-color: #17a2b8;
-            color: white;
-            padding-top: 5px;
-            padding-bottom: 5px;
-            padding-left: 9px;
-            padding-right: 9px;
-            border-radius: 3px;
-            font-size: 15px;
-            font-weight: bold;
-            width: 100%;
-            text-align: center;
-            text-decoration: none;
-        }
+    .card-container {
+        margin-top: 20px;
+        padding-right: 20px;
+        padding-left: 20px;
+    }
+    .card-body {
+        background-color: white;
+    }
+    .card-container a {
+        text-decoration: none;
+        color: black;
+    }
+    .card-header {
+        font-weight: bold;
+        font-size: 30px;
+    }
+    .card:hover {
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+        transform: translateY(-3px);
+        transition: transform 0.4s;
+        color: #17a2b8;
+    }
+    .card-content {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: left;
+        height: 100%;
+    }
+    .card-title {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 100%;
+        color: #17a2b8;
+        font-weight: bold;
+        font-size: 25px;
+        word-wrap: break-word;
+    }
+    .hr-line {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 3px;
+        height: 100%;
+        background-color: #17a2b8;
+    }
+    .hr-line-light {
+        position: relative;
+        left: 0;
+        top: 0;
+        width: 1px;
+        height: 100%;
+        background-color: #17a2b8;
+    }
+    .property-box {
+        background-color: rgba(229, 229, 229, 0.6);
+        padding: 1px;
+        margin-top: 3px;
+        border-radius: 1px;
+        font-size: 13px;
+        width: 100%;
+        text-align: center;
+    }
+    .card {
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+        border-top-right-radius: 10px;
+        border-bottom-right-radius: 10px;
+    }
+    .list-content {
+        background-color: white;
+        border-radius: 10px;
+        padding-top: 30px;
+        padding-bottom: 50px;
+        padding-left: 50px;
+        padding-right: 50px;
+        margin: auto;
+        margin-top: 0px;
+        margin-bottom: 30px;
+        width: 100%;
+    }
+    .content-container {
+        margin: auto;
+        display: flex;
+    }
+    h1 {
+        font-weight: bold;
+        font-size: 30px;
+        padding-left: 20px;
+    }
+    .page-button {
+        background-color: rgba(229, 229, 229, 0.5);
+        color: black;
+        padding-top: 5px;
+        padding-bottom: 5px;
+        padding-left: 7px;
+        padding-right: 7px;
+        border-radius: 3px;
+        font-size: 15px;
+        font-weight: bold;
+        width: 100%;
+        text-align: center;
+        text-decoration: none;
+    }
+    .page-button:hover {
+        color: #17a2b8;
+    }
+    .current-page {
+        background-color: #17a2b8;
+        color: white;
+        padding-top: 5px;
+        padding-bottom: 5px;
+        padding-left: 9px;
+        padding-right: 9px;
+        border-radius: 3px;
+        font-size: 15px;
+        font-weight: bold;
+        width: 100%;
+        text-align: center;
+        text-decoration: none;
+    }
 </style>
-
 {% endblock %}
 
 {% block content %}
 
 <div class="content-container">
-
     <div class="col-md-12">
-
+        <!-- 搜索表单 -->
         <div class="list-content">
             <h1>{{ page_title }}</h1>
+
             <div class="row mt-4">
                 <div class="col-md-12">
                     <button class="btn btn-success mb-3" id="apply-all-btn">一键投递所有岗位</button>
@@ -286,18 +267,18 @@
                                     </div>
                                     <div style="width:30%;">
                                         HR: {{ obj.HR }}
-                                            {% with id=obj.HR.id|stringformat:'d' %}
-                                                {% with user_avatar_path="images/"|add:id %}
-                                                {% query_image_extension user_avatar_path as user_avatar_full_path %}
-                                                {% with default_avatar_path='images/default.jpeg' %}
-                                                    {% if user_avatar_full_path|static_file_exists %}
-                                                        <img src="{% static user_avatar_full_path %}?rand=<%= Date.now() %>" alt="用户头像" class="rounded-circle" style="width: 40px; height: 40px">
-                                                    {% else %}
-                                                        <img src="{% static default_avatar_path %}" alt="默认头像" class="rounded-circle" style="width: 40px; height: 40px">
-                                                    {% endif %}
-                                                {% endwith %}
-                                                {% endwith %}
+                                        {% with id=obj.HR.id|stringformat:'d' %}
+                                            {% with user_avatar_path="images/"|add:id %}
+                                            {% query_image_extension user_avatar_path as user_avatar_full_path %}
+                                            {% with default_avatar_path='images/default.jpeg' %}
+                                                {% if user_avatar_full_path|static_file_exists %}
+                                                    <img src="{% static user_avatar_full_path %}?rand=<%= Date.now() %>" alt="用户头像" class="rounded-circle" style="width: 40px; height: 40px">
+                                                {% else %}
+                                                    <img src="{% static default_avatar_path %}" alt="默认头像" class="rounded-circle" style="width: 40px; height: 40px">
+                                                {% endif %}
                                             {% endwith %}
+                                            {% endwith %}
+                                        {% endwith %}
                                     </div>
                                 </div>
                             </div>
@@ -307,51 +288,36 @@
                 {% endfor %}
             </div>
 
+            <!-- 分页部分 -->
             <div class="row col-md-12" style="margin-top: 50px;">
                 <div class="pagination" style="display: flex; justify-content: center; align-items: center;">
-            <span class="step-links">
-                {% if query_set.has_previous %}
-                    <a href="?page=1&keyword={{ keyword }}&target_place={{ target_place }}&page_size={{ page_size }}"
-                       class="page-button">首页</a>
-                    <a href="?page={{ query_set.previous_page_number }}&keyword={{ keyword }}&target_place={{ target_place }}&page_size={{ page_size }}"
-                       class="page-button"><i class="bi-chevron-left"></i></a>
-                {% endif %}
-
-                {% if query_set.has_previous and query_set.number != 2 %}
-                    <a href="?page={{ query_set.previous_page_number |add:'-1'}}&keyword={{ keyword }}&target_place={{ target_place }}&page_size={{ page_size }}"
-                       class="page-button">{{ query_set.previous_page_number|add:"-1" }}</a>
-                {% endif %}
-                {% if query_set.has_previous %}
-                    <a href="?page={{ query_set.previous_page_number }}&keyword={{ keyword }}&target_place={{ target_place }}&page_size={{ page_size }}"
-                       class="page-button">{{ query_set.previous_page_number }}</a>
-                {% endif %}
-
-                <span class="current-page">{{ query_set.number }}</span>
-
-
-                {% if query_set.has_next %}
-                    <a href="?page={{ query_set.next_page_number }}&keyword={{ keyword }}&target_place={{ target_place }}&page_size={{ page_size }}"
-                       class="page-button">{{ query_set.next_page_number }}</a>
-                {% endif %}
-                {% if query_set.has_next and query_set.next_page_number != query_set.paginator.num_pages %}
-                    <a href="?page={{ query_set.next_page_number | add:'1' }}&keyword={{ keyword }}&target_place={{ target_place }}&page_size={{ page_size }}"
-                       class="page-button">{{ query_set.next_page_number|add:"1" }}</a>
-                {% endif %}
-
-                {% if query_set.has_next %}
-                    <a href="?page={{ query_set.next_page_number }}&keyword={{ keyword }}&target_place={{ target_place }}&page_size={{ page_size }}"
-                       class="page-button"><i class="bi bi-chevron-right"></i></a>
-                    <a href="?page={{ query_set.paginator.num_pages }}&keyword={{ keyword }}&target_place={{ target_place }}&page_size={{ page_size }}"
-                       class="page-button">末页</a>
-                {% endif %}
-            </span>
+                    <span class="step-links">
+                        {% if query_set.has_previous %}
+                            <a href="?page=1&keyword={{ keyword }}&target_place={{ target_place }}&page_size={{ page_size }}" class="page-button">首页</a>
+                            <a href="?page={{ query_set.previous_page_number }}&keyword={{ keyword }}&target_place={{ target_place }}&page_size={{ page_size }}" class="page-button"><i class="bi-chevron-left"></i></a>
+                        {% endif %}
+                        {% if query_set.has_previous and query_set.number != 2 %}
+                            <a href="?page={{ query_set.previous_page_number|add:'-1' }}&keyword={{ keyword }}&target_place={{ target_place }}&page_size={{ page_size }}" class="page-button">{{ query_set.previous_page_number|add:'-1' }}</a>
+                        {% endif %}
+                        {% if query_set.has_previous %}
+                            <a href="?page={{ query_set.previous_page_number }}&keyword={{ keyword }}&target_place={{ target_place }}&page_size={{ page_size }}" class="page-button">{{ query_set.previous_page_number }}</a>
+                        {% endif %}
+                        <span class="current-page">{{ query_set.number }}</span>
+                        {% if query_set.has_next %}
+                            <a href="?page={{ query_set.next_page_number }}&keyword={{ keyword }}&target_place={{ target_place }}&page_size={{ page_size }}" class="page-button">{{ query_set.next_page_number }}</a>
+                        {% endif %}
+                        {% if query_set.has_next and query_set.next_page_number != query_set.paginator.num_pages %}
+                            <a href="?page={{ query_set.next_page_number|add:'1' }}&keyword={{ keyword }}&target_place={{ target_place }}&page_size={{ page_size }}" class="page-button">{{ query_set.next_page_number|add:'1' }}</a>
+                        {% endif %}
+                        {% if query_set.has_next %}
+                            <a href="?page={{ query_set.next_page_number }}&keyword={{ keyword }}&target_place={{ target_place }}&page_size={{ page_size }}" class="page-button"><i class="bi-chevron-right"></i></a>
+                            <a href="?page={{ query_set.paginator.num_pages }}&keyword={{ keyword }}&target_place={{ target_place }}&page_size={{ page_size }}" class="page-button">尾页</a>
+                        {% endif %}
+                    </span>
                 </div>
             </div>
-
         </div>
     </div>
-
-
 </div>
 
 
@@ -377,9 +343,6 @@
         });
 
 </script>
-
-
-
 
 
 {% endblock %}

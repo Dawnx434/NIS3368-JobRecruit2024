@@ -1,4 +1,4 @@
-from django.shortcuts import render, HttpResponse, redirect
+from django.shortcuts import render, redirect
 from django.utils.safestring import mark_safe
 import markdown
 from django.core.paginator import Paginator, EmptyPage
@@ -7,9 +7,8 @@ from PublishPosition.models import Position
 from UserAuth.models import User
 from Application.models import Application
 from UserInfo.models import Resume
-from PublishPosition.utils.forms.MyForm import PublishPositionForm
+from PublishPosition.forms import PublishPositionForm
 
-from PublishPosition.utils.provincelist import province_dictionary
 from PublishPosition.utils.district import district_dictionary
 from PublishPosition.utils.check_position_form import check_publish_position_form
 
@@ -32,30 +31,21 @@ def position_list(request):
     if not matching_files:
         matching_files.append('default.jpeg')
 
-    # get query condition: Page and PageSize
+    # 获取查询参数
     try:
-        page = 1 if not request.GET.get('page') else int(request.GET.get('page'))
-        pagesize = 10 if not request.GET.get('page_size') else int(request.GET.get('page_size'))
-        keyword = '' if not request.GET.get('keyword') else request.GET.get('keyword')
-        target_place = None if not request.GET.get('target_place') else int(request.GET.get('target_place'))
-    except ValueError as e:
+        page = int(request.GET.get('page', 1))
+        pagesize = int(request.GET.get('page_size', 10))
+        keyword = request.GET.get('keyword', '')
+        target_place = request.GET.get('target_place', None)  # 这里保持为 None，后续处理
+    except ValueError:
         return render(request, "UserAuth/alert_page.html", {"msg": '异常的查询参数', 'return_path': '/position/list/'})
 
-    # get list
-    if target_place:
-        query_set = Position.objects.filter(published_state=1, position_name__contains=keyword, district=target_place)
-    else:
-        query_set = Position.objects.filter(published_state=1, position_name__contains=keyword)
+    # 获取职位列表
+    query_set = search_positions(keyword, target_place)
 
+    # 排序
     query_set = query_set.order_by('salary')
-    # filter according to query params
     paginator = Paginator(query_set, pagesize)
-    # query_set = query_set[(page - 1) * pagesize: page * pagesize ]
-
-    try:
-        page = int(page)
-    except ValueError:
-        page = 1
 
     try:
         current_page = paginator.page(page)
@@ -82,8 +72,21 @@ def position_list(request):
         'page_title': page_title,
         'keyword': keyword,
         'resumes':resumes
+        'target_place': target_place #ToDo:wating for check
     }
     return render(request, 'PublishPosition/position_list.html', context)
+
+
+def search_positions(keyword, target_place):
+    """根据条件搜索岗位"""
+    filters = {'published_state': 1}
+    if keyword:
+        filters['position_name__contains'] = keyword
+    if target_place:
+        filters['district'] = target_place
+
+    return Position.objects.filter(**filters)
+
 
 
 def view_position_detail(request, nid):
@@ -127,8 +130,7 @@ def view_position_detail(request, nid):
 
     # 未发布状态下，只有创建者且处于HR身份下可查看
     if position.published_state == 0:
-        if not ((
-                        current_user_obj.id == position.HR.id and current_user_obj.identity == 2) or application_query_set.exists()):
+        if not ((current_user_obj.id == position.HR.id and current_user_obj.identity == 2) or application_query_set.exists()):
             return render(request, 'UserAuth/alert_page.html',
                           {"msg": "未开放的岗位", "return_path": "/position/list/"})
 
@@ -251,51 +253,47 @@ def modify_position(request, nid):
         return render(request, "UserAuth/alert_page.html", {"msg": "请使用HR身份登录", "return_path": "/info/account/"})
     # 检查当前用户是否具有编辑权限
     if request.session.get("UserInfo")['id'] != position_obj.HR_id:
+        return render(request, "UserAuth/alert_page.html", {"msg": "您没有权限编辑该岗位", "return_path": "/position/list/"})
+
+    # 表单提交
+    if request.method == 'POST':
+        # 保存修改
+        position_obj.position_name = request.POST.get('position_name')
+        position_obj.salary = request.POST.get('salary')
+        position_obj.summary = request.POST.get('summary')
+        position_obj.detail = request.POST.get('detail')
+        position_obj.district = request.POST.get('district')
+        position_obj.published_state = request.POST.get('published_state')
+        position_obj.save()
+        return redirect('/position/list/')
+
+    # 表单渲染
+    context = {
+        'district_dictionary': district_dictionary,
+        'matching_files': matching_files[0],
+        'position_obj': position_obj
+    }
+    return render(request, "PublishPosition/position_modify.html", context)
+
+
+def delete_position(request, nid):
+    """删除岗位"""
+    query_set = Position.objects.filter(id=nid)
+    if not query_set:
         return render(request, "UserAuth/alert_page.html",
-                      {"msg": "您无权修改岗位信息", "return_path": "/position/list/"})
+                      {"msg": "不存在的岗位信息", "return_path": "/position/list/"})
+    # 获取目标岗位对象
+    position_obj = query_set.first()
+    # 获取当前登录用户信息
+    user_obj = User.objects.filter(id=request.session.get("UserInfo")['id']).first()
 
-    if request.method == 'GET':
-        # 获取属性内容['position_name', 'salary', 'summary', 'detail', 'province', 'published_state']
-        data_dict = {
-            'position_name': position_obj.position_name,
-            'salary': position_obj.salary,
-            'summary': position_obj.summary,
-            'detail': position_obj.detail,
-            'district': position_obj.district,
-            'published_state': position_obj.published_state
-        }
-        context = {
-            'district_dictionary': district_dictionary,
-            'data_dict': data_dict,
-            "matching_files": matching_files[0],
-        }
+    # 检查发布职位者的身份是否为HR
+    if user_obj.identity != 2:
+        # 当前登录用户非HR身份
+        return render(request, "UserAuth/alert_page.html", {"msg": "请使用HR身份登录", "return_path": "/info/account/"})
+    # 检查当前用户是否具有删除权限
+    if request.session.get("UserInfo")['id'] != position_obj.HR_id:
+        return render(request, "UserAuth/alert_page.html", {"msg": "您没有权限删除该岗位", "return_path": "/position/list/"})
 
-        return render(request, "PublishPosition/position_modify.html", context)
-
-    # else POST
-    data_dict = {}
-    error_dict = {}
-    # 提取数据
-    for field in ['position_name', 'salary', 'summary', 'detail', 'district', 'published_state']:
-        data_dict[field] = request.POST.get(field)
-    # 检查字段
-    data_dict, error_dict, check_passed_flag = check_publish_position_form(data_dict)
-    if not check_passed_flag:
-        # 未通过检查
-        context = {
-            'district_dictionary': district_dictionary,
-            'data_dict': data_dict,
-            'error_dict': error_dict,
-            "matching_files": matching_files[0],
-        }
-        return render(request, "PublishPosition/position_modify.html", context)
-
-    # 通过字段检查
-    query_set.update(**data_dict)
-    # 确认返回页面
-    if int(data_dict['published_state']) == 1:
-        # 如果仍然可见
-        return redirect('/position/view/{}/'.format(nid))
-    else:
-        return render(request, "UserAuth/alert_page.html",
-                      {"msg": "岗位信息已不可见，请前往用户中心-我发布的职位中查看", "return_path": "/position/list/"})
+    position_obj.delete()
+    return redirect('/position/list/')
