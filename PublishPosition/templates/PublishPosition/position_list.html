@@ -160,23 +160,34 @@
         <div class="list-content">
             <h1>{{ page_title }}</h1>
             <form method="get" action="{% url 'PublishPosition:publish_list' %}" class="mb-4">
-                <div class="row">
-                    <div class="col-md-4">
-                        <input type="text" name="keyword" class="form-control" placeholder="职位名称关键词" value="{{ keyword }}">
+                <div class="row g-3">
+                    <!-- 第一行：职位关键词和地点 -->
+                    <div class="col-md-6">
+                        <input type="text" name="keyword" class="form-control" placeholder="职位名称关键词" value="{{ keyword }}" aria-label="职位名称关键词">
                     </div>
-                    <div class="col-md-4">
-                        <select name="target_place" class="form-control">
+                    <div class="col-md-6">
+                        <select name="target_place" class="form-select" aria-label="选择地点">
                             <option value="">选择地点</option>
                             {% for key, value in district_dictionary.items %}
-                                <option value="{{ key }}" {% if key == target_place %}selected{% endif %}>{{ value }}</option>
+                                <option value="{{ key }}" {% if key|stringformat:"s" == target_place %}selected{% endif %}>{{ value }}</option>
                             {% endfor %}
                         </select>
                     </div>
-                    <div class="col-md-4">
+
+                    <!-- 第二行：最低薪资和最高薪资 -->
+                    <div class="col-md-6">
+                        <input type="number" name="salary_min" class="form-control" placeholder="最低薪资" value="{{ salary_min }}" aria-label="最低薪资">
+                    </div>
+                    <div class="col-md-6">
+                        <input type="number" name="salary_max" class="form-control" placeholder="最高薪资" value="{{ salary_max }}" aria-label="最高薪资">
+                    </div>
+
+                    <!-- 搜索按钮 -->
+                    <div class="col-md-12 d-flex justify-content-end">
                         <button type="submit" class="btn btn-primary">搜索</button>
                     </div>
                 </div>
-            </div>
+            </form>
             
             
             <!-- 模态框 HTML -->
