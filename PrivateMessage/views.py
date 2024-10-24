@@ -5,6 +5,7 @@ from .forms import MessageForm
 from django.core.paginator import Paginator, EmptyPage
 from django.utils.functional import SimpleLazyObject
 from django.urls import reverse
+from django.utils import timezone
 
 import re
 import os
@@ -141,27 +142,26 @@ from .forms import MessageForm
 from django.shortcuts import redirect
 
 # @login_required
+from django.utils import timezone
+
 def conversation_view(request, current_user_id, selected_user_id):
     # 获取当前登录用户对象
     current_user = get_object_or_404(User, id=current_user_id)
-
-    # 获取选中的联系人对象
     selected_user = get_object_or_404(User, id=selected_user_id)
 
     # 标记与选中联系人的所有未读消息为已读
     Message.objects.filter(sender=selected_user, recipient=current_user, is_read=False).update(is_read=True)
 
-    # 获取与当前登录用户有过互动的联系人列表，并按最后一条消息的时间戳排序
+    # 获取与当前登录用户有过互动的联系人列表
     contact_users = User.objects.filter(
         Q(sent_messages__recipient=current_user) | Q(received_messages__sender=current_user)
     ).annotate(
         last_message_time=Max('sent_messages__timestamp', filter=Q(sent_messages__recipient=current_user))
     ).order_by('-last_message_time')
 
-    # 获取每个联系人的未读消息数量（只计算当前用户收到的未读消息）
+    # 获取每个联系人的未读消息数量
     contact_users = contact_users.annotate(
-        unread_count=Count('sent_messages',
-                           filter=Q(sent_messages__recipient=current_user, sent_messages__is_read=False))
+        unread_count=Count('sent_messages', filter=Q(sent_messages__recipient=current_user, sent_messages__is_read=False))
     )
 
     # 获取当前登录用户与选中联系人的所有消息
@@ -169,6 +169,10 @@ def conversation_view(request, current_user_id, selected_user_id):
         (Q(sender=current_user) & Q(recipient=selected_user)) |
         (Q(sender=selected_user) & Q(recipient=current_user))
     ).order_by('timestamp')
+
+    # 格式化消息中的时间戳为东八区
+    for message in messages:
+        message.timestamp = timezone.localtime(message.timestamp, timezone.get_fixed_timezone(480)).strftime('%Y-%m-%d %H:%M:%S')
 
     # 消息发送表单
     form = MessageForm(request.POST or None)
@@ -199,15 +203,29 @@ def fetch_new_messages(request, current_user_id, selected_user_id):
         (Q(sender=selected_user) & Q(recipient=current_user))
     ).order_by('timestamp')
 
-    # 将消息序列化为JSON格式
+    # 强制将时间转换为东八区格式，避免轮询时发生时区问题
     message_data = [
         {
             'sender_id': message.sender.id,
             'content': message.content,
-            'timestamp': message.timestamp.strftime('%Y-%m-%d %H:%M:%S')
+            'timestamp': timezone.localtime(message.timestamp, timezone.get_fixed_timezone(480)).strftime('%Y-%m-%d %H:%M:%S')
         }
         for message in messages
     ]
 
     # 返回JSON响应
     return JsonResponse({'messages': message_data})
+
+from django.shortcuts import get_object_or_404, redirect
+from UserAuth.models import User
+
+def search_user(request):
+    # 获取输入的用户ID或用户名
+    username = request.GET.get('user_id')  # 假设通过用户名搜索
+    current_user_id = request.session['UserInfo'].get('id')
+
+    # 查找目标用户
+    target_user = get_object_or_404(User, username=username)  # 根据用户名查找用户
+
+    # 使用 redirect 跳转到 conversation_view
+    return redirect('PrivateMessage:conversation_with_user', current_user_id=current_user_id, selected_user_id=target_user.id)
