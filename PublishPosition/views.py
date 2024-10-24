@@ -74,10 +74,22 @@ def position_list(request):
         current_page = paginator.page(page)
     except EmptyPage:
         current_page = paginator.page(1)
+    current_user_obj = User.objects.filter(id=request.session.get("UserInfo").get("id")).first()
+    resume_query_set = Resume.objects.filter(belong_to=current_user_obj)
+    resumes = []
+    for resume_obj in resume_query_set:
+        resumes.append({
+            "id": resume_obj.id,
+            "name": resume_obj.name
+        })
 
+    position_ids = list(query_set.values_list('id', flat=True))
+    position_names = list(query_set.values_list('position_name', flat=True))
     page_title = f'职位 "{keyword}" 的搜索结果' if keyword else '最新发布职位'
     context = {
         'query_set': current_page,
+        'position_names':position_names,
+        'position_ids': position_ids,
         'matching_files': matching_files[0],
         'district_dictionary': district_dictionary,
         'page_title': page_title,
@@ -85,6 +97,8 @@ def position_list(request):
         'target_place': target_place,
         'salary_min': salary_min,
         'salary_max': salary_max,
+        'resumes':resumes
+        'target_place': target_place #ToDo:wating for check
     }
     return render(request, 'PublishPosition/position_list.html', context)
 

@@ -2,6 +2,7 @@
 # 本地环境
 .idea/
 venv/
+settings.py
 
 # Pycharm
 *.py[cod]
