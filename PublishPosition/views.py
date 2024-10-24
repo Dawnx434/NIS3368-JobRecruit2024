@@ -98,7 +98,7 @@ def position_list(request):
         'salary_min': salary_min,
         'salary_max': salary_max,
         'resumes':resumes,
-        'target_place': target_place #ToDo:wating for check
+        'target_place': target_place
     }
     return render(request, 'PublishPosition/position_list.html', context)
 
