@@ -15,4 +15,5 @@ urlpatterns = [
     path('fetch-new-messages/<int:current_user_id>/<int:selected_user_id>/',
          views.fetch_new_messages,
          name='fetch_new_messages'),
+    path('search/', views.search_user, name='search_user'),
 ]

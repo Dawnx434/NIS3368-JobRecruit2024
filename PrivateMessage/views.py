@@ -215,3 +215,17 @@ def fetch_new_messages(request, current_user_id, selected_user_id):
 
     # 返回JSON响应
     return JsonResponse({'messages': message_data})
+
+from django.shortcuts import get_object_or_404, redirect
+from UserAuth.models import User
+
+def search_user(request):
+    # 获取输入的用户ID或用户名
+    username = request.GET.get('user_id')  # 假设通过用户名搜索
+    current_user_id = request.session['UserInfo'].get('id')
+
+    # 查找目标用户
+    target_user = get_object_or_404(User, username=username)  # 根据用户名查找用户
+
+    # 使用 redirect 跳转到 conversation_view
+    return redirect('PrivateMessage:conversation_with_user', current_user_id=current_user_id, selected_user_id=target_user.id)

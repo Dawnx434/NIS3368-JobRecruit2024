@@ -16,6 +16,32 @@
             overflow-y: auto;
         }
 
+        /* 搜索框样式 */
+        .search-form {
+            margin-bottom: 20px;
+        }
+
+        .search-form input[type="text"] {
+            width: calc(100% - 40px);
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-right: 10px;
+        }
+
+        .search-form button {
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .search-form button:hover {
+            background-color: #0056b3;
+        }
+
         /* 每个联系人项样式 */
         .contact-item {
             padding: 10px;
@@ -51,12 +77,12 @@
         }
 
         .unread-dot {
-        display: inline-block;
-        width: 8px;  /* 红点的直径 */
-        height: 8px;
-        background-color: red;  /* 红点颜色 */
-        border-radius: 50%;  /* 圆形 */
-        margin-left: 5px;  /* 如果需要与其他内容保持一定间距 */
+            display: inline-block;
+            width: 8px;  /* 红点的直径 */
+            height: 8px;
+            background-color: red;  /* 红点颜色 */
+            border-radius: 50%;  /* 圆形 */
+            margin-left: 5px;  /* 如果需要与其他内容保持一定间距 */
         }
 
         /* 右侧对话框容器 */
@@ -149,6 +175,12 @@
     <div class="chat-container">
         <!-- 左侧联系人列表 -->
         <div class="contact-list">
+            <!-- 搜索框 -->
+            <form class="search-form" id="searchForm" method="GET" action="{% url 'PrivateMessage:search_user' %}">
+                <input type="text" name="user_id" placeholder="搜索用户ID" required>
+                <button type="submit">搜索</button>
+            </form>
+
             <ul class="list-group">
                 {% for contact in contact_users %}
                 <li class="list-group-item contact-item {% if contact.id == selected_user.id %}active{% endif %}">
