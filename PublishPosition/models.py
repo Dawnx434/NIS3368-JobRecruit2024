@@ -12,7 +12,7 @@ class Position(models.Model):
     def save(self, *args, **kwargs):
         # 计算 salary 字段的值
         if self.salary_min is not None and self.salary_max is not None:
-            self.salary = (self.salary_min + self.salary_max) / 2
+            self.salary = (int(self.salary_min) + int(self.salary_max)) / 2
         else:
             self.salary = None  # 或者你可以设置为0或者其他默认值
 
