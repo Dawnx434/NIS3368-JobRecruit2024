@@ -149,9 +149,15 @@
                         <select name="target_place" class="form-control">
                             <option value="">选择地点</option>
                             {% for key, value in district_dictionary.items %}
-                                <option value="{{ key }}" {% if key == target_place %}selected{% endif %}>{{ value }}</option>
+                                <option value="{{ key }}" {% if key|stringformat:"s" == target_place %}selected{% endif %}>{{ value }}</option>
                             {% endfor %}
                         </select>
+                    </div>
+                    <div class="col-md-3">
+                        <input type="number" name="salary_min" class="form-control" placeholder="最低薪资" value="{{ salary_min }}">
+                    </div>
+                    <div class="col-md-3">
+                        <input type="number" name="salary_max" class="form-control" placeholder="最高薪资" value="{{ salary_max }}">
                     </div>
                     <div class="col-md-4">
                         <button type="submit" class="btn btn-primary">搜索</button>

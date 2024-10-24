@@ -44,13 +44,27 @@ def position_list(request):
         keyword = request.GET.get('keyword', '')
         target_place = request.GET.get('target_place', None)  # 这里保持为 None，后续处理
         # 处理 target_place 等于 'None' 的情况
-        if target_place == 'None':
+        if not target_place or target_place == '' or target_place == 'None':  # 修复空字符串问题
             target_place = None
+
+        # 获取最低薪资和最高薪资
+        salary_min = request.GET.get('salary_min', None)
+        salary_max = request.GET.get('salary_max', None)
+        # 如果为空字符串则将其设为 None
+        if salary_min == '':
+            salary_min = None
+        if salary_max == '':
+            salary_max = None
+        # 确保 min_salary 和 max_salary 是数字
+        if salary_min is not None:
+            salary_min = int(salary_min)
+        if salary_max is not None:
+            salary_max = int(salary_max)
     except ValueError:
         return render(request, "UserAuth/alert_page.html", {"msg": '异常的查询参数', 'return_path': '/position/list/'})
 
     # 获取职位列表
-    query_set = search_positions(keyword, target_place)
+    query_set = search_positions(keyword, target_place, salary_min, salary_max)
 
     # 排序
     query_set = query_set.order_by('salary')
@@ -68,18 +82,24 @@ def position_list(request):
         'district_dictionary': district_dictionary,
         'page_title': page_title,
         'keyword': keyword,
-        'target_place': target_place
+        'target_place': target_place,
+        'salary_min': salary_min,
+        'salary_max': salary_max,
     }
     return render(request, 'PublishPosition/position_list.html', context)
 
 
-def search_positions(keyword, target_place):
+def search_positions(keyword, target_place, min_salary, max_salary):
     """根据条件搜索岗位"""
     filters = {'published_state': 1}
     if keyword:
         filters['position_name__contains'] = keyword
-    if target_place is not None:  # 这里确保 target_place 不为 None
+    if target_place is not None:
         filters['district'] = target_place
+    if min_salary is not None:
+        filters['salary_min__gte'] = min_salary  # 薪资下限 >= 用户输入的最低薪资
+    if max_salary is not None:
+        filters['salary_max__lte'] = max_salary  # 薪资上限 <= 用户输入的最高薪资
 
     return Position.objects.filter(**filters)
 
@@ -258,8 +278,8 @@ def modify_position(request, nid):
         # 保存修改
         position_obj.position_name = request.POST.get('position_name')
         position_obj.salary = request.POST.get('salary')
-        position_obj.salary = request.POST.get('salary_min')
-        position_obj.salary = request.POST.get('salary_max')
+        position_obj.salary_min = request.POST.get('salary_min')
+        position_obj.salary_max = request.POST.get('salary_max')
         position_obj.summary = request.POST.get('summary')
         position_obj.detail = request.POST.get('detail')
         position_obj.district = request.POST.get('district')
