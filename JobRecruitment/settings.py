@@ -87,14 +87,17 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "JobRecruitment.wsgi.application"
 
-
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'jobrecruitment',  # 数据库名字
+        'USER': 'root',  #用户名
+        'PASSWORD': '123456', #用户密码
+        'HOST': '127.0.0.1',  # MySQL 在哪个 ip
+        'PORT': '3306',  # 端口号
     }
 }
 
@@ -162,3 +165,4 @@ EMAIL_HOST_PASSWORD = ""     # JAccount密码
 EMAIL_USE_TLS = True
 EMAIL_FROM = "example@sjtu.edu.cn"  # JAccount邮箱地址
 EMAIL_TITLE = '邮箱激活'
+
