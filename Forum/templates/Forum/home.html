@@ -56,14 +56,6 @@
         <div class="mb-4">
             <a href="{% url 'Forum:new_topic' %}" class="btn btn-primary custom-button"><i class="fas fa-plus me-1"></i>新建动态</a>
         </div>
-{#        <!-- 在论坛主页上添加一个跳转到私信页面的按钮 -->#}
-{#        <a href="{% url 'PrivateMessage:inbox' %}" class="btn btn-info custom-button" style="margin-left: 10px;">#}
-{#            <i class="bi bi-envelope-fill me-1"></i> 私信#}
-{#        </a>#}
-            <!-- 在首页添加跳转到私信页面的按钮 -->
-            <a href="{% url 'PrivateMessage:conversation_with_user' request.session.UserInfo.id 1 %}" class="btn btn-info custom-button" style="margin-left: 10px;">
-                <i class="bi bi-envelope-fill me-1"></i> 私信
-            </a>
         {% if topics %}
         {% for topic in topics %}
         <div class="p-2 topic-card"

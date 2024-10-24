@@ -15,6 +15,7 @@ cookies = [
     {
         'name': 'sessionid',
         'value': 'fkmpluctb38ratwmhhri78jg3trmqs4z',
+
     },
 ]
 driver.get("http://127.0.0.1:8000/position/publish/")

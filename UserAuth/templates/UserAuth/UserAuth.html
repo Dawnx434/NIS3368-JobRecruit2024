@@ -1,285 +1,148 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="zh-CN">
-
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     {% if nid == 1 %}
-    <title>用户注册</title>
+        <title>用户注册</title>
     {% else %}
-    <title>用户登录</title>
+        <title>用户登录</title>
     {% endif %}
     <link rel="stylesheet" href="{% static 'plugins/bootstrap/css/bootstrap.css' %}">
     <style>
-        /* 全局背景图片 */
-        body {
-            margin: 0;
-            padding: 0;
-            height: 100vh;
-            background-image: url('{% static "img/背景.png" %}');
-            /* 全局背景图片路径 */
-            background-size: cover;
-            background-position: center;
-            display: flex;
-            align-items: center;
-            font-family: Arial, sans-serif;
-        }
-
-        /* 左侧图片部分 */
-        .left-section {
-            flex: 1;
-            background-image: url('{% static "img/banner.97f904e9.png" %}');
-            /* 替换为你的左侧图片路径 */
-            background-size: 80%;
-            background-position: center;
-            background-repeat: no-repeat;
-            height: 100%;
-        }
-
-        .left-section-text {
-            color: white;
-            font-size: 36px;
-            font-weight: bold;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* 给文字加阴影，增强可读性 */
-            text-align: center;
-        }
-
-        /* 右侧登录框 */
-        .right-section {
-            flex: 0.4;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background-color: rgba(255, 255, 255, 0);
-            /* 让右侧有个半透明背景 */
-            height: 100%;
-        }
-
         .account {
-            width: 100%;
-            max-width: 400px;
-            background: white;
-            border-radius: 10px;
-            padding: 40px;
-            margin-right: 12%;
-            box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1);
-            text-align: center;
+            width: 600px;
+            border: 1px solid #dddddd;
+            border-radius: 5px;
+            box-shadow: 5px 5px 20px #aaa;
+
+            margin-left: auto;
+            margin-right: auto;
+            margin-top: 80px;
+            padding: 20px 40px;
         }
 
         .account h2 {
-            margin-bottom: 20px;
-            font-weight: bold;
-            color: #333;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
-            float: left;
-            font-weight: bold;
-            color: #555;
-        }
-
-        .form-group input {
-            width: 100%;
-            padding: 10px;
-            border-radius: 5px;
-            border: 1px solid #ddd;
-            margin-top: 5px;
-        }
-
-        .btn-primary {
-            width: 100%;
-            padding: 10px;
-            background-color: #00bfa5;
-            border: none;
-            border-radius: 5px;
-            color: white;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-        .btn-primary:hover {
-            background-color: #009688;
-        }
-
-        .btn-danger {
-            width: 100%;
-            padding: 10px;
             margin-top: 10px;
-            border-radius: 5px;
-        }
-
-        .forgot-password {
-            text-align: right;
-            display: block;
-            margin-bottom: 15px;
-        }
-
-        .captcha {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .captcha img {
-            cursor: pointer;
-            width: 120px;
-            height: 40px;
-        }
-
-        .footer-link {
-            margin-top: 10px;
-            text-align: right;
-        }
-
-        .footer-link a {
-            color: #00bfa5;
-            font-weight: bold;
-            text-decoration: none;
-        }
-
-        .footer-link a:hover {
-            text-decoration: underline;
-        }
-
-        @media (max-width: 768px) {
-            body {
-                flex-direction: column;
-            }
-
-            .right-section {
-                width: 100%;
-            }
-
-            .left-section {
-                height: 200px;
-            }
-
-            .account {
-                width: 90%;
-            }
+            text-align: center;
         }
     </style>
 </head>
-
 <body>
-    <!-- 左侧部分 -->
-    <div class="left-section">
-        <!-- 左侧文字部分 -->
-        <div class="left-section-text">
-                      </div>
-        <div class="left-section-text">
-            海量优质人才，在线约面
-        </div>
-        <div class="left-section-text" style="font-size: 30px;">
-            找工作，上招聘网
-        </div>
-    </div>
-    <!-- 右侧登录框部分 -->
-    <div class="right-section">
-        <div class="account">
-            {% if nid == 1 %}
-            <h2>用户注册</h2>
-            {% else %}
-            <h2>用户登录</h2>
-            {% endif %}
-            <form method="post" novalidate>
-                {% csrf_token %}
-                <!-- 表单字段 -->
-                {% for field in form %}
-                {% if field.name != "verification_code" %}
+<div class="account">
+    {% if nid == 1 %}
+        <h2>用户注册</h2>
+    {% else %}
+        <h2>用户登录</h2>
+    {% endif %}
+    <form method="post" novalidate>
+        {% csrf_token %}
+        <!--表单列表-->
+        {% for field in form %}
+            {% if field.name != "verification_code" %}
                 <div class="form-group">
                     <label>{{ field.label }}</label>
                     {{ field }}
                     {% if field.name == 'password' and nid == 2 %}
-                    <a href="/auth/reset/" class="forgot-password">忘记密码？</a>
+                        <!--只有登录页面才会显示忘记密码一栏-->
+                        <div style="text-align: right;"><a href="/auth/reset/">忘记密码？</a></div>
                     {% endif %}
                     <span style="color: red;">{{ field.errors.0 }}</span>
                 </div>
-                {% else %}
-                <div class="form-group captcha">
+            {% else %}
+                <div class="form-group">
                     <label for="id_code">{{ field.label }}</label>
-                    <div>
-                        {{ field }}
-                        <span style="color: red;">{{ field.errors.0 }}</span>
-                    </div>
-                    <div>
-                        {% if nid == 2 %}
-                        <img id="imgCode" src="/auth/gencode/" alt="验证码" title="点击更换">
-                        {% elif nid == 1 %}
-                        <button type="button" id="sendemail" class="btn btn-primary">发送邮件</button>
-                        {% endif %}
-                    </div>
-                </div>
-                {% endif %}
-                {% endfor %}
-                {% if nid == 1 %}
-                <input type="submit" value="注 册" class="btn btn-primary">
-                {% else %}
-                <input type="submit" value="登 录" class="btn btn-primary">
-                {% endif %}
-                <a href="/" class="btn btn-danger active" role="button">取 消</a>
-                <div class="footer-link">
-                    {% if nid == 1 %}
-                    已有账号？<a href="/auth/login/">去登录！</a>
-                    {% else %}
-                    还没有账号？<a href="/auth/register/">去注册一个！</a>
-                    {% endif %}
-                </div>
-            </form>
-        </div>
-    </div>
+                    <div class="row">
+                        <div class="col-xs-8">
+                            {{ field }}
 
-    <script src="{% static 'js/jquery-3.6.0.min.js' %}"></script>
-    <script type="text/javascript">
-        // 点击刷新验证码
-        $(function () {
-            $("#imgCode").click(function () {
-                let oldSrc = $(this).attr('src');
-                $(this).attr('src', oldSrc + "?");
-            })
+                            <span style="color: red;">{{ field.errors.0 }}</span>
+                        </div>
+                        <div class="col-xs-4">
+                            {% if nid == 2 %}
+                                <img id="imgCode" style="width: 140px;" src="/auth/gencode/" alt="验证码"
+                                     title="点击更换">
+                            {% elif nid == 1 %}
+                                <button type="button" id="sendemail" class="btn btn-primary">发送邮件</button>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        {% endfor %}
+        {% if nid == 1 %}
+            <input type="submit" value="注 册" class="btn btn-primary">
+        {% else %}
+            <input type="submit" value="登 录" class="btn btn-primary">
+        {% endif %}
+        <a href="/" class="btn btn-danger active" role="button">取 消</a>
+        {% if nid == 1 %}
+            <div style="text-align: right;">
+                已有账号？<a style="text-align: right;" href="/auth/login/">去登录！</a>
+            </div>
+        {% else %}
+            <div style="text-align: right;">
+                还没有账号？<a style="text-align: right;" href="/auth/register/">去注册一个！</a>
+            </div>
+        {% endif %}
+        <!--表单结束-->
+    </form>
+</div>
+<script src="{% static 'js/jquery-3.6.0.min.js' %}"></script>
+<script type="text/javascript">
+    //点击刷新验证码
+    $(function () {
+        $("#imgCode").click(function () {
+            let oldSrc = $(this).attr('src');
+            $(this).attr('src', oldSrc + "?");
         })
+    })
 
-        const interval = 30;
-        let countdown = interval;
-        let button = document.getElementById('sendemail');
-        let timer;
+    const interval = 30; //这边lhw说30秒比较好
+    let countdown = interval;
+    let button = document.getElementById('sendemail');
+    let timer;
 
-        function updateButtonText() {
-            button.innerText = '剩余时间: ' + countdown + ' 秒';
+    function updateButtonText() {
+        button.innerText = '剩余时间: ' + countdown + ' 秒';
+    }
+
+
+    function countdownTick() {
+        countdown--;
+        updateButtonText(button);
+
+        if (countdown <= 0) {
+            clearInterval(timer);
+            button.innerText = '发送验证码';
+            button.disabled = false;
+            button.className = 'btn btn-primary';
         }
+    }
 
-        function countdownTick() {
-            countdown--;
-            updateButtonText(button);
-
-            if (countdown <= 0) {
-                clearInterval(timer);
-                button.innerText = '发送验证码';
-                button.disabled = false;
-                button.className = 'btn btn-primary';
-            }
-        }
-
-        document.getElementById('sendemail').addEventListener('click', function () {
-            button.disabled = true;
-            countdown = interval;
-            button.className = 'btn btn-secondary';
-            timer = setInterval(countdownTick, 1000);
-            let email_address = document.getElementById("id_email").value;
-            $.ajax({
-                url: '/auth/sendemail/',
-                type: 'POST',
-                data: {
-                    'email_address': email_address,
-                },
-                dataType: 'JSON',
-                success: function (res) {
-                    if (!res['state']) {
+    // 使用 JavaScript 事件处理监听按钮点击事件
+    document.getElementById('sendemail').addEventListener('click', function () {
+        //防止按钮再被点击
+        button.disabled = true;
+        countdown = interval;
+        button.className = 'btn btn-secondary';
+        //启动倒计时
+        timer = setInterval(countdownTick, 1000);
+        let email_address = document.getElementById("id_email").value
+        //发送请求
+        $.ajax({
+            url: '/auth/sendemail/',
+            type: 'POST',
+            data: {
+                'email_address': email_address,
+            },
+            dataType: 'JSON',
+            success: (
+                function (res) {
+                    if (res['state']) {
+                        // state = true
+                    } else {
+                        // state = false
                         alert('错误的邮箱格式！');
                         clearInterval(timer);
                         button.innerText = '发送验证码';
@@ -287,9 +150,10 @@
                         button.className = 'btn btn-primary';
                     }
                 }
-            });
-        });
-    </script>
-</body>
+            )
+        })
 
+    });
+</script>
+</body>
 </html>
