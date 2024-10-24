@@ -96,8 +96,8 @@ WSGI_APPLICATION = "JobRecruitment.wsgi.application"
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'jobrecruitment',  # 数据库名字
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
         'USER': 'root',  #用户名
         'PASSWORD': '123456', #用户密码
         'HOST': '127.0.0.1',  # MySQL 在哪个 ip
