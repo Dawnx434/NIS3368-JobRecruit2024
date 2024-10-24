@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'Application',
     'UserMessage',
     'PrivateMessage',
+    'ContentReview'
 ]
 
 MIDDLEWARE = [
@@ -64,6 +65,7 @@ MIDDLEWARE = [
     # My middleware
     "UserAuth.middlewares.CheckLoginState.CheckLoginStateMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    'ContentReview.middleware.SensitiveWordsMiddleware',
 ]
 
 X_FRAME_OPTIONS = "SAMEORIGIN"
