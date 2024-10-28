@@ -178,7 +178,7 @@
             <!-- 搜索框 -->
             <form class="search-form" id="searchForm" method="GET" action="{% url 'PrivateMessage:search_user' %}">
                 <input type="text" name="user_id" placeholder="搜索用户ID" required>
-                <button type="submit">搜索</button>
+                <button type="submit" style="background-color: #17a2b8; border: none; color: white;">搜索</button>
             </form>
 
             <ul class="list-group">
@@ -215,7 +215,7 @@
                 <form method="post" action="{% url 'PrivateMessage:conversation_with_user' current_user.id selected_user.id %}">
                     {% csrf_token %}
                     {{ form.as_p }}
-                    <button type="submit" class="btn btn-primary">Send</button>
+                    <button type="submit" class="btn btn-primary" style="background-color: #17a2b8; border: none; color: white;">发送</button>
                 </form>
             </div>
             {% else %}

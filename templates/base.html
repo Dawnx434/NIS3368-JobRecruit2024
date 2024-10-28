@@ -24,23 +24,34 @@
             /* JobRecruitment 自定义字体颜色 */
         }
 
-        /* 按钮颜色 */
-        .custom-button {
+        /* 按钮颜色和圆角样式 */
+        .custom-button,
+        .btn {
             background-color: #17a2b8;
-            /* 按钮主色与 JobRecruitment 字体相同 */
             border: none;
             color: white;
+            border-radius: 25px;
+            padding: 10px 20px;
+            /* 调整按钮的内边距 */
+            font-size: 16px;
+            /* 调整按钮字体大小 */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            /* 增加按钮阴影 */
+            transition: all 0.3s ease;
+            /* 平滑过渡效果 */
         }
 
-        .custom-button:hover {
+        .custom-button:hover,
+        .btn:hover {
             background-color: #138496;
-            /* 悬停时颜色略深 */
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+            transform: translateY(-2px);
+            /* 悬停时上移 */
         }
 
         /* 导航链接间距 */
         .navbar-nav .nav-item+.nav-item {
             margin-left: 20px;
-            /* 导航项之间的间距设置为20px */
         }
 
         /* 页脚和链接样式 */
@@ -55,7 +66,14 @@
 
         footer a:hover {
             color: #ffffff;
-            /* 悬停时颜色变白 */
+        }
+
+        /* 用户头像样式 */
+        .rounded-circle {
+            border: 2px solid #17a2b8;
+            /* 添加蓝绿色边框 */
+            padding: 2px;
+            /* 添加内边距 */
         }
     </style>
 </head>
@@ -66,7 +84,8 @@
     <nav class="navbar navbar-expand-sm navbar-light bg-light shadow-sm">
         <div class="container">
             <a class="navbar-brand custom-text-color" href="{% url 'Forum:home' %}">JobRecruitment</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar">
+            <button class="navbar-toggler btn custom-button" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbar">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbar">
@@ -182,6 +201,8 @@
             $(".dropdown").hover(function () {
                 $(this).children(".dropdown-menu").toggleClass("show");
             });
+    
+
         });
 
         $(document).ready(function () {
