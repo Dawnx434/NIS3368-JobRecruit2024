@@ -1,0 +1,176 @@
+[33mcommit 38dfafcdade9757368f50cf6e0a78117524012b9[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m
+Author: mr <mr@123.com>
+Date:   Mon Oct 28 23:46:21 2024 +0800
+
+    首页美化
+
+[1mdiff --git a/Forum/templates/Forum/home.html b/Forum/templates/Forum/home.html[m
+[1mindex 6cc80cb..9140633 100644[m
+[1m--- a/Forum/templates/Forum/home.html[m
+[1m+++ b/Forum/templates/Forum/home.html[m
+[36m@@ -6,145 +6,167 @@[m
+ <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">[m
+ [m
+ <style>[m
+[32m+[m[32m    /* 基础样式调整 */[m
+[32m+[m[32m    body {[m
+[32m+[m[32m        font-family: 'Helvetica Neue', sans-serif;[m
+[32m+[m[32m        background-color: #f5f7fa;[m
+[32m+[m[32m        line-height: 1.6;[m
+[32m+[m[32m    }[m
+ [m
+[31m-    .topic-card:hover{[m
+[31m-        color: #17a2b8 !important;[m
+[31m-        font-weight: bold;[m
+[32m+[m[32m    .btn {[m
+[32m+[m[32m        border-radius: 25px;[m
+[32m+[m[32m        padding: 10px 20px;[m
+     }[m
+ [m
+[31m-    .page-button {[m
+[31m-        background-color: rgba(229, 229, 229, 0.5);[m
+[31m-        color: black;[m
+[31m-        padding-top: 5px;[m
+[31m-        padding-bottom: 5px;[m
+[31m-        padding-left: 7px;[m
+[31m-        padding-right: 7px;[m
+[31m-        border-radius: 3px;[m
+[31m-        font-size: 15px;[m
+[31m-        font-weight: bold;[m
+[31m-        width: 100%;[m
+[31m-        text-align: center;[m
+[32m+[m[32m    /* 现代化按钮样式 */[m
+[32m+[m[32m    .custom-button {[m
+[32m+[m[32m        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);[m
+[32m+[m[32m        transition: all 0.3s ease;[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    .custom-button:hover {[m
+[32m+[m[32m        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);[m
+[32m+[m[32m        transform: translateY(-2px);[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    /* 主题卡片样式 */[m
+[32m+[m[32m    .topic-card {[m
+[32m+[m[32m        border-radius: 15px;[m
+[32m+[m[32m        background-color: #ffffff;[m
+[32m+[m[32m        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);[m
+[32m+[m[32m        margin-bottom: 20px;[m
+[32m+[m[32m        padding: 20px;[m
+[32m+[m[32m        transition: all 0.3s ease;[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    .topic-card:hover {[m
+[32m+[m[32m        background-color: #f8f9fa;[m
+[32m+[m[32m        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    /* 分页样式 */[m
+[32m+[m[32m    .pagination .page-button,[m
+[32m+[m[32m    .pagination .current-page {[m
+[32m+[m[32m        border-radius: 15px;[m
+[32m+[m[32m        padding: 10px 15px;[m
+[32m+[m[32m        font-size: 14px;[m
+[32m+[m[32m        margin: 0 5px;[m
+[32m+[m[32m        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);[m
+[32m+[m[32m        transition: background-color 0.3s ease;[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    .pagination .page-button {[m
+[32m+[m[32m        background-color: #e9ecef;[m
+[32m+[m[32m        color: #495057;[m
+         text-decoration: none;[m
+     }[m
+ [m
+[31m-    .page-button:hover {[m
+[31m-        color: #17a2b8;[m
+[32m+[m[32m    .pagination .page-button:hover {[m
+[32m+[m[32m        background-color: #17a2b8;[m
+[32m+[m[32m        color: #ffffff;[m
+     }[m
+ [m
+[31m-    .current-page{[m
+[32m+[m[32m    .pagination .current-page {[m
+         background-color: #17a2b8;[m
+[31m-        color: white;[m
+[31m-        padding-top: 5px;[m
+[31m-        padding-bottom: 5px;[m
+[31m-        padding-left: 9px;[m
+[31m-        padding-right: 9px;[m
+[31m-        border-radius: 3px;[m
+[31m-        font-size: 15px;[m
+[32m+[m[32m        color: #ffffff;[m
+         font-weight: bold;[m
+[31m-        width: 100%;[m
+[31m-        text-align: center;[m
+[31m-        text-decoration: none;[m
+     }[m
+ [m
+[32m+[m[32m    /* 用户头像样式 */[m
+[32m+[m[32m    .rounded-circle {[m
+[32m+[m[32m        border: 2px solid #17a2b8;[m
+[32m+[m[32m        padding: 2px;[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    /* 额外间距 */[m
+[32m+[m[32m    .mt-4 {[m
+[32m+[m[32m        margin-top: 40px;[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    /* 头部按钮间距 */[m
+[32m+[m[32m    .header-buttons {[m
+[32m+[m[32m        margin-bottom: 20px;[m
+[32m+[m[32m    }[m
+ </style>[m
+ {% endblock %}[m
+ [m
+[31m-[m
+ {% block content %}[m
+[31m-<div style="border-radius: 10px; margin-bottom: 50px;" class="mt-4 p-4 bg-light">[m
+[31m-    <div>[m
+[31m-        <div class="mb-4">[m
+[31m-            <a href="{% url 'Forum:new_topic' %}" class="btn btn-primary custom-button"><i class="fas fa-plus me-1"></i>新建动态</a>[m
+[31m-        </div>[m
+[31m-{#        <!-- 在论坛主页上添加一个跳转到私信页面的按钮 -->#}[m
+[31m-{#        <a href="{% url 'PrivateMessage:inbox' %}" class="btn btn-info custom-button" style="margin-left: 10px;">#}[m
+[31m-{#            <i class="bi bi-envelope-fill me-1"></i> 私信#}[m
+[31m-{#        </a>#}[m
+[31m-            <!-- 在首页添加跳转到私信页面的按钮 -->[m
+[31m-            <a href="{% url 'PrivateMessage:conversation_with_user' request.session.UserInfo.id 1 %}" class="btn btn-info custom-button" style="margin-left: 10px;">[m
+[31m-                <i class="bi bi-envelope-fill me-1"></i> 私信[m
+[31m-            </a>[m
+[31m-        {% if topics %}[m
+[31m-        {% for topic in topics %}[m
+[31m-        <div class="p-2 topic-card"[m
+[31m-             style="{% if forloop.first %}border-top: 1px solid #17a2b8;{% else %}border-top: 1px solid #dddddd;{% endif %}{% if forloop.last %}border-bottom: 1px solid #17a2b8;{% endif %}">[m
+[31m-            <div class="row">[m
+[31m-                <div class="col-8 d-flex align-items-center">[m
+[31m-                    <a href="{% url 'Forum:topic_posts' topic.pk %}" class="text-decoration-none text-black">[m
+[31m-                        {{ topic.subject }}[m
+[31m-                    </a>[m
+[31m-[m
+[31m-                </div>[m
+[31m-                <div class="col-1 d-flex align-items-center">[m
+[31m-                    <a href="{% url 'UserInfo:index' topic.starter.id %}">[m
+[31m-                        {% with user_id=topic.starter.id|stringformat:'d' %}[m
+[31m-                            {% with user_avatar_path="images/"|add:user_id %}[m
+[31m-                                {% query_image_extension user_avatar_path as user_avatar_full_path %}[m
+[31m-                                {% with default_avatar_path='images/default.jpeg' %}[m
+[31m-                                    {% if user_avatar_full_path|static_file_exists %}[m
+[31m-                                        <img src="{% static user_avatar_full_path %}?rand=<%= Date.now() %>" alt="用户头像" class="rounded-circle" style="width:40px; height:40px;">[m
+[31m-                                    {% else %}[m
+[31m-                                        <img src="{% static default_avatar_path %}" alt="默认头像" class="rounded-circle" style="width:40px; height:40px;">[m
+[31m-                                    {% endif %}[m
+[31m-                                {% endwith %}[m
+[31m-                            {% endwith %}[m
+[31m-                        {% endwith %}[m
+[31m-                    </a>[m
+[31m-                </div>[m
+[31m-                <div class="col-1 d-flex justify-content-center align-items-center text-muted">[m
+[31m-                    {{ topic.views }}[m
+[31m-                </div>[m
+[31m-                <div class="col-2 d-flex justify-content-center align-items-center text-muted">[m
+[31m-                    {{ topic.last_updated|naturaltime }}[m
+[31m-                </div>[m
+[32m+[m[32m<div class="container mt-4" style="border-radius: 15px; padding: 20px; background-color: #ffffff; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);">[m
+[32m+[m[32m    <div class="d-flex justify-content-between
