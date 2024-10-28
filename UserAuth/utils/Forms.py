@@ -6,8 +6,11 @@ from UserAuth import models
 from UserAuth.utils.bootstrapform import BootStrapForm
 
 from UserAuth.utils.validators import is_username_valid
-from UserAuth.utils.encrypt import md5_encrypt
+from UserAuth.utils.encrypt import encrypt_password, verify_encrypted_password
 
+import re
+import os
+from django.conf import settings
 
 class RegisterForm(BootStrapForm, forms.ModelForm):
     password = forms.CharField(
@@ -73,6 +76,34 @@ class RegisterForm(BootStrapForm, forms.ModelForm):
             raise ValidationError("验证码错误")
         return self.cleaned_data['verification_code']
 
+    def clean_password(self):
+        password = self.cleaned_data['password']
+
+        # 检查密码长度
+        if len(password) < 8:
+            raise ValidationError("密码长度必须至少为8位。")
+        if self.cleaned_data['username_or_mobile'].lower() in password.lower():
+            raise ValidationError("密码不能与用户名或手机号过于相似。")
+        # 检查常见密码
+        # 构建 common_passwords.txt 的路径
+        common_passwords_path = os.path.join(settings.BASE_DIR, 'common_passwords.txt')
+        try:
+            with open(common_passwords_path, 'r', encoding='utf-8') as f:
+                common_passwords = f.read().splitlines()
+            if password in common_passwords:
+                raise ValidationError("此密码过于常见，请选择其他密码。")
+        except FileNotFoundError:
+            raise ValidationError("常见密码字典文件未找到，请联系管理员。")
+        # 检查密码复杂度
+        if not re.search(r'[A-Z]', password):
+            raise ValidationError("密码必须包含至少一个大写字母、一个小写字母、一个数字。缺少大写字母。")
+        if not re.search(r'[a-z]', password):
+            raise ValidationError("密码必须包含至少一个大写字母、一个小写字母、一个数字。缺少小写字母。")
+        if not re.search(r'\d', password):
+            raise ValidationError("密码必须包含至少一个大写字母、一个小写字母、一个数字。缺少数字。")
+
+        return password
+
 
 class LoginForm(BootStrapForm, forms.ModelForm):
     password = forms.CharField(
@@ -95,7 +126,7 @@ class LoginForm(BootStrapForm, forms.ModelForm):
 
     def clean_password(self):
         row_obj = models.User.objects.filter(username=self.cleaned_data.get('username')).first()
-        if row_obj and row_obj.password == md5_encrypt(self.cleaned_data['password']):
+        if row_obj and verify_encrypted_password(encrypt_password(self.cleaned_data['password']), row_obj.password):
             return self.cleaned_data['password']
         else:
             raise ValidationError("用户名或密码错误")
@@ -142,6 +173,36 @@ class ResetPasswordForm(BootStrapForm, forms.Form):
         return self.cleaned_data['verification_code']
 
     def clean_check_password(self):
-        if not self.cleaned_data['password'] == self.cleaned_data['check_password']:
+        password = self.cleaned_data.get('password')
+        check_password = self.cleaned_data.get('check_password')
+        if password and check_password and password != check_password:
             raise ValidationError("两次输入的密码不一致！")
-        return self.cleaned_data['password']
+        return check_password
+
+    def clean_password(self):
+        password = self.cleaned_data['password']
+
+        # 检查密码长度
+        if len(password) < 8:
+            raise ValidationError("密码长度必须至少为8位。")
+        if self.cleaned_data['username_or_mobile'].lower() in password.lower():
+            raise ValidationError("密码不能与用户名或手机号过于相似。")
+        # 检查常见密码
+        # 构建 common_passwords.txt 的路径
+        common_passwords_path = os.path.join(settings.BASE_DIR, 'common_passwords.txt')
+        try:
+            with open(common_passwords_path, 'r', encoding='utf-8') as f:
+                common_passwords = f.read().splitlines()
+            if password in common_passwords:
+                raise ValidationError("此密码过于常见，请选择其他密码。")
+        except FileNotFoundError:
+            raise ValidationError("常见密码字典文件未找到，请联系管理员。")
+        # 检查密码复杂度
+        if not re.search(r'[A-Z]', password):
+            raise ValidationError("密码必须包含至少一个大写字母、一个小写字母、一个数字。缺少大写字母。")
+        if not re.search(r'[a-z]', password):
+            raise ValidationError("密码必须包含至少一个大写字母、一个小写字母、一个数字。缺少小写字母。")
+        if not re.search(r'\d', password):
+            raise ValidationError("密码必须包含至少一个大写字母、一个小写字母、一个数字。缺少数字。")
+
+        return password
