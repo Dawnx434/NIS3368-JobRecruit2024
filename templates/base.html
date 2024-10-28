@@ -1,10 +1,11 @@
 {% load static static_tags %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{% block title %}Django Boards{% endblock %}</title>
+    <title>{% block title %}Django 论坛{% endblock %}</title>
     <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
     <link rel="stylesheet" href="{% static 'css/base.css' %}">
     <link rel="stylesheet" href="{% static 'css/bootstrap-icons.css' %}">
@@ -12,139 +13,184 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css">
     <script src="https://cdn.staticfile.org/twitter-bootstrap/5.1.1/js/bootstrap.bundle.min.js"></script>
     {% block stylesheet %}{% endblock %}
+    <style>
+        /* 页面背景和文字自定义颜色 */
+        body.custom-background {
+            background-color: #f8f9fa;
+        }
+
+        .custom-text-color {
+            color: #17a2b8;
+            /* JobRecruitment 自定义字体颜色 */
+        }
+
+        /* 按钮颜色 */
+        .custom-button {
+            background-color: #17a2b8;
+            /* 按钮主色与 JobRecruitment 字体相同 */
+            border: none;
+            color: white;
+        }
+
+        .custom-button:hover {
+            background-color: #138496;
+            /* 悬停时颜色略深 */
+        }
+
+        /* 导航链接间距 */
+        .navbar-nav .nav-item+.nav-item {
+            margin-left: 20px;
+            /* 导航项之间的间距设置为20px */
+        }
+
+        /* 页脚和链接样式 */
+        footer {
+            background-color: #343a40;
+            color: #adb5bd;
+        }
+
+        footer a {
+            color: #adb5bd;
+        }
+
+        footer a:hover {
+            color: #ffffff;
+            /* 悬停时颜色变白 */
+        }
+    </style>
 </head>
+
 <body class="custom-background">
 
     {% block body %}
-        <nav class="navbar navbar-expand-sm navbar-light bg-light">
-            <div class="container">
-                <a class="navbar-brand custom-text-color" href="{% url 'Forum:home' %}">JobRecruitment</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbar">
-                    <ul class="navbar-nav me-auto">
-                        <li class="nav-item">
-                            <a class="nav-link custom-nav-link" style="margin-left: 1rem;" href="{% url 'Forum:home' %}">首页</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link custom-nav-link" style="margin-left: 1rem;" href="{% url 'PublishPosition:publish_list' %}">职位</a>
-                        </li>
-                    </ul>
-                    <form class="d-flex" method="get" action="/position/list/">
-                        <input class="form-control me-2" type="text" name="keyword" placeholder="搜索职位...">
-                        <input type="hidden" name="target_place" value="0">
-                        <input type="hidden" name="page" value="1">
-                        <input type="hidden" name="page_size" value="10">
-                        <button class="btn btn-primary custom-button" type="submit"><i class="fas fa-search"></i></button>
-                    </form>
-                    {% if 'UserInfo' in request.session %}
-                        <div class="nav-item dropdown">
-                            {% with id=request.session.UserInfo.id %}
-                                <a class="nav-link dropdown-toggle" href="{% url 'UserInfo:index' id %}" id="navbardrop" data-toggle="dropdown">
-                                    {% with user_id=id|stringformat:'d' %}
-                                        {% with user_avatar_path="images/"|add:user_id %}
-                                            {% query_image_extension user_avatar_path as user_avatar_full_path %}
-                                            {% with default_avatar_path='images/default.jpeg' %}
-                                                {% if user_avatar_full_path|static_file_exists %}
-                                                    <img src="{% static user_avatar_full_path %}?rand=<%= Date.now() %>" alt="用户头像" class="rounded-circle" style="width:40px; height:40px;">
-                                                {% else %}
-                                                    <img src="{% static default_avatar_path %}" alt="默认头像" class="rounded-circle" style="width:40px; height:40px;">
-                                                {% endif %}
-                                            {% endwith %}
-                                        {% endwith %}
-                                    {% endwith %}
-                                </a>
-                            {% endwith %}
-                            <div class="dropdown-menu">
-
-                                <a class="dropdown-item" href="{% url 'UserInfo:resume' %}">我的简历</a>
-                                <a class="dropdown-item" href="{% url 'UserInfo:application' %}">我的投递</a>
-                                <a class="dropdown-item" href="{% url 'UserMessage:message_box' %}">我的收件箱</a>
-                                <a class="dropdown-item" href="{% url 'UserInfo:user_info' %}">个人资料</a>
-                                <a class="dropdown-item" href="{% url 'UserInfo:account' %}">账号安全</a>
-                                <a class="dropdown-item" href="{% url 'UserInfo:my_position' %}">我发布的职位</a>
-                                <a class="dropdown-item" href="{% url 'UserAuth:logout' %}">退出登录</a>
-                            </div>
-                        </div>
-                        <div class="nav-item dropdown">
-                            <button type="button" class="btn btn-primary custom-button dropdown-toggle" onclick="window.location.href='#'" data-toggle="dropdown">
-                                发布
-                            </button>
-                            <div class="dropdown-menu">
-                                <a class="dropdown-item" href="{% url 'Forum:new_topic' %}">发动态</a>
-                                <a class="dropdown-item" href="{% url 'PublishPosition:publish'%}">发职位</a>
-                            </div>
-                        </div>
-                    {% else %}
-                        <form class="form-inline ml-auto">
-                            <a href="{% url 'UserAuth:login' %}" class="btn btn-outline-secondary">Log in</a>
-                            <a href="{% url 'UserAuth:register' %}" class="btn btn-primary ml-2">Sign up</a>
-                        </form>
-                    {% endif %}
-                </div>
-            </div>
-        </nav>
-
-        <div class="container mb-5">
-            {% block content %}
-            {% endblock %}
-        </div>
-
-
-        {% block footer %}
-            <footer class="bg-dark text-muted">
-                <div class="container py-4">
-                    <div class="row">
-                        <div class="col-md-4">
-                            <h5>联系方式</h5>
-                            <ul class="list-unstyled">
-                                <li>电话：XXX-XXXX-XXXX</li>
-                                <li>邮件：example@qq.com</li>
-                                <li>地址：上海市闵行区东川路800号</li>
-                            </ul>
-                        </div>
-                        <div class="col-md-4">
-                            <h5>导航</h5>
-                            <ul class="list-unstyled">
-                                <li><a href="{% url 'Forum:home' %}" class="text-decoration-none text-secondary">首页</a></li>
-                                <li><a href="#" class="text-decoration-none text-secondary">关于我们</a></li>
-                                <li><a href="#" class="text-decoration-none text-secondary">服务</a></li>
-                                <li><a href="#" class="text-decoration-none text-secondary">联系我们</a></li>
-                            </ul>
-                        </div>
-                        <div class="col-md-4">
-                            <h5>社交媒体</h5>
-                            <ul class="list-unstyled">
-                                <li><a href="https://www.facebook.com/" class="text-decoration-none text-secondary"><i class="fab fa-facebook"></i></a></li>
-                                <li><a href="https://twitter.com/" class="text-decoration-none text-secondary"><i class="fab fa-twitter"></i></a></li>
-                                <li><a href="https://www.instagram.com/" class="text-decoration-none text-secondary"><i class="fab fa-instagram"></i></a></li>
-                            </ul>
-                        </div>
+    <nav class="navbar navbar-expand-sm navbar-light bg-light shadow-sm">
+        <div class="container">
+            <a class="navbar-brand custom-text-color" href="{% url 'Forum:home' %}">JobRecruitment</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbar">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link custom-nav-link" href="{% url 'Forum:home' %}">首页</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link custom-nav-link" href="{% url 'PublishPosition:publish_list' %}">职位</a>
+                    </li>
+                </ul>
+                <form class="d-flex" method="get" action="/position/list/">
+                    <input class="form-control me-2" type="text" name="keyword" placeholder="搜索职位..."
+                        aria-label="Search">
+                    <button class="btn custom-button" type="submit"><i class="fas fa-search"></i></button>
+                </form>
+                {% if 'UserInfo' in request.session %}
+                <div class="nav-item dropdown">
+                    {% with id=request.session.UserInfo.id %}
+                    <a class="nav-link dropdown-toggle" href="{% url 'UserInfo:index' id %}" id="navbardrop"
+                        data-bs-toggle="dropdown">
+                        {% with user_id=id|stringformat:'d' %}
+                        {% with user_avatar_path="images/"|add:user_id %}
+                        {% query_image_extension user_avatar_path as user_avatar_full_path %}
+                        {% with default_avatar_path='images/default.jpeg' %}
+                        {% if user_avatar_full_path|static_file_exists %}
+                        <img src="{% static user_avatar_full_path %}?rand=<%= Date.now() %>" alt="用户头像"
+                            class="rounded-circle" style="width:40px; height:40px;">
+                        {% else %}
+                        <img src="{% static default_avatar_path %}" alt="默认头像" class="rounded-circle"
+                            style="width:40px; height:40px;">
+                        {% endif %}
+                        {% endwith %}
+                        {% endwith %}
+                        {% endwith %}
+                    </a>
+                    {% endwith %}
+                    <div class="dropdown-menu">
+                        <a class="dropdown-item" href="{% url 'UserInfo:resume' %}">我的简历</a>
+                        <a class="dropdown-item" href="{% url 'UserInfo:application' %}">我的投递</a>
+                        <a class="dropdown-item" href="{% url 'UserMessage:message_box' %}">我的收件箱</a>
+                        <a class="dropdown-item" href="{% url 'UserInfo:user_info' %}">个人资料</a>
+                        <a class="dropdown-item" href="{% url 'UserInfo:account' %}">账号安全</a>
+                        <a class="dropdown-item" href="{% url 'UserInfo:my_position' %}">我发布的职位</a>
+                        <a class="dropdown-item" href="{% url 'UserAuth:logout' %}">退出登录</a>
                     </div>
                 </div>
-            </footer>
+                <div class="nav-item dropdown">
+                    <button type="button" class="btn custom-button dropdown-toggle" onclick="window.location.href='#'"
+                        data-bs-toggle="dropdown">
+                        发布
+                    </button>
+                    <div class="dropdown-menu">
+                        <a class="dropdown-item" href="{% url 'Forum:new_topic' %}">发动态</a>
+                        <a class="dropdown-item" href="{% url 'PublishPosition:publish'%}">发职位</a>
+                    </div>
+                </div>
+                {% else %}
+                <form class="form-inline ml-auto">
+                    <a href="{% url 'UserAuth:login' %}" class="btn btn-outline-secondary">登录</a>
+                    <a href="{% url 'UserAuth:register' %}" class="btn custom-button ml-2">注册</a>
+                </form>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mb-5">
+        {% block content %}
         {% endblock %}
-        <script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
-        <script>
-            $(document).ready(function(){
-                $(".dropdown").hover(function(){
-                    var dropdownMenu = $(this).children(".dropdown-menu");
-                    if(dropdownMenu.is(":visible")){
-                        dropdownMenu.parent().toggleClass("open");
-                    }
-                });
+    </div>
+
+    {% block footer %}
+    <footer class="py-4">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <h5>联系方式</h5>
+                    <ul class="list-unstyled">
+                        <li>电话：XXX-XXXX-XXXX</li>
+                        <li>邮件：example@qq.com</li>
+                        <li>地址：上海市闵行区东川路800号</li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <h5>导航</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="{% url 'Forum:home' %}" class="text-decoration-none">首页</a></li>
+                        <li><a href="#" class="text-decoration-none">关于我们</a></li>
+                        <li><a href="#" class="text-decoration-none">服务</a></li>
+                        <li><a href="#" class="text-decoration-none">联系我们</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <h5>社交媒体</h5>
+                    <ul class="list-unstyled d-flex">
+                        <li class="me-3"><a href="https://www.facebook.com/" class="text-decoration-none"><i
+                                    class="fab fa-facebook fa-lg"></i></a></li>
+                        <li class="me-3"><a href="https://twitter.com/" class="text-decoration-none"><i
+                                    class="fab fa-twitter fa-lg"></i></a></li>
+                        <li><a href="https://www.instagram.com/" class="text-decoration-none"><i
+                                    class="fab fa-instagram fa-lg"></i></a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </footer>
+    {% endblock %}
+
+    <script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $(".dropdown").hover(function () {
+                $(this).children(".dropdown-menu").toggleClass("show");
             });
+        });
 
-            $(document).ready(function(){
-                $(document).off('click.bs.dropdown.data-api');
-            });
-        </script>
+        $(document).ready(function () {
+            $(document).off('click.bs.dropdown.data-api');
+        });
+    </script>
 
-        {% block js %}
-        {% endblock %}
-
+    {% block js %}{% endblock %}
     {% endblock body %}
-
 </body>
+
 </html>

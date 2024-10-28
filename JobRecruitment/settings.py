@@ -97,7 +97,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'jobrecruitment',  # 数据库名字
         'USER': 'root',  #用户名
-        'PASSWORD': '123456', #用户密码
+        'PASSWORD': 'Mr.040124', #用户密码
         'HOST': '127.0.0.1',  # MySQL 在哪个 ip
         'PORT': '3306',  # 端口号
     }

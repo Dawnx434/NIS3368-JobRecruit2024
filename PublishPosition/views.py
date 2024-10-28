@@ -80,8 +80,8 @@ def position_list(request):
         'district_dictionary': district_dictionary,
         'page_title': page_title,
         'keyword': keyword,
-        'resumes':resumes
-        'target_place': target_place #ToDo:wating for check
+        'resumes':resumes,
+        'target_place': target_place, #ToDo:wating for check
     }
     return render(request, 'PublishPosition/position_list.html', context)
 
