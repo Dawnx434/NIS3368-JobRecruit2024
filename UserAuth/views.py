@@ -48,8 +48,6 @@ def register(request):
     }
     request.session.set_expiry(60 * 60 * 24 * 7)  # 7天免登录
     return redirect("/")
-
-
 def login(request):
     if request.method == 'GET':
         form = LoginForm(request=request)
@@ -107,7 +105,8 @@ def reset_password(request):
         return render(request, "UserAuth/alert_page.html", {'msg': '错误的用户信息'})
 
     # 重置密码
-    query_set.update(password=form.cleaned_data['password'])
+    new_password = md5_encrypt(form.cleaned_data['password'])  # 使用 md5_encrypt 对新密码加密
+    query_set.update(password=new_password)  # 更新数据库中的密码
     return render(request, "UserAuth/alert_page.html", context={'msg': "您的密码已被重置！", 'success': True})
 
 
