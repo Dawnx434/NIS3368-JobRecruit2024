@@ -12,4 +12,8 @@ urlpatterns = [
     path('conversation/<int:current_user_id>/<int:selected_user_id>/', views.conversation_view, name='conversation_with_user'),
     # path('<int:selected_user_id>/', views.conversation_view, name='conversation_with_user'),  # 特定用户对话
     path('send/', views.send_message, name='send_message'),
+    path('fetch-new-messages/<int:current_user_id>/<int:selected_user_id>/',
+         views.fetch_new_messages,
+         name='fetch_new_messages'),
+    path('search/', views.search_user, name='search_user'),
 ]

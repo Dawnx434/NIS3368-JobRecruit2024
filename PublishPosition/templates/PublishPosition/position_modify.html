@@ -220,10 +220,17 @@
                 </div>
 
                 <div class="mb-3">
-                    <label for="salary" class="form-label">薪资</label>
-                    <input type="number" id="salary" name="salary" class="form-control" aria-describedby="salary_Help" value="{{ data_dict.salary }}" required>
+                    <label for="salary_min" class="form-label">最低薪资</label>
+                    <input type="number" id="salary_min" name="salary_min" class="form-control" aria-describedby="salary_Help" value="{{ data_dict.salary_max }}" required>
                     <span id="salary_Help" class="form-text" style="color: red;">{{ error_dict.salary }}</span>
                     
+                </div>
+
+                <div class="mb-3">
+                    <label for="salary_max" class="form-label">最高薪资</label>
+                    <input type="number" id="salary_max" name="salary_max" class="form-control" aria-describedby="salary_Help" value="{{ data_dict.salary_max }}" required>
+                    <span id="salary_Help" class="form-text" style="color: red;">{{ error_dict.salary }}</span>
+
                 </div>
 
                 <div class="mb-3">
