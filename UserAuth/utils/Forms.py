@@ -64,7 +64,7 @@ class RegisterForm(BootStrapForm, forms.ModelForm):
         return self.cleaned_data['email']
 
     def clean_check_password(self):
-        if not self.cleaned_data['password'] == self.cleaned_data['check_password']:
+        if not self.cleaned_data.get('password') == self.cleaned_data['check_password']:
             raise ValidationError("两次密码不一致")
         return self.cleaned_data['check_password']
 
@@ -72,18 +72,17 @@ class RegisterForm(BootStrapForm, forms.ModelForm):
         code_in_session = self.request.session.get('register_verification_code')
         if not code_in_session:
             raise ValidationError("验证码已过期")
-        if not self.cleaned_data['verification_code'] == code_in_session:
+        if not self.cleaned_data['verification_code'].upper() == code_in_session.upper():
             raise ValidationError("验证码错误")
         return self.cleaned_data['verification_code']
 
     def clean_password(self):
         password = self.cleaned_data['password']
-
         # 检查密码长度
         if len(password) < 8:
             raise ValidationError("密码长度必须至少为8位。")
-        if self.cleaned_data['username_or_mobile'].lower() in password.lower():
-            raise ValidationError("密码不能与用户名或手机号过于相似。")
+        if self.cleaned_data.get('username').lower() in password.lower():
+            raise ValidationError("密码不能与用户名过于相似。")
         # 检查常见密码
         # 构建 common_passwords.txt 的路径
         common_passwords_path = os.path.join(settings.BASE_DIR, 'common_passwords.txt')
@@ -135,7 +134,7 @@ class LoginForm(BootStrapForm, forms.ModelForm):
         code_in_session = self.request.session.get('login_verification_code')
         if not code_in_session:
             raise ValidationError("验证码已过期")
-        if not self.cleaned_data['verification_code'] == code_in_session:
+        if not self.cleaned_data['verification_code'].upper() == code_in_session.upper():
             raise ValidationError("验证码错误")
         return self.cleaned_data['verification_code']
 

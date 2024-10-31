@@ -4,7 +4,7 @@
 
 {% block stylesheet %}
 
-    <style>
+    <style nonce="{{request.csp_nonce}}">
         legend {
             color: #17a2b8;
             border-bottom: 1px solid #17a2b8;
@@ -76,8 +76,8 @@
 {% endblock %}
 
 {% block js %}
-<script src="{% static 'js/jquery-3.6.0.min.js' %}"></script>
-<script type="text/javascript">
+<script src="{% static 'js/jquery-3.6.0.min.js' %}" nonce="{{request.csp_nonce}}"></script>
+<script type="text/javascript" nonce="{{request.csp_nonce}}">
     const interval = 30;
     let countdown = interval;
     let button = document.getElementById('sendemail');

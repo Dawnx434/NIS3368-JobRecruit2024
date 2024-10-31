@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.humanize',
     'mdeditor',
     'widget_tweaks',
+    'csp',
 
     # My app
     'UserAuth',
@@ -66,6 +67,7 @@ MIDDLEWARE = [
     "UserAuth.middlewares.CheckLoginState.CheckLoginStateMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     'ContentReview.middleware.SensitiveWordsMiddleware',
+    'csp.middleware.CSPMiddleware',
 ]
 
 X_FRAME_OPTIONS = "SAMEORIGIN"
@@ -163,10 +165,30 @@ try:
 except ImportError:  # 捕获导入异常
     pass
 
+CSP_IMG_SRC = ("'self'", "data:", "www.google-analytics.com", "https://cdnjs.cloudflare.com", "https://cdn.jsdelivr.net")
+CSP_DEFAULT_SRC =(
+    "'self'",
+    "www.google-analytics.com",  
+    "https://cdnjs.cloudflare.com",
+    "https://cdn.jsdelivr.net",
+    )
+CSP_SCRIPT_SRC =(
+    "'self'",
+    "www.googletagmanager.com",
+    "https://cdn.staticfile.org",
+    )
+CSP_STYLE_SRC =(
+    "'self'",
+    "https://cdnjs.cloudflare.com",
+    "https://cdn.jsdelivr.net",
+    "'unsafe-inline'",
+)
+CSP_INCLUDE_NONCE_IN = ("script-src"),#"style-src")
+
 EMAIL_HOST = "smtp.sjtu.edu.cn"
 EMAIL_PORT = 25 
-EMAIL_HOST_USER = ""     # JAccount账号，不带邮箱后缀
-EMAIL_HOST_PASSWORD = ""     # JAccount密码
+EMAIL_HOST_USER = "guoyu_1"     # JAccount账号，不带邮箱后缀
+EMAIL_HOST_PASSWORD = "Aa2195301536"     # JAccount密码
 EMAIL_USE_TLS = True 
 EMAIL_FROM = "guoyu_1@sjtu.edu.cn"  # JAccount邮箱地址
 EMAIL_TITLE = '邮箱激活'

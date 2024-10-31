@@ -2,7 +2,7 @@
 
 {% block stylesheet %}
 
-    <style>
+    <style nonce="{{request.csp_nonce}}">
 
         .custom-text-color {
             color: #17a2b8 !important;
@@ -288,12 +288,12 @@
 
 {% block js %}
 
-    <script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
-    <script src="https://cdn.staticfile.org/popper.js/1.15.0/umd/popper.min.js"></script>
-    <script src="https://cdn.staticfile.org/twitter-bootstrap/5.1.1/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js" nonce="{{request.csp_nonce}}"></script>
+    <script src="https://cdn.staticfile.org/popper.js/1.15.0/umd/popper.min.js" nonce="{{request.csp_nonce}}"></script>
+    <script src="https://cdn.staticfile.org/twitter-bootstrap/5.1.1/js/bootstrap.bundle.min.js" nonce="{{request.csp_nonce}}"></script>
 
 
-    <script>
+    <script nonce="{{request.csp_nonce}}">
 
             document.addEventListener("DOMContentLoaded", function() {
                 document.getElementById("uploadAvatarBtn").addEventListener("click", openModal);
