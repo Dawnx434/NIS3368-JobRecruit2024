@@ -84,7 +84,7 @@ class RegisterForm(BootStrapForm, forms.ModelForm):
         # 检查密码长度
         if len(password) < 8:
             raise ValidationError("密码长度必须至少为8位。")
-        if self.cleaned_data['username_or_mobile'].lower() in password.lower():
+        if self.cleaned_data['username'].lower() in password.lower() or self.cleaned_data['mobile_phone'].lower() in password.lower():
             raise ValidationError("密码不能与用户名或手机号过于相似。")
         # 检查常见密码
         # 构建 common_passwords.txt 的路径
