@@ -121,13 +121,6 @@ def reset_password(request):
     return render(request, "UserAuth/alert_page.html", context={'msg': "您的密码已被重置！", 'success': True})
 
 def is_similar(original, new):
-    # 这里可以实现简单的相似度检查逻辑，例如字符相似度
-    threshold = 0.7  # 相似度阈值
-    similar_chars = sum(1 for a, b in zip(original, new) if a == b)
-    return (similar_chars / max(len(original), len(new))) > threshold
-
-
-def is_similar(original, new):
     distance = Levenshtein.distance(original, new)
     max_len = max(len(original), len(new))
     similarity = 1 - (distance / max_len)

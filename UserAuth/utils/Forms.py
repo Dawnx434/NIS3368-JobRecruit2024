@@ -63,11 +63,6 @@ class RegisterForm(BootStrapForm, forms.ModelForm):
             raise ValidationError("邮箱已存在")
         return self.cleaned_data['email']
 
-    def clean_check_password(self):
-        if not self.cleaned_data['password'] == self.cleaned_data['check_password']:
-            raise ValidationError("两次密码不一致")
-        return self.cleaned_data['check_password']
-
     def clean_verification_code(self):
         code_in_session = self.request.session.get('register_verification_code')
         if not code_in_session:
@@ -75,6 +70,13 @@ class RegisterForm(BootStrapForm, forms.ModelForm):
         if not self.cleaned_data['verification_code'] == code_in_session:
             raise ValidationError("验证码错误")
         return self.cleaned_data['verification_code']
+
+    def clean_check_password(self):
+        password = self.cleaned_data.get('password')
+        check_password = self.cleaned_data.get('check_password')
+        if password and check_password and password != check_password:
+            raise ValidationError("两次输入的密码不一致！")
+        return check_password
 
     def clean_password(self):
         password = self.cleaned_data['password']
