@@ -183,7 +183,7 @@ CSP_STYLE_SRC =(
     "https://cdn.jsdelivr.net",
     "'unsafe-inline'",
 )
-CSP_INCLUDE_NONCE_IN = ("script-src"),#"style-src")
+CSP_INCLUDE_NONCE_IN = ["script-src"]#,"style-src")
 
 EMAIL_HOST = "smtp.sjtu.edu.cn"
 EMAIL_PORT = 25 

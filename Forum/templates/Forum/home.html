@@ -91,7 +91,7 @@
 {% endblock %}
 
 {% block content %}
-<div class="container mt-4" style="border-radius: 15px; padding: 20px; background-color: #ffffff; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);">
+<div class="container mt-4" style="border-radius: 15px; padding: 20px; background-color: #ffffff; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);" nonce="{{ request.csp_nonce }}">
     <div class="d-flex justify-content-between header-buttons">
         <a href="{% url 'Forum:new_topic' %}" class="btn btn-primary custom-button">
             <i class="fas fa-plus me-1"></i> 新建动态
