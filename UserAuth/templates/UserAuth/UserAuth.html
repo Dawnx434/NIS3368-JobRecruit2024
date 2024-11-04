@@ -17,31 +17,33 @@
             padding: 0;
             height: 100vh;
             background-image: url('{% static "img/背景.png" %}');
-            /* 全局背景图片路径 */
             background-size: cover;
             background-position: center;
             display: flex;
-            align-items: center;
-            font-family: Arial, sans-serif;
+            font-family: 'Helvetica', sans-serif; /* 改变字体 */
         }
 
         /* 左侧图片部分 */
         .left-section {
             flex: 1;
             background-image: url('{% static "img/banner.97f904e9.png" %}');
-            /* 替换为你的左侧图片路径 */
-            background-size: 80%;
-            background-position: center;
-            background-repeat: no-repeat;
+            background-size: contain; /* 使背景图自适应宽度 */
+            background-repeat: no-repeat; /* 不重复背景图 */
+            background-position: center; /* 居中显示背景图 */
             height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start; /* 调整为从上方开始对齐 */
+            align-items: center;
+            color: #fffacd; /* 改为淡黄色 */
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+            padding-top: 50px; /* 添加上内边距以上调文字 */
         }
 
         .left-section-text {
-            color: white;
             font-size: 36px;
             font-weight: bold;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* 给文字加阴影，增强可读性 */
-            text-align: center;
+            margin: 10px 0;
         }
 
         /* 右侧登录框 */
@@ -50,26 +52,27 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            background-color: rgba(255, 255, 255, 0);
-            /* 让右侧有个半透明背景 */
             height: 100%;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.5); /* 更浅的背景颜色 */
+            box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1); /* 更柔和的阴影 */
         }
 
         .account {
-            width: 100%;
-            max-width: 400px;
-            background: white;
-            border-radius: 10px;
-            padding: 40px;
-            margin-right: 12%;
-            box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1);
-            text-align: center;
-        }
+        width: 100%;
+        max-width: 400px;
+        background: white;
+        border-radius: 20px;
+        padding: 20px;
+        box-shadow: 0px 5px 20px rgba(0, 0, 0, 0.1);
+        text-align: center;
+    }
 
         .account h2 {
             margin-bottom: 20px;
             font-weight: bold;
             color: #333;
+            font-size: 24px; /* 调整标题字体大小 */
         }
 
         .form-group {
@@ -84,34 +87,61 @@
 
         .form-group input {
             width: 100%;
-            padding: 10px;
-            border-radius: 5px;
+            padding: 12px;
+            border-radius: 8px;
             border: 1px solid #ddd;
             margin-top: 5px;
+            transition: border 0.3s;
+            font-family: 'Helvetica', sans-serif; /* 改变输入框字体 */
+            color: #333; /* 改变输入框字体颜色 */
+        }
+
+        .form-group input:focus {
+            border-color: #00bfa5;
+            outline: none;
         }
 
         .btn-primary {
             width: 100%;
-            padding: 10px;
+            padding: 12px;
             background-color: #00bfa5;
             border: none;
-            border-radius: 5px;
+            border-radius: 20px; /* 修改按钮边角为20px */
             color: white;
             font-weight: bold;
             cursor: pointer;
-            transition: background-color 0.3s;
+            transition: background-color 0.3s, transform 0.3s;
         }
 
         .btn-primary:hover {
             background-color: #009688;
+            transform: scale(1.05); /* 添加悬浮放大效果 */
         }
 
         .btn-danger {
             width: 100%;
-            padding: 10px;
+            padding: 12px;
             margin-top: 10px;
-            border-radius: 5px;
+            border-radius: 20px; /* 修改按钮边角为20px */
+            background-color: #f44336;
+            color: white;
+            font-weight: bold;
+            border: none;
+            transition: background-color 0.3s, transform 0.3s; /* 添加过渡效果 */
         }
+
+        .btn-danger:hover {
+            background-color: #e53935; /* 悬浮时改变颜色 */
+            transform: scale(1.05); /* 添加悬浮放大效果 */
+        }
+
+        .password-hint {
+            color: #ff4500; /* 使用橙色 */
+            font-size: 12px;
+            margin-top: 5px;
+            font-style: italic; /* 斜体显示 */
+        }
+
 
         .forgot-password {
             text-align: right;
@@ -171,8 +201,6 @@
     <div class="left-section">
         <!-- 左侧文字部分 -->
         <div class="left-section-text">
-                      </div>
-        <div class="left-section-text">
             海量优质人才，在线约面
         </div>
         <div class="left-section-text" style="font-size: 30px;">
@@ -195,6 +223,9 @@
                 <div class="form-group">
                     <label>{{ field.label }}</label>
                     {{ field }}
+                    {% if field.name == 'password' %}
+                    <div class="password-hint">密码必须包含至少一个大写字母、一个小写字母、一个数字，并且不少于8个字符</div> <!-- 修改了提示信息 -->
+                    {% endif %}
                     {% if field.name == 'password' and nid == 2 %}
                     <a href="/auth/reset/" class="forgot-password">忘记密码？</a>
                     {% endif %}
@@ -255,38 +286,39 @@
 
         function countdownTick() {
             countdown--;
-            updateButtonText(button);
-
+            updateButtonText();
             if (countdown <= 0) {
                 clearInterval(timer);
-                button.innerText = '发送验证码';
+                button.innerText = '发送邮件';
                 button.disabled = false;
-                button.className = 'btn btn-primary';
+                countdown = interval; // 重置倒计时
             }
         }
 
-        document.getElementById('sendemail').addEventListener('click', function () {
-            button.disabled = true;
-            countdown = interval;
-            button.className = 'btn btn-secondary';
-            timer = setInterval(countdownTick, 1000);
-            let email_address = document.getElementById("id_email").value;
-            $.ajax({
-                url: '/auth/sendemail/',
-                type: 'POST',
-                data: {
-                    'email_address': email_address,
-                },
-                dataType: 'JSON',
-                success: function (res) {
-                    if (!res['state']) {
-                        alert('错误的邮箱格式！');
-                        clearInterval(timer);
-                        button.innerText = '发送验证码';
-                        button.disabled = false;
-                        button.className = 'btn btn-primary';
+        $(document).ready(function () {
+            button.addEventListener('click', function () {
+                $(this).prop('disabled', true);
+                $.ajax({
+                    url: '/auth/send-email/',
+                    type: 'POST',
+                    data: {
+                        'email': $('#id_email').val(),
+                        'csrfmiddlewaretoken': '{{ csrf_token }}',
+                    },
+                    success: function (data) {
+                        if (data.code == 200) {
+                            alert('邮件发送成功！');
+                            timer = setInterval(countdownTick, 1000);
+                        } else {
+                            alert('发送失败，请重试！');
+                            button.prop('disabled', false); // 发送失败则启用按钮
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        alert('错误: ' + error);
+                        button.prop('disabled', false); // 出现错误则启用按钮
                     }
-                }
+                });
             });
         });
     </script>
