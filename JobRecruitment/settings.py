@@ -99,7 +99,7 @@ DATABASES = {
         "ENGINE": "django.db.backends.sqlite3",
         "NAME": BASE_DIR / "db.sqlite3",
         'USER': 'root',  #用户名
-        'PASSWORD': '123456', #用户密码
+        'PASSWORD': '123456',  #用户密码
         'HOST': '127.0.0.1',  # MySQL 在哪个 ip
         'PORT': '3306',  # 端口号
     }
@@ -143,14 +143,12 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = "static/"
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 
-STATICFILES_DIRS = [
-    # 全局目录下的静态文件
-    BASE_DIR / "static",
-]
+STATICFILES_DIRS = []
 PROFILE_ROOT = os.path.join(BASE_DIR, 'static/images/')
 RESUME_ROOT = os.path.join(BASE_DIR, 'resumes/')
 # Default primary key field type
@@ -164,9 +162,9 @@ except ImportError:  # 捕获导入异常
     pass
 
 EMAIL_HOST = "smtp.sjtu.edu.cn"
-EMAIL_PORT = 25 
-EMAIL_HOST_USER = ""     # JAccount账号，不带邮箱后缀
-EMAIL_HOST_PASSWORD = ""     # JAccount密码
-EMAIL_USE_TLS = True 
+EMAIL_PORT = 25
+EMAIL_HOST_USER = ""  # JAccount账号，不带邮箱后缀
+EMAIL_HOST_PASSWORD = ""  # JAccount密码
+EMAIL_USE_TLS = True
 EMAIL_FROM = "guoyu_1@sjtu.edu.cn"  # JAccount邮箱地址
 EMAIL_TITLE = '邮箱激活'
