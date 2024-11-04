@@ -92,7 +92,7 @@ class RegisterForm(BootStrapForm, forms.ModelForm):
         try:
             with open(common_passwords_path, 'r', encoding='utf-8') as f:
                 common_passwords = f.read().splitlines()
-            if password in common_passwords:
+            if password in  common_passwords:
                 raise ValidationError("此密码过于常见，请选择其他密码。")
         except FileNotFoundError:
             raise ValidationError("常见密码字典文件未找到，请联系管理员。")
