@@ -1,13 +1,10 @@
 from django import forms
 from django.core.validators import RegexValidator
 from django.core.exceptions import ValidationError
-
 from UserAuth import models
 from UserAuth.utils.bootstrapform import BootStrapForm
-
 from UserAuth.utils.validators import is_username_valid
 from UserAuth.utils.encrypt import encrypt_password, verify_encrypted_password
-
 import re
 import os
 from django.conf import settings
@@ -87,12 +84,11 @@ class RegisterForm(BootStrapForm, forms.ModelForm):
         if self.cleaned_data['username'].lower() in password.lower():
             raise ValidationError("密码不能与用户名过于相似。")
         # 检查常见密码
-        # 构建 common_passwords.txt 的路径
         common_passwords_path = os.path.join(settings.BASE_DIR, 'common_passwords.txt')
         try:
             with open(common_passwords_path, 'r', encoding='utf-8') as f:
                 common_passwords = f.read().splitlines()
-            if password in  common_passwords:
+            if password in common_passwords:
                 raise ValidationError("此密码过于常见，请选择其他密码。")
         except FileNotFoundError:
             raise ValidationError("常见密码字典文件未找到，请联系管理员。")
@@ -137,7 +133,8 @@ class LoginForm(BootStrapForm, forms.ModelForm):
         code_in_session = self.request.session.get('login_verification_code')
         if not code_in_session:
             raise ValidationError("验证码已过期")
-        if not self.cleaned_data['verification_code'] == code_in_session:
+        # 将用户输入的验证码转换为小写进行比较
+        if not self.cleaned_data['verification_code'].lower() == code_in_session.lower():
             raise ValidationError("验证码错误")
         return self.cleaned_data['verification_code']
 
@@ -190,7 +187,6 @@ class ResetPasswordForm(BootStrapForm, forms.Form):
         if self.cleaned_data['username_or_mobile'].lower() in password.lower():
             raise ValidationError("密码不能与用户名或手机号过于相似。")
         # 检查常见密码
-        # 构建 common_passwords.txt 的路径
         common_passwords_path = os.path.join(settings.BASE_DIR, 'common_passwords.txt')
         try:
             with open(common_passwords_path, 'r', encoding='utf-8') as f:

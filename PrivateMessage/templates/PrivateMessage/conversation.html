@@ -1,5 +1,12 @@
-<html>
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>私信页面</title>
     <style>
         .chat-container {
             display: flex;
@@ -9,32 +16,75 @@
 
         /* 左侧联系人列表样式 */
         .contact-list {
-            width: 25%; /* 左侧占25%的宽度 */
+            width: 25%;
+            /* 左侧占25%的宽度 */
             background-color: #ffffff;
             border-right: 1px solid #ccc;
             padding: 20px;
             overflow-y: auto;
         }
 
+        .avatar {
+            width: 40px;
+            /* 头像宽度 */
+            height: 40px;
+            /* 头像高度 */
+            border-radius: 50%;
+            /* 圆形头像 */
+            margin-right: 10px;
+            /* 与用户名间的间距 */
+            vertical-align: middle;
+            /* 垂直对齐 */
+        }
+
+        /* 返回首页按钮样式 */
+        .home-button {
+            display: inline-block;
+            padding: 8px 15px;
+            /* 缩小内边距 */
+            margin-bottom: 15px;
+            background-color: #17a2b8;
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 16px;
+            /* 调整字体大小 */
+            width: auto;
+            /* 让宽度根据内容自动调整 */
+        }
+
+        .home-button:hover {
+            background-color: #0056b3;
+        }
+
         /* 搜索框样式 */
         .search-form {
+            display: flex;
+            /* 使用flex布局让输入框和按钮在同一行 */
+            align-items: center;
+            /* 垂直居中对齐 */
             margin-bottom: 20px;
         }
 
         .search-form input[type="text"] {
-            width: calc(100% - 40px);
+            flex: 1;
+            /* 使输入框占据剩余空间 */
             padding: 10px;
             border: 1px solid #ccc;
-            border-radius: 5px;
-            margin-right: 10px;
+            border-radius: 5px 0 0 5px;
+            /* 左侧圆角 */
+            margin-right: 0;
+            /* 去掉右侧的外边距 */
         }
 
         .search-form button {
             padding: 10px;
-            background-color: #007bff;
+            background-color: #17a2b8;
             color: white;
             border: none;
-            border-radius: 5px;
+            border-radius: 0 5px 5px 0;
+            /* 右侧圆角 */
             cursor: pointer;
         }
 
@@ -49,7 +99,8 @@
             border-radius: 5px;
             cursor: pointer;
             transition: background-color 0.3s ease;
-            position: relative;  /* 确保未读消息计数能够定位在右边 */
+            position: relative;
+            /* 确保未读消息计数能够定位在右边 */
         }
 
         .contact-item:hover {
@@ -58,7 +109,7 @@
 
         /* 当前选中的联系人高亮 */
         .contact-item.active {
-            background-color: #007bff;
+            background-color: #17a2b8;
             color: white;
         }
 
@@ -78,16 +129,21 @@
 
         .unread-dot {
             display: inline-block;
-            width: 8px;  /* 红点的直径 */
+            width: 8px;
+            /* 红点的直径 */
             height: 8px;
-            background-color: red;  /* 红点颜色 */
-            border-radius: 50%;  /* 圆形 */
-            margin-left: 5px;  /* 如果需要与其他内容保持一定间距 */
+            background-color: red;
+            /* 红点颜色 */
+            border-radius: 50%;
+            /* 圆形 */
+            margin-left: 5px;
+            /* 如果需要与其他内容保持一定间距 */
         }
 
         /* 右侧对话框容器 */
         .chat-box-container {
-            width: 75%; /* 右侧占75%的宽度 */
+            width: 75%;
+            /* 右侧占75%的宽度 */
             padding: 20px;
             display: flex;
             flex-direction: column;
@@ -114,9 +170,10 @@
             clear: both;
         }
 
-        /* 发送的消息（右对齐，蓝色背景） */
+        /* 发送的消息（右对齐，按钮相同颜色背景） */
         .sent {
-            background-color: #007bff;
+            background-color: #17a2b8;
+            /* 改为按钮相同颜色 */
             color: white;
             text-align: right;
             float: right;
@@ -136,10 +193,11 @@
         .message-input {
             display: flex;
             align-items: center;
+            width: 100%;
         }
 
         .message-input textarea {
-            width: 85%;
+            width: 257%;
             height: 50px;
             border: 1px solid #ccc;
             border-radius: 5px;
@@ -148,9 +206,17 @@
         }
 
         .message-input button {
-            width: 15%;
-            height: 50px;
-            background-color: #007bff;
+            position: absolute;
+            /* 使按钮绝对定位 */
+            bottom: 1px;
+            /* 离容器底部1px */
+            right: 27px;
+            /* 离容器右侧27px */
+            width: 7.5%;
+            /* 调整宽度 */
+            height: 30px;
+            /* 调整高度 */
+            background-color: #17a2b8;
             color: white;
             border: none;
             border-radius: 5px;
@@ -158,32 +224,33 @@
             transition: background-color 0.3s ease;
         }
 
+
         .message-input button:hover {
             background-color: #0056b3;
         }
-
     </style>
-    <script>
-        // 页面加载后自动滚动到聊天框的底部
-        document.addEventListener("DOMContentLoaded", function() {
-            var chatBox = document.querySelector('.chat-box');
-            chatBox.scrollTop = chatBox.scrollHeight;
-        });
-    </script>
+    <script src="https://cdn.jsdelivr.net/npm/@joeattardi/emoji-button@4.6.2/dist/index.min.js"></script>
 </head>
+
 <body>
     <div class="chat-container">
         <!-- 左侧联系人列表 -->
         <div class="contact-list">
+            <!-- 返回首页按钮 -->
+            <a href="{% url 'Forum:home' %}" class="home-button">返回首页</a>
+
             <!-- 搜索框 -->
             <form class="search-form" id="searchForm" method="GET" action="{% url 'PrivateMessage:search_user' %}">
                 <input type="text" name="user_id" placeholder="搜索用户ID" required>
-                <button type="submit" style="background-color: #17a2b8; border: none; color: white;">搜索</button>
+                <button type="submit" id="searchButton">搜索</button>
             </form>
 
             <ul class="list-group">
                 {% for contact in contact_users %}
                 <li class="list-group-item contact-item {% if contact.id == selected_user.id %}active{% endif %}">
+                    <!-- 添加头像 -->
+                    <img src="{% static 'images/' %}{{ contact.id }}.jpeg" alt="头像" class="avatar"
+                        onerror="loadFallbackImage(this, '{{ contact.id }}')">
                     <!-- 显示联系人姓名 -->
                     <a href="{% url 'PrivateMessage:conversation_with_user' current_user.id contact.id %}">
                         {{ contact.username }}
@@ -212,10 +279,34 @@
 
             <!-- 发送消息表单 -->
             <div class="message-input">
-                <form method="post" action="{% url 'PrivateMessage:conversation_with_user' current_user.id selected_user.id %}">
+                <form method="post"
+                    action="{% url 'PrivateMessage:conversation_with_user' current_user.id selected_user.id %}">
                     {% csrf_token %}
                     {{ form.as_p }}
-                    <button type="submit" class="btn btn-primary" style="background-color: #17a2b8; border: none; color: white;">发送</button>
+                    <button type="button" id="emojiButton"
+                        style="background: none; border: none; font-size: 20px; cursor: pointer; margin-right: 100px;">😀</button>
+                    <button type="submit">发送</button>
+                    <div id="emojiPicker"
+                        style="display: none; position: absolute; bottom: 60px; right: 30px; background-color: #fff; border: 1px solid #ccc; padding: 10px; border-radius: 5px;">
+                        <span onclick="insertEmoji('😀')">😀</span>
+                        <span onclick="insertEmoji('😂')">😂</span>
+                        <span onclick="insertEmoji('😍')">😍</span>
+                        <span onclick="insertEmoji('😢')">😢</span>
+                        <span onclick="insertEmoji('👍')">👍</span>
+                        <span onclick="insertEmoji('🎉')">🎉</span>
+                        <span onclick="insertEmoji('😎')">😎</span>
+                        <span onclick="insertEmoji('😡')">😡</span>
+                        <span onclick="insertEmoji('😱')">😱</span>
+                        <span onclick="insertEmoji('🤔')">🤔</span>
+                        <span onclick="insertEmoji('🙌')">🙌</span>
+                        <span onclick="insertEmoji('🥳')">🥳</span>
+                        <span onclick="insertEmoji('❤️')">❤️</span>
+                        <span onclick="insertEmoji('🌟')">🌟</span>
+                        <span onclick="insertEmoji('💔')">💔</span>
+                        <span onclick="insertEmoji('🌈')">🌈</span>
+                        <span onclick="insertEmoji('🎶')">🎶</span>
+                        <!-- 可以继续添加更多表情 -->
+                    </div>
                 </form>
             </div>
             {% else %}
@@ -223,51 +314,70 @@
             {% endif %}
         </div>
     </div>
-
-
-    <!-- 添加的AJAX轮询脚本，放置在页面的底部 -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-
     <script>
-        // 页面加载后自动滚动到聊天框的底部
-        // 页面加载后自动滚动到聊天框的底部
-            document.addEventListener("DOMContentLoaded", function() {
-                var chatBox = document.querySelector('.chat-box');
-                chatBox.scrollTop = chatBox.scrollHeight;
+        document.getElementById("searchForm").addEventListener("submit", function (event) {
+            event.preventDefault();  // 阻止默认表单提交
 
-                // 启动轮询，每5秒钟调用一次 fetchNewMessages 函数
-                setInterval(fetchNewMessages, 5000);
-            });
+            const userId = document.querySelector("input[name='user_id']").value;
 
-            // 定义获取最新消息的函数
-            function fetchNewMessages() {
-                var currentUserId = "{{ current_user.id }}";
-                var selectedUserId = "{{ selected_user.id }}";
-
-                $.ajax({
-                    url: '{% url "PrivateMessage:fetch_new_messages" current_user.id selected_user.id %}',  // 后端API URL
-                    method: 'GET',
-                    success: function(response) {
-                        var chatBox = $('.chat-box');
-                        chatBox.html('');  // 清空现有的消息
-                        response.messages.forEach(function(message) {
-                            var messageClass = message.sender_id == currentUserId ? 'sent' : 'received';
-                            var messageHtml = '<div class="message ' + messageClass + '">'
-                                              + '<p>' + message.content + '</p>'
-                                              + '<small>' + message.timestamp + '</small></div>';
-                            chatBox.append(messageHtml);  // 插入新消息
-                        });
-                        // 自动滚动到聊天框底部
-                        chatBox.scrollTop(chatBox.prop("scrollHeight"));
-                    },
-                    error: function(xhr, status, error) {
-                        console.log('Error fetching new messages:', error);
+            fetch("{% url 'PrivateMessage:search_user' %}?user_id=" + userId)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.exists) {
+                        // 用户存在，重定向到对应的会话页面
+                        window.location.href = data.url;
+                    } else {
+                        // 用户不存在，显示提示框
+                        alert("用户不存在，请检查用户ID！");
                     }
-                });
+                })
+                .catch(error => console.error('Error:', error));
+        });
+    </script>
+    <script>
+        function loadFallbackImage(img, userId) {
+            const formats = ['jpeg', 'jpg', 'png', 'gif'];
+            let index = 0;
+
+            function tryNextFormat() {
+                if (index < formats.length) {
+                    img.src = `/static/images/${userId}.${formats[index]}`;
+                    img.onerror = () => {
+                        index++;
+                        tryNextFormat();
+                    };
+                } else {
+                    img.src = '{% static "images/default.jpeg" %}'; // 最后的备用图片
+                }
             }
 
-        // 每5秒钟调用一次fetchNewMessages函数
-        setInterval(fetchNewMessages, 1000);
+            tryNextFormat();
+        }
+    </script>
+    <script>
+        // 获取元素
+        const emojiButton = document.getElementById('emojiButton');
+        const emojiPicker = document.getElementById('emojiPicker');
+        const messageInput = document.querySelector('.message-input textarea');
+
+        // 点击表情按钮，显示/隐藏表情选择面板
+        emojiButton.addEventListener('click', () => {
+            emojiPicker.style.display = emojiPicker.style.display === 'none' ? 'block' : 'none';
+        });
+
+        // 插入表情到输入框
+        function insertEmoji(emoji) {
+            messageInput.value += emoji;
+            emojiPicker.style.display = 'none';  // 插入后隐藏表情选择面板
+        }
+
+        // 点击页面其他位置时隐藏表情选择面板
+        document.addEventListener('click', (event) => {
+            if (!emojiButton.contains(event.target) && !emojiPicker.contains(event.target)) {
+                emojiPicker.style.display = 'none';
+            }
+        });
     </script>
 </body>
+
 </html>
