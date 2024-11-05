@@ -263,3 +263,9 @@ def check_login_state(request):
         return HttpResponse("您尚未登录")
 
     return HttpResponse("Welcome User: " + user_info["username"])
+
+def get_public_key(request):
+    public_key_path = os.path.join(settings.BASE_DIR, 'public_key.pem')
+    with open(public_key_path, 'r') as file:
+        public_key = file.read()
+    return HttpResponse(public_key, content_type="text/plain")

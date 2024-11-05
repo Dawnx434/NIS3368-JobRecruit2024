@@ -17,7 +17,7 @@
             margin: 0;
             padding: 0;
             height: 100vh;
-            background-image: url('{% static "img/背景.png" %}');
+            background-image: url('{% static "背景.png" %}');
             background-size: cover;
             background-position: center;
             display: flex;
@@ -27,7 +27,7 @@
         /* 左侧图片部分 */
         .left-section {
             flex: 1;
-            background-image: url('{% static "img/banner.97f904e9.png" %}');
+            background-image: url('{% static "banner.97f904e9.png" %}');
             background-size: contain; /* 使背景图自适应宽度 */
             background-repeat: no-repeat; /* 不重复背景图 */
             background-position: center; /* 居中显示背景图 */
@@ -285,56 +285,55 @@
             $("#imgCode").click(function () {
                 let oldSrc = $(this).attr('src');
                 $(this).attr('src', oldSrc + "?");
-            })
-        })
-
+            });
+        });
+    
         const interval = 30;
         let countdown = interval;
-        let button = document.getElementById('sendemail');
+        let $button = $('#sendemail'); // 使用 jQuery 选择器包装按钮
         let timer;
-
+    
         function updateButtonText() {
-            button.innerText = '剩余时间: ' + countdown + ' 秒';
+            $button.text('剩余时间: ' + countdown + ' 秒');
         }
-
+    
         function countdownTick() {
             countdown--;
             updateButtonText();
             if (countdown <= 0) {
                 clearInterval(timer);
-                button.innerText = '发送邮件';
-                button.disabled = false;
+                $button.text('发送邮件');
+                $button.prop('disabled', false); // 启用按钮
+                $button.removeClass('btn-secondary').addClass('btn-primary'); // 还原样式
                 countdown = interval; // 重置倒计时
             }
         }
-
+    
         $(document).ready(function () {
-            button.addEventListener('click', function () {
-                $(this).prop('disabled', true);
+            $button.on('click', function () {
+                $button.prop('disabled', true); // 禁用按钮
+                $button.removeClass('btn-primary').addClass('btn-secondary'); // 更改样式
+                countdown = interval;
+    
                 $.ajax({
-                    url: '/auth/send-email/',
+                    url: '/auth/sendemail/',
                     type: 'POST',
                     data: {
-                        'email': $('#id_email').val(),
+                        'email_address': $('#id_email').val(), // 确保字段名一致
                         'csrfmiddlewaretoken': '{{ csrf_token }}',
                     },
                     success: function (data) {
-                        if (data.code == 200) {
-                            alert('邮件发送成功！');
-                            timer = setInterval(countdownTick, 1000);
-                        } else {
-                            alert('发送失败，请重试！');
-                            button.prop('disabled', false); // 发送失败则启用按钮
-                        }
+                        alert(data.msg); // 直接显示服务器返回的信息
+                        timer = setInterval(countdownTick, 1000);
                     },
-                    error: function (xhr, status, error) {
-                        alert('错误: ' + error);
-                        button.prop('disabled', false); // 出现错误则启用按钮
+                    error: function () {
+                        alert('发送失败，请重试！');
+                        $button.prop('disabled', false); // 出现错误则启用按钮
+                        $button.removeClass('btn-secondary').addClass('btn-primary'); // 还原样式
                     }
                 });
             });
         });
     </script>
-</body>
-
-</html>
+    
+    
