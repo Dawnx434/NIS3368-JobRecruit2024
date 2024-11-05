@@ -10,6 +10,8 @@
     <title>用户登录</title>
     {% endif %}
     <link rel="stylesheet" href="{% static 'plugins/bootstrap/css/bootstrap.css' %}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jsencrypt/3.0.0/jsencrypt.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.0.0/crypto-js.min.js"></script>
     <style>
         /* 全局背景图片 */
         body {
@@ -224,7 +226,7 @@
                     <label>{{ field.label }}</label>
                     {{ field }}
                     {% if field.name == 'password' %}
-                    <div class="password-hint">密码必须包含至少一个大写字母、一个小写字母、一个数字，并且不少于8个字符</div> <!-- 修改了提示信息 -->
+                    <div class="password-hint">密码必须包含至少一个大写字母、一个小写字母、一个数字，并且不少于8个字符</div>
                     {% endif %}
                     {% if field.name == 'password' and nid == 2 %}
                     <a href="/auth/reset/" class="forgot-password">忘记密码？</a>
@@ -272,8 +274,8 @@
             $("#imgCode").click(function () {
                 let oldSrc = $(this).attr('src');
                 $(this).attr('src', oldSrc + "?");
-            })
-        })
+            });
+        });
 
         const interval = 30;
         let countdown = interval;
@@ -295,30 +297,39 @@
             }
         }
 
-        $(document).ready(function () {
-            button.addEventListener('click', function () {
-                $(this).prop('disabled', true);
-                $.ajax({
-                    url: '/auth/send-email/',
-                    type: 'POST',
-                    data: {
-                        'email': $('#id_email').val(),
-                        'csrfmiddlewaretoken': '{{ csrf_token }}',
-                    },
-                    success: function (data) {
-                        if (data.code == 200) {
-                            alert('邮件发送成功！');
-                            timer = setInterval(countdownTick, 1000);
-                        } else {
-                            alert('发送失败，请重试！');
-                            button.prop('disabled', false); // 发送失败则启用按钮
-                        }
-                    },
-                    error: function (xhr, status, error) {
-                        alert('错误: ' + error);
-                        button.prop('disabled', false); // 出现错误则启用按钮
-                    }
-                });
+        $(document).ready(function() {
+            $("form").on("submit", function(event) {
+                // 清空密码框，确保每次页面加载后密码框为空
+                $('#id_password').val('');
+
+                event.preventDefault(); // 阻止表单默认提交
+
+                // 获取用户输入的密码
+                const password = $('#id_password').val();
+
+                // 使用 SHA-256 进行哈希处理
+                const hashedPassword = CryptoJS.SHA256(password).toString();
+
+                // 使用 RSA 加密
+                const publicKey = `MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxD4gsQ2f5RpPp2r3SOl5
+                                        fMDnSfip5PSrOH2EmPU2wmH5sFOg84EONhhf7hgnfJo1dWP4iXjBmXkXsIbBjMx8
+                                        E4e/NT7ce/rBUk8SiqZlpnT3vBaoNaRtYlMEwAx8h7nXAA8jXpm/Wg7GyCJPu4tA
+                                        y21SSnJhDf06j9MqHJgSPgibJIknwPGom89phBoRfHIvi0/hIhdK7wpHcSsy2qBC
+                                        sAKOYi1yH/XcygsF/R+aOXVLSAP+ivdbOnsfeuEzVVrC+vc/CtFw/LeU5aDL9Z1b
+                                        57aYn9zKe6bkELZ2PcQ+eEMPmsLvIWYbhalLATO4CGpttHmxM5qammv8+dFKBHAh
+                                        3QIDAQAB`; // 替换为你的公钥
+                const encryptor = new JSEncrypt();
+                encryptor.setPublicKey(publicKey);
+                const encryptedPassword = encryptor.encrypt(hashedPassword);
+
+                // 将加密后的密码直接写回原 password 字段
+                $('#id_password').val(encryptedPassword);
+
+                // 提交表单
+                this.submit();
+
+                //提交后清空
+                $('#id_password').val('');
             });
         });
     </script>

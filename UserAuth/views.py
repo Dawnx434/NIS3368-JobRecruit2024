@@ -4,6 +4,7 @@ import Levenshtein
 
 from django.shortcuts import render, HttpResponse, redirect
 from django.http import JsonResponse
+import base64
 from django.views.decorators.csrf import csrf_exempt
 from django.urls import reverse
 from UserAuth.utils.Forms import RegisterForm, LoginForm, ResetPasswordForm
@@ -12,10 +13,7 @@ from UserAuth import models
 
 from UserAuth.utils.generateCode import check_code, send_sms_code
 from UserAuth.utils.validators import is_valid_email
-from UserAuth.utils.encrypt import encrypt_password
 
-# Create your views here.
-"""视图页面开始"""
 
 
 def register(request):
@@ -38,7 +36,7 @@ def register(request):
 
     # store userinfo
     form.instance.identity = 1  # default: User
-    form.instance.password = encrypt_password(form.instance.password)
+    form.instance.password = form.instance.password
     form.save()
 
     # generate cookie
@@ -105,26 +103,12 @@ def reset_password(request):
     if not query_set:
         return render(request, "UserAuth/alert_page.html", {'msg': '错误的用户信息'})
 
-    # 检查新密码与原密码相似度
-    original_password = query_set.first().password  # 获取原密码（已加密）
-    new_password = encrypt_password(form.cleaned_data['password'])
-
-    if is_similar(original_password, new_password):
-        context = {
-            'form': form,
-            'error': "新密码与原密码相似度过高，请选择其他密码。"
-        }
-        return render(request, 'UserAuth/forget_password.html', context=context)
+    new_password = form.cleaned_data['password']
 
     # 重置密码
     query_set.update(password=new_password)  # 更新数据库中的密码
     return render(request, "UserAuth/alert_page.html", context={'msg': "您的密码已被重置！", 'success': True})
 
-def is_similar(original, new):
-    distance = Levenshtein.distance(original, new)
-    max_len = max(len(original), len(new))
-    similarity = 1 - (distance / max_len)
-    return similarity > 0.7  # 例如，设定阈值为 70%
 
 
 def change_identity(request):
