@@ -76,6 +76,13 @@ class RegisterForm(BootStrapForm, forms.ModelForm):
             raise ValidationError("验证码错误")
         return self.cleaned_data['verification_code']
 
+    def clean_check_password(self):
+        password = self.cleaned_data.get('password')
+        check_password = self.cleaned_data.get('check_password')
+        if password and check_password and password != check_password:
+            raise ValidationError("两次输入的密码不一致！")
+        return check_password
+
     def clean_password(self):
         password = self.cleaned_data['password']
         # 检查密码长度
@@ -89,7 +96,7 @@ class RegisterForm(BootStrapForm, forms.ModelForm):
         try:
             with open(common_passwords_path, 'r', encoding='utf-8') as f:
                 common_passwords = f.read().splitlines()
-            if password in common_passwords:
+            if password in  common_passwords:
                 raise ValidationError("此密码过于常见，请选择其他密码。")
         except FileNotFoundError:
             raise ValidationError("常见密码字典文件未找到，请联系管理员。")
