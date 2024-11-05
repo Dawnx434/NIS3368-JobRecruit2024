@@ -7,7 +7,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>私信页面</title>
-    <style>
+    <style nonce="{{request.csp_nonce}}">
         .chat-container {
             display: flex;
             height: 100vh;
@@ -229,7 +229,7 @@
             background-color: #0056b3;
         }
     </style>
-    <script src="https://cdn.jsdelivr.net/npm/@joeattardi/emoji-button@4.6.2/dist/index.min.js"></script>
+    <script nonce="{{request.csp_nonce}}" src="https://cdn.jsdelivr.net/npm/@joeattardi/emoji-button@4.6.2/dist/index.min.js"></script>
 </head>
 
 <body>
@@ -314,7 +314,7 @@
             {% endif %}
         </div>
     </div>
-    <script>
+    <script nonce = "{{request.csp_nonce}}">
         document.getElementById("searchForm").addEventListener("submit", function (event) {
             event.preventDefault();  // 阻止默认表单提交
 
@@ -334,7 +334,7 @@
                 .catch(error => console.error('Error:', error));
         });
     </script>
-    <script>
+    <script nonce="{{request.csp_nonce}}">
         function loadFallbackImage(img, userId) {
             const formats = ['jpeg', 'jpg', 'png', 'gif'];
             let index = 0;
@@ -354,7 +354,7 @@
             tryNextFormat();
         }
     </script>
-    <script>
+    <script nonce="{{request.csp_nonce}}">
         // 获取元素
         const emojiButton = document.getElementById('emojiButton');
         const emojiPicker = document.getElementById('emojiPicker');

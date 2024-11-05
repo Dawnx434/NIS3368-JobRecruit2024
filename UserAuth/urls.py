@@ -15,5 +15,6 @@ urlpatterns = [
 
     path("state/", views.check_login_state),
     path("logout/", views.logout, name='logout'),
+    path('public-key/', views.get_public_key, name='public_key'),
 
 ]

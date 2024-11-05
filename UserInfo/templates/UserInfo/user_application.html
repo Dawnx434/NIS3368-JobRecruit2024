@@ -6,7 +6,7 @@
 
 {% block stylesheet %}
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.5.1/dist/css/bootstrap.min.css">
-<style>
+<style nonce="{{request.csp_nonce}}">
         .content-container{
             background-color: white;
             border-radius: 10px;
@@ -135,7 +135,7 @@
                                 <div class="card-title" id="position-name-{{ position.position_id }}">
                                     {{ position.position_name }}
                                 </div>
-                                <script>
+                                <script nonce="{{request.csp_nonce}}">
                                     var myBox = document.getElementById('position-name-{{ position.position_id }}');
                                     var text = myBox.innerText.trim();
                                     console.log(text);

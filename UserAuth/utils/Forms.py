@@ -64,7 +64,7 @@ class RegisterForm(BootStrapForm, forms.ModelForm):
         code_in_session = self.request.session.get('register_verification_code')
         if not code_in_session:
             raise ValidationError("验证码已过期")
-        if not self.cleaned_data['verification_code'] == code_in_session:
+        if not self.cleaned_data['verification_code'].upper() == code_in_session.upper():
             raise ValidationError("验证码错误")
         return self.cleaned_data['verification_code']
 

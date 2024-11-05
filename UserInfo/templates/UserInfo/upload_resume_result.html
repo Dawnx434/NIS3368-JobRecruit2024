@@ -5,7 +5,7 @@
     <title>头像上传结果</title>
     <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/5.1.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <style>
+    <style nonce="{{request.csp_nonce}}">
         .custom-text-color {
             color: #17a2b8 !important;
             font-weight: bold;
@@ -79,9 +79,9 @@
 </div>
 
 
-<script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
-<script src="https://cdn.staticfile.org/popper.js/1.15.0/umd/popper.min.js"></script>
-<script src="https://cdn.staticfile.org/twitter-bootstrap/5.1.1/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js" nonce="{{request.csp_nonce}}"></script>
+<script src="https://cdn.staticfile.org/popper.js/1.15.0/umd/popper.min.js" nonce="{{request.csp_nonce}}"></script>
+<script src="https://cdn.staticfile.org/twitter-bootstrap/5.1.1/js/bootstrap.bundle.min.js" nonce="{{request.csp_nonce}}"></script>
 
 </body>
 </html>

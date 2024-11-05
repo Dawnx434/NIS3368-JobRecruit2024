@@ -11,9 +11,9 @@
     <link rel="stylesheet" href="{% static 'css/bootstrap-icons.css' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css">
-    <script src="https://cdn.staticfile.org/twitter-bootstrap/5.1.1/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.staticfile.org/twitter-bootstrap/5.1.1/js/bootstrap.bundle.min.js" nonce="{{request.csp_nonce}}"></script>
     {% block stylesheet %}{% endblock %}
-    <style>
+    <style nonce="{{request.csp_nonce}}">
         /* 页面背景和文字自定义颜色 */
         body.custom-background {
             background-color: #dee2e6;
@@ -281,8 +281,8 @@
     </footer>
     {% endblock %}
 
-    <script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
-    <script>
+    <script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js" nonce="{{request.csp_nonce}}"></script>
+    <script nonce="{{request.csp_nonce}}">
         $(document).ready(function () {
             $(".dropdown").hover(function () {
                 $(this).children(".dropdown-menu").toggleClass("show");

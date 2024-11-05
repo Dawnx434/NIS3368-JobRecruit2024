@@ -50,7 +50,7 @@
 {% endblock %}
 
 {% block js %}
-    <script>
+    <script nonce="{{request.csp_nonce}}">
         var simplemde = new SimpleMDE();
     </script>
 {% endblock %}
