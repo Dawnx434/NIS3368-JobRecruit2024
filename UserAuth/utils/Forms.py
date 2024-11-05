@@ -1,10 +1,12 @@
 from django import forms
 from django.core.validators import RegexValidator
 from django.core.exceptions import ValidationError
+from fontTools.misc.eexec import encrypt
+
 from UserAuth import models
 from UserAuth.utils.bootstrapform import BootStrapForm
 from UserAuth.utils.validators import is_username_valid
-from UserAuth.utils.encrypt import verify_encrypted_password
+from UserAuth.utils.encrypt import rsa_decrypt_password
 import re
 import os
 from django.conf import settings
@@ -124,7 +126,9 @@ class LoginForm(BootStrapForm, forms.ModelForm):
 
     def clean_password(self):
         row_obj = models.User.objects.filter(username=self.cleaned_data.get('username')).first()
-        if row_obj and verify_encrypted_password((self.cleaned_data['password']), row_obj.password):
+        encrypted_password = (self.cleaned_data['password'])
+        encrypted_password_hash = rsa_decrypt_password(encrypted_password)
+        if row_obj and encrypted_password_hash == row_obj.password:
             return ''
         else:
             raise ValidationError("用户名或密码错误")

@@ -55,10 +55,10 @@ from django.core.exceptions import ValidationError
 #     return encrypted
 
 # 使用私钥解密密码
-def rsa_decrypt(private_key, encrypted_stored_password):
+def rsa_decrypt(private_key, encrypted_password):
     try:
         decrypted = private_key.decrypt(
-            encrypted_stored_password,
+            encrypted_password,
             padding.OAEP(
                 mgf=padding.MGF1(algorithm=hashes.SHA256()),
                 algorithm=hashes.SHA256(),
@@ -69,8 +69,9 @@ def rsa_decrypt(private_key, encrypted_stored_password):
     except ValueError as e:
         print("Decryption failed:", e)
         print("Private Key:", private_key)
-        print("Encrypted Stored Password:", encrypted_stored_password)
-        print("Encrypted Stored Password (Base64):", base64.b64encode(encrypted_stored_password).decode())
+        print("Encrypted Stored Password length:", len(encrypted_password))
+        print("Encrypted Stored Password:", encrypted_password)
+        print("Encrypted Stored Password (Base64):", base64.b64encode(encrypted_password).decode())
         raise ValidationError("解密失败，请联系管理员")
 
 
@@ -84,10 +85,22 @@ def rsa_decrypt(private_key, encrypted_stored_password):
 #     encrypted_password = rsa_encrypt(public_key, password)
 #     return encrypted_password
 
+def from_url_safe_base64(url_safe_base64_str):
+    print("get url_safe_base64_str: ", url_safe_base64_str)
+    # 还原 URL 安全的 Base64 字符串
+    base64_str = url_safe_base64_str.replace('-', '+').replace('_', '/')
+    print("get base64_str: ", base64_str)
+    print("get base64_str len:", len(base64_str))
+    # 如果原字符串末尾有“=”被去掉，需要补上
+    padding_needed = len(base64_str) % 4
+    if padding_needed:
+        base64_str += '=' * (4 - padding_needed)
+    return base64.b64decode(base64_str)
+
 # 加载私钥并解密密码
 def rsa_decrypt_password(encrypted_password):
     if isinstance(encrypted_password, str):
-        encrypted_password = base64.b64decode(encrypted_password.encode('utf-8'))
+        encrypted_password = from_url_safe_base64(encrypted_password)
 
     with open('private_key.pem', 'rb') as f:
         private_key = serialization.load_pem_private_key(
@@ -107,22 +120,22 @@ def rsa_decrypt_password(encrypted_password):
 #     encrypted_password = rsa_encrypt_password(sha256_password)
 #     return base64.b64encode(encrypted_password).decode('utf-8')
 
-# 验证加密的密码
-def verify_encrypted_password(base64_encoded_password, base64_encoded_stored_password):
-    encrypted_password = base64.b64decode(base64_encoded_password)
-    encrypted_stored_password = base64.b64decode(base64_encoded_stored_password)
-
-    # 使用私钥解密
-    with open('private_key.pem', 'rb') as f:
-        private_key = serialization.load_pem_private_key(
-            f.read(),
-            password=None,
-            backend=default_backend()
-        )
-
-    # 解密密码
-    decrypted_password = rsa_decrypt(private_key, encrypted_password)
-    decrypted_stored_password = rsa_decrypt(private_key, encrypted_stored_password)
-
-    # 比较哈希值
-    return decrypted_password == decrypted_stored_password
+# # 验证加密的密码
+# def verify_encrypted_password(base64_encoded_password, base64_encoded_stored_password):
+#     encrypted_password = base64.b64decode(base64_encoded_password)
+#     encrypted_stored_password = base64.b64decode(base64_encoded_stored_password)
+#
+#     # 使用私钥解密
+#     with open('private_key.pem', 'rb') as f:
+#         private_key = serialization.load_pem_private_key(
+#             f.read(),
+#             password=None,
+#             backend=default_backend()
+#         )
+#
+#     # 解密密码
+#     decrypted_password = rsa_decrypt(private_key, encrypted_password)
+#     decrypted_stored_password = rsa_decrypt(private_key, encrypted_stored_password)
+#
+#     # 比较哈希值
+#     return decrypted_password == decrypted_stored_password

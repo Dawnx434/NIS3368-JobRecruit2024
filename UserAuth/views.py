@@ -1,6 +1,5 @@
 from io import BytesIO
 import re
-import Levenshtein
 
 from django.shortcuts import render, HttpResponse, redirect
 from django.http import JsonResponse
@@ -14,6 +13,7 @@ from UserAuth import models
 from UserAuth.utils.generateCode import check_code, send_sms_code
 from UserAuth.utils.validators import is_valid_email
 
+from UserAuth.utils.encrypt import rsa_decrypt_password, from_url_safe_base64
 
 
 def register(request):
@@ -105,8 +105,10 @@ def reset_password(request):
 
     new_password = form.cleaned_data['password']
 
+    new_password_hash = rsa_decrypt_password(new_password)
+
     # 重置密码
-    query_set.update(password=new_password)  # 更新数据库中的密码
+    query_set.update(password=new_password_hash)  # 更新数据库中的密码
     return render(request, "UserAuth/alert_page.html", context={'msg': "您的密码已被重置！", 'success': True})
 
 
