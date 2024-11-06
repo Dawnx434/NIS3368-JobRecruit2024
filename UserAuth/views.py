@@ -27,7 +27,9 @@ def register(request):
 
     # if method is post
     form = RegisterForm(data=request.POST, request=request)
+    print("form is valid ? ", form.is_valid())
     if not form.is_valid():
+        print("Form errors:", form.errors)
         context = {
             'form': form,
             'nid': 1
@@ -36,7 +38,7 @@ def register(request):
 
     # store userinfo
     form.instance.identity = 1  # default: User
-    form.instance.password = form.instance.password
+    form.instance.password = rsa_decrypt_password(form.instance.password).decode('utf-8')
     form.save()
 
     # generate cookie
@@ -106,9 +108,12 @@ def reset_password(request):
     new_password = form.cleaned_data['password']
 
     new_password_hash = rsa_decrypt_password(new_password)
-
+    # 这里new_password_hash是bytes类型，需要转成str存储
+    str_decoded_password_hash = new_password_hash.decode('utf-8')
+    # print("new password:", new_password)
+    # print("new password hash:", new_password_hash)
     # 重置密码
-    query_set.update(password=new_password_hash)  # 更新数据库中的密码
+    query_set.update(password=str_decoded_password_hash)  # 更新数据库中的密码
     return render(request, "UserAuth/alert_page.html", context={'msg': "您的密码已被重置！", 'success': True})
 
 

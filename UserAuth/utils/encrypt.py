@@ -59,19 +59,15 @@ def rsa_decrypt(private_key, encrypted_password):
     try:
         decrypted = private_key.decrypt(
             encrypted_password,
-            padding.OAEP(
-                mgf=padding.MGF1(algorithm=hashes.SHA256()),
-                algorithm=hashes.SHA256(),
-                label=None
-            )
+            padding.PKCS1v15()
         )
         return decrypted
     except ValueError as e:
         print("Decryption failed:", e)
         print("Private Key:", private_key)
-        print("Encrypted Stored Password length:", len(encrypted_password))
-        print("Encrypted Stored Password:", encrypted_password)
-        print("Encrypted Stored Password (Base64):", base64.b64encode(encrypted_password).decode())
+        print("Encrypted Password length:", len(encrypted_password))
+        print("Encrypted Password:", encrypted_password)
+        print("Encrypted Password (Base64):", base64.b64encode(encrypted_password).decode())
         raise ValidationError("解密失败，请联系管理员")
 
 
@@ -86,15 +82,16 @@ def rsa_decrypt(private_key, encrypted_password):
 #     return encrypted_password
 
 def from_url_safe_base64(url_safe_base64_str):
-    print("get url_safe_base64_str: ", url_safe_base64_str)
+    # print("get url_safe_base64_str: ", url_safe_base64_str)
     # 还原 URL 安全的 Base64 字符串
     base64_str = url_safe_base64_str.replace('-', '+').replace('_', '/')
-    print("get base64_str: ", base64_str)
-    print("get base64_str len:", len(base64_str))
+    # print("get base64_str: ", base64_str)
+    # print("get base64_str len:", len(base64_str))
     # 如果原字符串末尾有“=”被去掉，需要补上
     padding_needed = len(base64_str) % 4
     if padding_needed:
         base64_str += '=' * (4 - padding_needed)
+    print("get base64_str:", base64_str)
     return base64.b64decode(base64_str)
 
 # 加载私钥并解密密码
@@ -111,7 +108,7 @@ def rsa_decrypt_password(encrypted_password):
     decrypted_password = rsa_decrypt(private_key, encrypted_password)
     return decrypted_password
 
-# 在启动时检查并生成密钥对
+# # 在启动时检查并生成密钥对
 # generate_rsa_keypair()
 
 # # 使用 SHA256 加密并生成密文
