@@ -163,10 +163,7 @@ STATICFILES_DIRS = [
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 
-<<<<<<< HEAD
-=======
 
->>>>>>> 3621cc103e648f9e0e5691892160261bf60f591c
 PROFILE_ROOT = os.path.join(BASE_DIR, 'static/images/')
 RESUME_ROOT = os.path.join(BASE_DIR, 'resumes/')
 # Default primary key field type
