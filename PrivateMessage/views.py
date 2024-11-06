@@ -6,14 +6,12 @@ from django.core.paginator import Paginator, EmptyPage
 from django.utils.functional import SimpleLazyObject
 from django.urls import reverse
 from django.utils import timezone
-
-import re
-import os
+from django.http import JsonResponse
+from django.db.models import Q, Count, Max
 from django.conf import settings
 from UserAuth.models import User
-from django.http import HttpResponse
-from django.db.models import Q, Count, Max
-from django.http import JsonResponse
+import os
+import re
 
 # 获取用户头像的帮助函数
 def get_matching_files(request):
@@ -164,6 +162,10 @@ def conversation_view(request, current_user_id, selected_user_id):
         unread_count=Count('sent_messages', filter=Q(sent_messages__recipient=current_user, sent_messages__is_read=False))
     )
 
+    # 为每个联系人添加头像路径
+    for contact in contact_users:
+        contact.avatar_url = f"{request.build_absolute_uri('/static/images/')}{contact.id}.jpeg"
+
     # 获取当前登录用户与选中联系人的所有消息
     messages = Message.objects.filter(
         (Q(sender=current_user) & Q(recipient=selected_user)) |
@@ -216,16 +218,16 @@ def fetch_new_messages(request, current_user_id, selected_user_id):
     # 返回JSON响应
     return JsonResponse({'messages': message_data})
 
-from django.shortcuts import get_object_or_404, redirect
-from UserAuth.models import User
-
-def search_user(request):
-    # 获取输入的用户ID或用户名
-    username = request.GET.get('user_id')  # 假设通过用户名搜索
+def search_user(request): 
+    username = request.GET.get('user_id')
     current_user_id = request.session['UserInfo'].get('id')
 
-    # 查找目标用户
-    target_user = get_object_or_404(User, username=username)  # 根据用户名查找用户
-
-    # 使用 redirect 跳转到 conversation_view
-    return redirect('PrivateMessage:conversation_with_user', current_user_id=current_user_id, selected_user_id=target_user.id)
+    try:
+        target_user = User.objects.get(username=username)
+        conversation_url = reverse('PrivateMessage:conversation_with_user', args=[current_user_id, target_user.id])
+        return JsonResponse({
+            "exists": True,
+            "url": conversation_url
+        })
+    except User.DoesNotExist:
+        return JsonResponse({"exists": False})

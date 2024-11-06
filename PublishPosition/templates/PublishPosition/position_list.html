@@ -5,7 +5,7 @@
 {% block title %}职位列表{% endblock %}
 
 {% block stylesheet %}
-<style>
+<style nonce="{{request.csp_nonce}}">
     .card-container {
         margin-top: 20px;
         padding-right: 20px;
@@ -129,6 +129,43 @@
         text-align: center;
         text-decoration: none;
     }
+
+    .form-control,
+    .form-select {
+        border-radius: 20px; /* 增加倒角 */
+        border: 1px solid #17a2b8; /* 边框颜色 */
+        transition: border-color 0.3s, box-shadow 0.3s; /* 添加过渡效果 */
+        height: 50px;
+    }
+
+    .form-control:focus,
+    .form-select:focus {
+        border-color: #0056b3; /* 焦点时边框颜色 */
+        box-shadow: 0 0 5px rgba(38, 143, 255, 0.5); /* 焦点时阴影效果 */
+        outline: none; /* 去掉默认的轮廓 */
+    }
+
+    .form-control::placeholder,
+    .form-select {
+        font-family: 'Arial', sans-serif; /* 字体 */
+        color: #a9a9a9; /* 占位符颜色 */
+    }
+
+
+
+    .btn {
+        background-color: #17a2b8; /* 按钮背景颜色 */
+        border: none; /* 去掉边框 */
+        border-radius: 20px; /* 增加倒角 */
+        color: white; /* 字体颜色 */
+        font-family: 'Arial', sans-serif; /* 字体 */
+        transition: background-color 0.3s, transform 0.3s; /* 添加过渡效果 */
+    }
+
+    .btn:hover {
+        background-color: #0056b3; /* 悬浮时背景颜色 */
+        transform: scale(1.05); /* 悬浮时放大效果 */
+    }
 </style>
 {% endblock %}
 
@@ -147,13 +184,14 @@
                             aria-label="职位名称关键词">
                     </div>
                     <div class="col-md-6">
-                        <select name="target_place" class="form-select" aria-label="选择地点">
-                            <option value="">选择地点</option>
-                            {% for key, value in district_dictionary.items %}
-                            <option value="{{ key }}" {% if key|stringformat:"s" == target_place %}selected{% endif %}>{{ value }}
-                            </option>
-                            {% endfor %}
-                        </select>
+                        <div class="input-group">
+                            <select name="target_place" class="form-select custom-select" aria-label="选择地点">
+                                <option value="">选择地点</option>
+                                {% for key, value in district_dictionary.items %}
+                                <option value="{{ key }}" {% if key|stringformat:"s" == target_place %}selected{% endif %}>{{ value }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
                     </div>
         
                     <!-- 第二行：最低薪资和最高薪资 -->
@@ -175,34 +213,34 @@
             
             
             <!-- 模态框 HTML -->
-<div class="modal fade" id="confirmApplyAllModal" tabindex="-1" role="dialog" aria-labelledby="confirmApplyAllModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="confirmApplyAllModalLabel">确认投递岗位</h5>
-                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+            <div class="modal fade" id="confirmApplyAllModal" tabindex="-1" role="dialog" aria-labelledby="confirmApplyAllModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="confirmApplyAllModalLabel">确认投递岗位</h5>
+                            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <p>您将投递以下岗位：</p>
+                            <ul id="position-list">
+                                <!-- 将要显示的岗位列表 -->
+                            </ul>
+                            <p>请选择使用的简历：</p>
+                            <select class="form-select mb-2" name="resume_id" id="resume_id_modal">
+                                {% for resume in resumes %}
+                                    <option value="{{ resume.id }}">{{ resume.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                            <button type="button" class="btn btn-primary" id="confirm-apply-all">确认投递</button>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="modal-body">
-                <p>您将投递以下岗位：</p>
-                <ul id="position-list">
-                    <!-- 将要显示的岗位列表 -->
-                </ul>
-                <p>请选择使用的简历：</p>
-                <select class="form-select mb-2" name="resume_id" id="resume_id_modal">
-                    {% for resume in resumes %}
-                        <option value="{{ resume.id }}">{{ resume.name }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
-                <button type="button" class="btn btn-primary" id="confirm-apply-all">确认投递</button>
-            </div>
-        </div>
-    </div>
-</div>
 
             <!-- 隐藏表单用于提交 -->
             <form id="applyAllForm" method="POST" action="{% url 'apply_all' %}" style="display:none;">
@@ -211,7 +249,7 @@
                 <input type="hidden" name="resume_id" id="resume_id_input">
             </form>
             
-            <script>
+            <script nonce="{{request.csp_nonce}}">
                 document.getElementById('apply-all-btn').addEventListener('click', function() {
                     var positionIds = {{ position_ids|safe }};
                     var positionNames = {{position_names|safe}};
@@ -254,7 +292,7 @@
                                             {{ obj.position_name }}
                                         </div>
                                     </div>
-                                    <script>
+                                    <script nonce="{{request.csp_nonce}}">
                                         var myBox = document.getElementById('position-name-{{ obj.id }}');
                                         var text = myBox.innerText.trim();
                                         var maxLength = 12;
@@ -332,11 +370,11 @@
 {% endblock %}
 
 {% block js %}
-<script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
-<script src="https://cdn.staticfile.org/popper.js/1.15.0/umd/popper.min.js"></script>
-<script src="https://cdn.staticfile.org/twitter-bootstrap/5.1.1/js/bootstrap.min.js"></script>
+<script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js" nonce="{{request.csp_nonce}}"></script>
+<script src="https://cdn.staticfile.org/popper.js/1.15.0/umd/popper.min.js" nonce="{{request.csp_nonce}}"></script>
+<script src="https://cdn.staticfile.org/twitter-bootstrap/5.1.1/js/bootstrap.min.js" nonce="{{request.csp_nonce}}"></script>
 
-<script>
+<script nonce="{{request.csp_nonce}}">
         $(document).ready(function(){
             $(".dropdown").hover(function(){
                 var dropdownMenu = $(this).children(".dropdown-menu");

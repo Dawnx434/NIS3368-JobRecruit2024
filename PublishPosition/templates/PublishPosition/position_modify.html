@@ -7,7 +7,7 @@
 {% block stylesheet %}
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simplemde/dist/simplemde.min.css">
-    <style>
+    <style nonce="{{request.csp_nonce}}">
 
         .custom-text-color {
             color: #17a2b8 !important;
@@ -275,7 +275,7 @@
 {% endblock %}
 
 {% block js %}
-    <script>
+    <script nonce="{{request.csp_nonce}}">
         var simplemde = new SimpleMDE({ element: document.getElementById("detail") });
     </script>
 {% endblock js %}

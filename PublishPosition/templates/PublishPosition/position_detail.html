@@ -6,7 +6,7 @@
 {% block title %}职位列表{% endblock %}
 
 {% block stylesheet %}
-    <style>
+    <style nonce="{{request.csp_nonce}}">
         .content-container {
             width: 70%;
         }

@@ -1,4 +1,5 @@
 {% load static %}
+{% csrf_token %}
 <!DOCTYPE html>
 <html lang="zh-CN">
 
@@ -10,13 +11,15 @@
     <title>用户登录</title>
     {% endif %}
     <link rel="stylesheet" href="{% static 'plugins/bootstrap/css/bootstrap.css' %}">
-    <style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jsencrypt/3.0.0/jsencrypt.min.js" nonce="{{request.csp_nonce}}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.0.0/crypto-js.min.js" nonce="{{request.csp_nonce}}"></script>
+    <style nonce="{{request.csp_nonce}}">
         /* 全局背景图片 */
         body {
             margin: 0;
             padding: 0;
             height: 100vh;
-            background-image: url('{% static "img/背景.png" %}');
+            background-image: url('{% static "背景.png" %}');
             background-size: cover;
             background-position: center;
             display: flex;
@@ -26,7 +29,7 @@
         /* 左侧图片部分 */
         .left-section {
             flex: 1;
-            background-image: url('{% static "img/banner.97f904e9.png" %}');
+            background-image: url('{% static "banner.97f904e9.png" %}');
             background-size: contain; /* 使背景图自适应宽度 */
             background-repeat: no-repeat; /* 不重复背景图 */
             background-position: center; /* 居中显示背景图 */
@@ -44,6 +47,14 @@
             font-size: 36px;
             font-weight: bold;
             margin: 10px 0;
+        }
+
+        .left-section-text2 {
+            color: white;
+            font-size: 30px;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* 给文字加阴影，增强可读性 */
+            text-align: center;
         }
 
         /* 右侧登录框 */
@@ -176,6 +187,10 @@
             text-decoration: underline;
         }
 
+        .text-red {
+            color: red;
+        }
+
         @media (max-width: 768px) {
             body {
                 flex-direction: column;
@@ -203,7 +218,7 @@
         <div class="left-section-text">
             海量优质人才，在线约面
         </div>
-        <div class="left-section-text" style="font-size: 30px;">
+        <div class="left-section-text2">
             找工作，上招聘网
         </div>
     </div>
@@ -224,19 +239,19 @@
                     <label>{{ field.label }}</label>
                     {{ field }}
                     {% if field.name == 'password' %}
-                    <div class="password-hint">密码必须包含至少一个大写字母、一个小写字母、一个数字，并且不少于8个字符</div> <!-- 修改了提示信息 -->
+                    <div class="password-hint">密码必须包含至少一个大写字母、一个小写字母、一个数字，并且不少于8个字符</div>
                     {% endif %}
                     {% if field.name == 'password' and nid == 2 %}
                     <a href="/auth/reset/" class="forgot-password">忘记密码？</a>
                     {% endif %}
-                    <span style="color: red;">{{ field.errors.0 }}</span>
+                    <span class="text-red">{{ field.errors.0 }}</span>
                 </div>
                 {% else %}
                 <div class="form-group captcha">
                     <label for="id_code">{{ field.label }}</label>
                     <div>
                         {{ field }}
-                        <span style="color: red;">{{ field.errors.0 }}</span>
+                        <span class="text-red">{{ field.errors.0 }}</span>
                     </div>
                     <div>
                         {% if nid == 2 %}
@@ -265,23 +280,23 @@
         </div>
     </div>
 
-    <script src="{% static 'js/jquery-3.6.0.min.js' %}"></script>
-    <script type="text/javascript">
+    <script src="{% static 'js/jquery-3.6.0.min.js' %}" nonce="{{request.csp_nonce}}"></script>
+    <script type="text/javascript" nonce="{{request.csp_nonce}}">
         // 点击刷新验证码
         $(function () {
             $("#imgCode").click(function () {
                 let oldSrc = $(this).attr('src');
                 $(this).attr('src', oldSrc + "?");
-            })
-        })
+            });
+        });
 
         const interval = 30;
         let countdown = interval;
-        let button = document.getElementById('sendemail');
+        let $button = $('#sendemail'); // 使用 jQuery 选择器包装按钮
         let timer;
 
         function updateButtonText() {
-            button.innerText = '剩余时间: ' + countdown + ' 秒';
+            $button.text('剩余时间: ' + countdown + ' 秒');
         }
 
         function countdownTick() {
@@ -289,36 +304,142 @@
             updateButtonText();
             if (countdown <= 0) {
                 clearInterval(timer);
-                button.innerText = '发送邮件';
-                button.disabled = false;
+                $button.text('发送邮件');
+                $button.prop('disabled', false); // 启用按钮
+                $button.removeClass('btn-secondary').addClass('btn-primary'); // 还原样式
                 countdown = interval; // 重置倒计时
             }
         }
 
+        function toUrlSafeBase64(base64Str) {
+            return base64Str.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+        }
+
         $(document).ready(function () {
-            button.addEventListener('click', function () {
-                $(this).prop('disabled', true);
+            $button.on('click', function () {
+                $button.prop('disabled', true); // 禁用按钮
+                $button.removeClass('btn-primary').addClass('btn-secondary'); // 更改样式
+                countdown = interval;
+
                 $.ajax({
-                    url: '/auth/send-email/',
+                    url: '/auth/sendemail/',
                     type: 'POST',
                     data: {
-                        'email': $('#id_email').val(),
+                        'email_address': $('#id_email').val(), // 确保字段名一致
                         'csrfmiddlewaretoken': '{{ csrf_token }}',
                     },
                     success: function (data) {
-                        if (data.code == 200) {
-                            alert('邮件发送成功！');
-                            timer = setInterval(countdownTick, 1000);
-                        } else {
-                            alert('发送失败，请重试！');
-                            button.prop('disabled', false); // 发送失败则启用按钮
-                        }
+                        alert(data.msg); // 直接显示服务器返回的信息
+                        timer = setInterval(countdownTick, 1000);
                     },
-                    error: function (xhr, status, error) {
-                        alert('错误: ' + error);
-                        button.prop('disabled', false); // 出现错误则启用按钮
+                    error: function () {
+                        alert('发送失败，请重试！');
+                        $button.prop('disabled', false); // 出现错误则启用按钮
+                        $button.removeClass('btn-secondary').addClass('btn-primary'); // 还原样式
                     }
                 });
+            });
+        });
+
+        $(document).ready(function() {
+            $("form").on("submit", function(event) {
+                event.preventDefault(); // 阻止默认提交行为
+
+                const nid = {{ nid }};
+
+                // 获取用户输入的密码和确认密码（如果有）
+                const password = $('#id_password').val();
+                const checkPassword = $('#id_check_password').val();
+
+                // 清空密码框，确保每次页面加载后密码框为空
+                $('#id_password').val('');
+                $('#id_check_password').val('');
+
+                if(nid == 1){
+
+
+                    // 验证密码和确认密码是否一致
+                    if (password !== checkPassword) {
+                        alert("两次输入的密码不一致！");
+                        return; // 如果不一致，阻止表单提交
+                    }
+
+                    // 密码长度检查
+                    if (password.length < 8) {
+                        alert("密码长度必须至少为8位。");
+                        return; // 阻止表单提交
+                    }
+
+                    // 检查密码是否包含用户名或手机号
+                    const username = $('#id_username').val();
+                    if (password.toLowerCase().includes(username.toLowerCase())) {
+                        alert("密码不能与用户名或手机号过于相似。");
+                        return; // 阻止表单提交
+                    }
+
+                    // 常见密码检查（此处假设 common_passwords 是一个包含常见密码的数组）
+                    const commonPasswords = [
+                        "123456", "password", "123456789", "qwerty", "abc123", "password1"
+                    ];
+                    if (commonPasswords.includes(password)) {
+                        alert("此密码过于常见，请选择其他密码。");
+                        return; // 阻止表单提交
+                    }
+
+                    // 密码复杂度检查
+                    const hasUpperCase = /[A-Z]/.test(password);
+                    const hasLowerCase = /[a-z]/.test(password);
+                    const hasDigit = /\d/.test(password);
+
+                    if (!hasUpperCase || !hasLowerCase || !hasDigit) {
+                        alert("密码必须包含至少一个大写字母、一个小写字母、一个数字。");
+                        return; // 阻止表单提交
+                    }
+                }
+
+                // 使用 SHA-256 进行哈希处理
+                const hashedPassword = CryptoJS.SHA256(password).toString();
+
+                // 使用 RSA 加密
+                const publicKey = `MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA0tZNC152TevJHSYj9b/L
+                                P8pxNSIKIExMzngTEHDDFjPXj+RUEH0exJ2uCByPcAQfPjmQCle39MJwiOyi8Y3J
+                                e78AZC9Em9mUtXYmb4ezVZGrbiz/ZZ8fuxpG7+FtegvfUDHiefQ/g9+SdRT7BIA6
+                                dpvBb6Kw3YGx6eB9YN5w+cyu2MF3aPzE5p6C6Iba/i5abHPJ5GHnSViTL/3HfaB8
+                                +td5N0CDhd49BeTkNpBjVEkNIFxmHV5Sa2o+47hWMSj/UgpTLFyRXef/nKgxhFII
+                                Bn+3VFdx5dY85jVyOpVIdo9JUhazh5BGnvfYA9EU0dPkIPTOtD/uMJwN97etRLey
+                                fwIDAQAB`;
+
+                const encryptor = new JSEncrypt();
+                encryptor.setPublicKey(publicKey);
+                const encryptedPassword = encryptor.encrypt(hashedPassword);
+                const urlSafeEncryptedData = toUrlSafeBase64(encryptedPassword);
+
+                if (encryptedPassword) {
+                    if(nid == 1){
+                        // 将加密后的密码和确认密码写回原 password 和 check_password 字段
+                        $('#id_password').val(urlSafeEncryptedData);
+                        $('#id_check_password').val(urlSafeEncryptedData);
+
+                        // 提交表单
+                        this.submit();
+
+                        // 清空密码，防止数据泄露
+                        $('#id_password').val('');
+                        $('#id_check_password').val('');
+                    }
+                    else{
+                        // 将加密后的密码直接写回 password 字段
+                        $('#id_password').val(encryptedPassword);
+
+                        // 提交表单
+                        this.submit();
+
+                        // 清空密码，防止数据泄露
+                        $('#id_password').val('');
+                    }
+                } else {
+                    alert("密码加密失败，请重试！");
+                }
             });
         });
     </script>

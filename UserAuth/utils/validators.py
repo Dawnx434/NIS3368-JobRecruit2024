@@ -1,15 +1,19 @@
 import re
 
 
+import re
+
 def is_valid_email(email):
+    # 检查 email 是否为 None 或空字符串，避免传入 None 引发错误
+    if not email:
+        return False
+
     # 正则表达式模式，用于匹配合法的邮箱地址
     pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
 
-    # 使用 re 模块进行匹配
-    if re.match(pattern, email):
-        return True
-    else:
-        return False
+    # 使用 re.match 进行匹配，直接返回匹配结果
+    return re.match(pattern, email) is not None
+
 
 
 def is_username_valid(username):
