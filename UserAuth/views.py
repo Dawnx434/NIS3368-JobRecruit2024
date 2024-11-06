@@ -38,7 +38,10 @@ def register(request):
 
     # store userinfo
     form.instance.identity = 1  # default: User
-    form.instance.password = rsa_decrypt_password(form.instance.password).decode('utf-8')
+    try:
+        form.instance.password = rsa_decrypt_password(form.instance.password).decode('latin1')
+    except:
+        raise ValidationError("哈希值转字符串失败，请联系管理员")
     form.save()
 
     # generate cookie
@@ -109,7 +112,10 @@ def reset_password(request):
 
     new_password_hash = rsa_decrypt_password(new_password)
     # 这里new_password_hash是bytes类型，需要转成str存储
-    str_decoded_password_hash = new_password_hash.decode('utf-8')
+    try:
+        str_decoded_password_hash = new_password_hash.decode('latin1')
+    except:
+        raise ValidationError("哈希值转字符串失败，请联系管理员")
     # print("new password:", new_password)
     # print("new password hash:", new_password_hash)
     # 重置密码
