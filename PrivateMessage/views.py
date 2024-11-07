@@ -13,6 +13,7 @@ from UserAuth.models import User
 import os
 import re
 
+# @login_required
 # 获取用户头像的帮助函数
 def get_matching_files(request):
     pattern = re.compile(str(request.session['UserInfo'].get("id")) + r'.*')
@@ -88,7 +89,6 @@ def send_message(request):
 
 # 查看消息详情视图
 # @login_required
-
 def view_message(request, message_id):
     # 获取当前用户的ID
     user_id = request.session['UserInfo'].get('id')
@@ -135,13 +135,12 @@ def reply_message(request, message_id):
     }
     return render(request, 'PrivateMessage/reply_message.html', context)
 
-# @login_required
 from .forms import MessageForm
 from django.shortcuts import redirect
 
-# @login_required
-from django.utils import timezone
 
+from django.utils import timezone
+# @login_required
 def conversation_view(request, current_user_id, selected_user_id):
     # 获取当前登录用户对象
     current_user = get_object_or_404(User, id=current_user_id)
@@ -194,7 +193,7 @@ def conversation_view(request, current_user_id, selected_user_id):
         'current_user': current_user,  # 当前登录用户
         'form': form,  # 消息表单
     })
-
+# @login_required
 def fetch_new_messages(request, current_user_id, selected_user_id):
     current_user = get_object_or_404(User, id=current_user_id)
     selected_user = get_object_or_404(User, id=selected_user_id)
@@ -217,7 +216,7 @@ def fetch_new_messages(request, current_user_id, selected_user_id):
 
     # 返回JSON响应
     return JsonResponse({'messages': message_data})
-
+# @login_required
 def search_user(request): 
     username = request.GET.get('user_id')
     current_user_id = request.session['UserInfo'].get('id')

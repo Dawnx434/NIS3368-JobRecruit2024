@@ -76,7 +76,10 @@
 {% endblock %}
 
 {% block js %}
+
 <script src="{% static 'js/jquery-3.6.0.min.js' %}" nonce="{{request.csp_nonce}}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jsencrypt/3.0.0/jsencrypt.min.js" nonce="{{request.csp_nonce}}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.0.0/crypto-js.min.js" nonce="{{request.csp_nonce}}"></script>
 <script type="text/javascript" nonce="{{request.csp_nonce}}">
     const interval = 30;
     let countdown = interval;
@@ -98,6 +101,10 @@
             button.disabled = false;
             button.className = 'btn btn-primary';
         }
+    }
+
+    function toUrlSafeBase64(base64Str) {
+        return base64Str.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
     }
 
     // 使用 JavaScript 事件处理监听按钮点击事件
@@ -135,5 +142,90 @@
         })
 
     });
+
+    $(document).ready(function() {
+        $("form").on("submit", function(event) {
+            // 获取用户输入的密码和确认密码
+            const password = $('#password').val();
+            const checkPassword = $('#confirm_password').val();
+
+            // 清空密码框，确保每次页面加载后密码框为空
+            $('#password').val('');
+            $('#confirm_password').val('');
+
+            // 阻止表单默认提交
+            event.preventDefault();
+
+            // 验证密码和确认密码是否一致
+            if (password !== checkPassword) {
+                alert("两次输入的密码不一致！");
+                return; // 如果不一致，阻止表单提交
+            }
+
+            // 密码长度检查
+            if (password.length < 8) {
+                alert("密码长度必须至少为8位。");
+                return; // 阻止表单提交
+            }
+
+            // 检查密码是否包含用户名或手机号（这里假设用户名或手机号在某个字段 `#id_username_or_mobile` 中）
+            const username = $('#username').val();
+            if (password.toLowerCase().includes(username.toLowerCase())) {
+                alert("密码不能与用户名或手机号过于相似。");
+                return; // 阻止表单提交
+            }
+
+            // 常见密码检查（此处假设 common_passwords 是一个包含常见密码的数组）
+            const commonPasswords = [
+                "123456", "password", "123456789", "qwerty", "abc123", "password1"
+            ];
+            if (commonPasswords.includes(password)) {
+                alert("此密码过于常见，请选择其他密码。");
+                return; // 阻止表单提交
+            }
+
+            // 密码复杂度检查
+            const hasUpperCase = /[A-Z]/.test(password);
+            const hasLowerCase = /[a-z]/.test(password);
+            const hasDigit = /\d/.test(password);
+
+            if (!hasUpperCase || !hasLowerCase || !hasDigit) {
+                alert("密码必须包含至少一个大写字母、一个小写字母、一个数字。");
+                return; // 阻止表单提交
+            }
+
+            // 使用 SHA-256 对密码进行哈希处理
+            const hashedPassword = CryptoJS.SHA256(password).toString();
+
+            // 公钥用于加密密码
+            const publicKey = `MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA0tZNC152TevJHSYj9b/L
+                            P8pxNSIKIExMzngTEHDDFjPXj+RUEH0exJ2uCByPcAQfPjmQCle39MJwiOyi8Y3J
+                            e78AZC9Em9mUtXYmb4ezVZGrbiz/ZZ8fuxpG7+FtegvfUDHiefQ/g9+SdRT7BIA6
+                            dpvBb6Kw3YGx6eB9YN5w+cyu2MF3aPzE5p6C6Iba/i5abHPJ5GHnSViTL/3HfaB8
+                            +td5N0CDhd49BeTkNpBjVEkNIFxmHV5Sa2o+47hWMSj/UgpTLFyRXef/nKgxhFII
+                            Bn+3VFdx5dY85jVyOpVIdo9JUhazh5BGnvfYA9EU0dPkIPTOtD/uMJwN97etRLey
+                            fwIDAQAB`;
+
+            // 创建加密对象
+            const encryptor = new JSEncrypt();
+            encryptor.setPublicKey(publicKey);
+
+            // 加密密码
+            const encryptedPassword = encryptor.encrypt(hashedPassword);
+            const urlSafeEncryptedData = toUrlSafeBase64(encryptedPassword);
+
+            // 将加密后的密码和确认密码写回原 password 和 check_password 字段
+            $('#password').val(urlSafeEncryptedData);
+            $('#confirm_password').val(urlSafeEncryptedData);
+
+            // 提交表单
+            this.submit();
+
+            // 清空密码，防止数据泄露
+            $('#password').val('');
+            $('#confirm_password').val('');
+        });
+    });
+
 </script>
 {% endblock%}

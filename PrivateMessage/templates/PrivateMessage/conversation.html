@@ -229,7 +229,10 @@
             background-color: #0056b3;
         }
     </style>
-    <script nonce="{{request.csp_nonce}}" src="https://cdn.jsdelivr.net/npm/@joeattardi/emoji-button@4.6.2/dist/index.min.js"></script>
+<!--    <script nonce="{{request.csp_nonce}}"-->
+<!--        src="https://cdn.jsdelivr.net/npm/@joeattardi/emoji-button@4.6.2/dist/index.min.js"></script>-->
+    <script nonce="{{ request.csp_nonce }}" src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script nonce="{{ request.csp_nonce }}" src="https://cdn.jsdelivr.net/npm/@joeattardi/emoji-button@4.6.2/dist/index.min.js"></script>
 </head>
 
 <body>
@@ -249,8 +252,7 @@
                 {% for contact in contact_users %}
                 <li class="list-group-item contact-item {% if contact.id == selected_user.id %}active{% endif %}">
                     <!-- 添加头像 -->
-                    <img src="{% static 'images/' %}{{ contact.id }}.jpeg" alt="头像" class="avatar"
-                        onerror="loadFallbackImage(this, '{{ contact.id }}')">
+                    <img src="http://mms1.baidu.com/it/u=3278520282,536964870&fm=253&app=138&f=JPG?w=300&h=300" alt="头像" class="avatar">
                     <!-- 显示联系人姓名 -->
                     <a href="{% url 'PrivateMessage:conversation_with_user' current_user.id contact.id %}">
                         {{ contact.username }}
@@ -286,27 +288,7 @@
                     <button type="button" id="emojiButton"
                         style="background: none; border: none; font-size: 20px; cursor: pointer; margin-right: 100px;">😀</button>
                     <button type="submit">发送</button>
-                    <div id="emojiPicker"
-                        style="display: none; position: absolute; bottom: 60px; right: 30px; background-color: #fff; border: 1px solid #ccc; padding: 10px; border-radius: 5px;">
-                        <span onclick="insertEmoji('😀')">😀</span>
-                        <span onclick="insertEmoji('😂')">😂</span>
-                        <span onclick="insertEmoji('😍')">😍</span>
-                        <span onclick="insertEmoji('😢')">😢</span>
-                        <span onclick="insertEmoji('👍')">👍</span>
-                        <span onclick="insertEmoji('🎉')">🎉</span>
-                        <span onclick="insertEmoji('😎')">😎</span>
-                        <span onclick="insertEmoji('😡')">😡</span>
-                        <span onclick="insertEmoji('😱')">😱</span>
-                        <span onclick="insertEmoji('🤔')">🤔</span>
-                        <span onclick="insertEmoji('🙌')">🙌</span>
-                        <span onclick="insertEmoji('🥳')">🥳</span>
-                        <span onclick="insertEmoji('❤️')">❤️</span>
-                        <span onclick="insertEmoji('🌟')">🌟</span>
-                        <span onclick="insertEmoji('💔')">💔</span>
-                        <span onclick="insertEmoji('🌈')">🌈</span>
-                        <span onclick="insertEmoji('🎶')">🎶</span>
-                        <!-- 可以继续添加更多表情 -->
-                    </div>
+                    
                 </form>
             </div>
             {% else %}
@@ -314,7 +296,7 @@
             {% endif %}
         </div>
     </div>
-    <script nonce = "{{request.csp_nonce}}">
+    <script nonce="{{request.csp_nonce}}">
         document.getElementById("searchForm").addEventListener("submit", function (event) {
             event.preventDefault();  // 阻止默认表单提交
 
@@ -334,7 +316,27 @@
                 .catch(error => console.error('Error:', error));
         });
     </script>
-    <script nonce="{{request.csp_nonce}}">
+<!--    <script nonce="{{ request.csp_nonce }}" src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>-->
+    <script nonce="{{ request.csp_nonce }}">
+        document.getElementById("searchForm").addEventListener("submit", function (event) {
+            event.preventDefault();  // 阻止默认表单提交
+
+            const userId = document.querySelector("input[name='user_id']").value;
+
+            fetch("{% url 'PrivateMessage:search_user' %}?user_id=" + userId)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.exists) {
+                        window.location.href = data.url;
+                    } else {
+                        alert("用户不存在，请检查用户ID！");
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        });
+      
+        // 加载备用头像图片的函数
+        
         function loadFallbackImage(img, userId) {
             const formats = ['jpeg', 'jpg', 'png', 'gif'];
             let index = 0;
@@ -353,30 +355,87 @@
 
             tryNextFormat();
         }
-    </script>
-    <script nonce="{{request.csp_nonce}}">
-        // 获取元素
-        const emojiButton = document.getElementById('emojiButton');
-        const emojiPicker = document.getElementById('emojiPicker');
-        const messageInput = document.querySelector('.message-input textarea');
 
-        // 点击表情按钮，显示/隐藏表情选择面板
-        emojiButton.addEventListener('click', () => {
-            emojiPicker.style.display = emojiPicker.style.display === 'none' ? 'block' : 'none';
+                // 表情选择器功能
+                    document.addEventListener('DOMContentLoaded', function () {
+                        const emojiButton = document.getElementById('emojiButton');
+                        const messageInput = document.querySelector('.message-input textarea');
+                        const emojis = ['😀', '😂', '😍', '😢', '👍', '🎉', '😎', '😡', '😱', '🤔', '🙌', '🥳', '❤️', '🌟', '💔', '🌈', '🎶'];
+                        let emojiPickerVisible = false;
+
+                        // 创建表情选择面板
+                        const emojiPicker = document.createElement('div');
+                        emojiPicker.id = 'emojiPicker';
+                        emojiPicker.style.cssText = "display: none; position: absolute; bottom: 60px; right: 30px; background-color: #fff; border: 1px solid #ccc; padding: 10px; border-radius: 5px;";
+                        emojis.forEach(emoji => {
+                            const emojiElement = document.createElement('span');
+                            emojiElement.innerText = emoji;
+                            emojiElement.style.cursor = 'pointer';
+                            emojiElement.style.fontSize = '20px';
+                            emojiElement.style.marginRight = '5px';
+                            emojiElement.onclick = () => insertEmoji(emoji);
+                            emojiPicker.appendChild(emojiElement);
+                        });
+                        document.body.appendChild(emojiPicker);
+
+                        emojiButton.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            emojiPicker.style.display = emojiPickerVisible ? 'none' : 'block';
+                            emojiPickerVisible = !emojiPickerVisible;
+                        });
+
+                        function insertEmoji(emoji) {
+                            messageInput.value += emoji;
+                            emojiPicker.style.display = 'none';
+                            emojiPickerVisible = false;
+                        }
+
+                        document.addEventListener('click', (e) => {
+                            if (emojiPickerVisible && !emojiPicker.contains(e.target) && e.target !== emojiButton) {
+                                emojiPicker.style.display = 'none';
+                                emojiPickerVisible = false;
+                            }
+                        });
+                    });
+
+        // 页面加载后自动滚动到聊天框的底部
+        document.addEventListener("DOMContentLoaded", function() {
+            var chatBox = document.querySelector('.chat-box');
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            // 启动轮询，每5秒钟调用一次 fetchNewMessages 函数
+            setInterval(fetchNewMessages, 5000);
         });
 
-        // 插入表情到输入框
-        function insertEmoji(emoji) {
-            messageInput.value += emoji;
-            emojiPicker.style.display = 'none';  // 插入后隐藏表情选择面板
+        // 定义获取最新消息的函数
+        function fetchNewMessages() {
+            var currentUserId = "{{ current_user.id }}";
+            var selectedUserId = "{{ selected_user.id }}";
+            var url = '{% url "PrivateMessage:fetch_new_messages" current_user.id selected_user.id %}';
+
+            $.ajax({
+                url: url,  // 后端API URL
+                method: 'GET',
+                success: function(response) {
+                    var chatBox = $('.chat-box');
+                    chatBox.html('');  // 清空现有的消息
+                    response.messages.forEach(function(message) {
+                        var messageClass = message.sender_id == currentUserId ? 'sent' : 'received';
+                        var messageHtml = '<div class="message ' + messageClass + '">'
+                                          + '<p>' + message.content + '</p>'
+                                          + '<small>' + message.timestamp + '</small></div>';
+                        chatBox.append(messageHtml);  // 插入新消息
+                    });
+                    // 自动滚动到聊天框底部
+                    chatBox.scrollTop(chatBox.prop("scrollHeight"));
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error fetching new messages:', error);
+                    console.error('Status:', status);
+                    console.error('Response:', xhr.responseText); // 记录服务器响应
+                }
+            });
         }
-
-        // 点击页面其他位置时隐藏表情选择面板
-        document.addEventListener('click', (event) => {
-            if (!emojiButton.contains(event.target) && !emojiPicker.contains(event.target)) {
-                emojiPicker.style.display = 'none';
-            }
-        });
     </script>
 </body>
 

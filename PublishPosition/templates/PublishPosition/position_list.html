@@ -5,6 +5,24 @@
 {% block title %}职位列表{% endblock %}
 
 {% block stylesheet %}
+<!-- Bootstrap CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+{% if messages %}
+    <div class="container mt-3">
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
 <style nonce="{{request.csp_nonce}}">
     .card-container {
         margin-top: 20px;
@@ -176,6 +194,11 @@
         <!-- 搜索表单 -->
         <div class="list-content">
             <h1>{{ page_title }}</h1>
+	    <div class="row mt-4">
+                <div class="col-md-12">
+                    <button class="btn btn-success mb-3" id="apply-all-btn">一键投递所有岗位</button>
+                </div>
+            </div>
             <form method="get" action="{% url 'PublishPosition:publish_list' %}" class="mb-4">
                 <div class="row g-3">
                     <!-- 第一行：职位关键词和地点 -->

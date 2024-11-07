@@ -8,9 +8,11 @@ from django.core.paginator import Paginator, EmptyPage
 from django.conf import settings
 import urllib.parse
 from django.views.decorators.csrf import csrf_exempt
+from django.core.exceptions import ValidationError
 
 from UserAuth.utils.generateCode import send_sms_code
 from UserAuth.utils import validators
+from UserAuth.utils.encrypt import rsa_decrypt_password
 from UserAuth.models import User
 from Application.models import Application
 from PublishPosition.models import Position
@@ -151,11 +153,13 @@ def account(request):
         error_dict['username'] = "用户名只能包含数字和字母"
         check_passed = False
 
-    # check password and confirm_password
-    if post_data['password'] or post_data['confirm_password']:
-        if post_data['password'] != post_data['confirm_password']:
-            error_dict['confirm_password'] = "两次密码不一致"
-            check_passed = False
+    # # check password and confirm_password
+    # if post_data['password'] or post_data['confirm_password']:
+    #     if post_data['password'] != post_data['confirm_password']:
+    #         error_dict['confirm_password'] = "两次密码不一致"
+    #         check_passed = False
+
+    new_password = post_data['password']
 
     # check mobile_phone and email
     if not validators.is_valid_email(post_data['email']):
@@ -179,8 +183,16 @@ def account(request):
         'mobile_phone': post_data['mobile_phone'],
         'email': post_data['email']
     }
-    if post_data['password']:
-        save_data['password'] = post_data['password']
+
+    # 解密new_password为哈希值
+    new_password_hash = rsa_decrypt_password(new_password)
+    try:
+        str_decoded_password_hash = new_password_hash.decode('latin1')
+    except:
+        raise ValidationError("哈希值转字符串失败，请联系管理员")
+
+    if str_decoded_password_hash:
+        save_data['password'] = str_decoded_password_hash
     print(save_data)
     User.objects.filter(id=request.session.get("UserInfo").get("id")).update(**save_data)
     return redirect("/info/info/")

@@ -10,9 +10,6 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 import os
-
-os.path.join(os.path.dirname(__file__), '../templates').replace('\\', '/')
-import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -25,9 +22,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = "django-insecure-ddt_33p8(2$8#y3f@7p1@df9flgshx0@rfp1hspph8mm8)dyce"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ["*"]
+# ALLOWED_HOSTS = ["sjtuis2024mygo.monster"]
 
 # Application definition
 
@@ -151,18 +149,10 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static','plugins'),
     os.path.join(BASE_DIR, 'static','js'),
     os.path.join(BASE_DIR, 'static','img'),
-
 ]
-#STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-# STATICFILES_DIRS = [
-#     os.path.join(BASE_DIR, 'static'),# 主要静态文件目录
-#     os.path.join(BASE_DIR, 'static/plugins'),# 插件目录
-#     os.path.join(BASE_DIR, 'static/js'),# JS 目录
-#     os.path.join(BASE_DIR, 'static/img'),# 图片目录
-# ]
+
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
-
 
 PROFILE_ROOT = os.path.join(BASE_DIR, 'static/images/')
 RESUME_ROOT = os.path.join(BASE_DIR, 'resumes/')
@@ -176,17 +166,19 @@ try:
 except ImportError:  # 捕获导入异常
     pass
 
-CSP_IMG_SRC = ("'self'", "data:", "www.google-analytics.com", "https://cdnjs.cloudflare.com", "https://cdn.jsdelivr.net",)
+CSP_IMG_SRC = ("'self'", "data:", "www.google-analytics.com", "https://cdnjs.cloudflare.com", "https://cdn.jsdelivr.net","http://mms1.baidu.com",)
 CSP_DEFAULT_SRC =(
     "'self'",
-    "www.google-analytics.com",  
+    "www.google-analytics.com",
     "https://cdnjs.cloudflare.com",
     "https://cdn.jsdelivr.net",
+    #'unsafe-inline',
     )
 CSP_SCRIPT_SRC =(
     "'self'",
     "www.googletagmanager.com",
     "https://cdn.staticfile.org",
+    #'unsafe-inline',
     )
 CSP_STYLE_SRC =(
     "'self'",
@@ -199,7 +191,7 @@ CSP_INCLUDE_NONCE_IN = ["script-src"]#,"style-src")
 EMAIL_HOST = "smtp.sjtu.edu.cn"
 EMAIL_PORT = 25
 EMAIL_HOST_USER = "guoyu_1"  # JAccount账号，不带邮箱后缀
-EMAIL_HOST_PASSWORD = "Aa2195301536"  # JAccount密码
+EMAIL_HOST_PASSWORD = ""  # JAccount密码
 EMAIL_USE_TLS = True
 EMAIL_FROM = "guoyu_1@sjtu.edu.cn"  # JAccount邮箱地址
 EMAIL_TITLE = '邮箱激活'
